@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1B4D2E" />
+  <title>Draft — TW Fantasy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_AUTH_DOMAIN", projectId:"YOUR_PROJECT_ID", storageBucket:"YOUR_STORAGE_BUCKET", messagingSenderId:"YOUR_MESSAGING_SENDER_ID", appId:"YOUR_APP_ID" };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href="/index.html"; return; }
+      const snap = await getDoc(doc(db,"users",user.uid));
+      if (!snap.exists() || snap.data().status !== "approved") { window.location.href="/pages/pending.html"; return; }
+      loadDraft();
+    });
+
+    function loadDraft() {
+      onSnapshot(doc(db,"draft","current"), (d) => {
+        if(!d.exists()) return;
+        const data = d.data();
+        document.getElementById("draft-round").textContent = "Round " + (data.round||1);
+        document.getElementById("draft-pick").textContent = (data.currentTeam||"—") + " ရဲ့ Turn";
+        document.getElementById("draft-status").textContent = data.status==="active"?"🟢 Active":"⏸ Paused";
+      });
+      const q = query(collection(db,"draft","current","picks"), orderBy("pickNo","asc"));
+      onSnapshot(q, (snapshot) => {
+        const picks = [];
+        snapshot.forEach(d=>picks.push(d.data()));
+        document.getElementById("pick-list").innerHTML = picks.map(p=>`
+          <div class="flex items-center gap-3 py-2.5 px-3 rounded-xl mb-1" style="background:#1F5C36;border:1px solid #2A7A47;">
+            <span class="text-xs font-bold w-8 text-center" style="color:#C9A84C;">#${p.pickNo}</span>
+            <div class="flex-1">
+              <p class="text-white text-sm font-semibold">${p.playerName||"—"}</p>
+              <p class="text-xs" style="color:#3A9E5F;">${p.teamName||""}</p>
+            </div>
+            <span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:rgba(201,168,76,0.2);color:#C9A84C;">${p.position||"?"}</span>
+          </div>`).join("") || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">Draft မစသေးပါ</p>`;
+      });
+    }
+  </script>
+  <style>
+    *{-webkit-tap-highlight-color:transparent;}
+    body{font-family:"Inter",sans-serif;background:#0D2B1A;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+    .gold-text{background:linear-gradient(135deg,#C9A84C,#F0D060,#A07830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+  </style>
+</head>
+<body>
+  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;flex-shrink:0;">
+    <a href="/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
+    <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">TRANSFER DRAFT</h1>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;" class="px-4 py-4">
+    <div class="rounded-2xl p-4 mb-4" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.3);">
+      <div class="flex justify-between items-center">
+        <div>
+          <p id="draft-round" class="gold-text font-bold" style="font-family:'Bebas Neue';font-size:1.5rem;">Round 1</p>
+          <p id="draft-pick" class="text-white text-sm font-semibold mt-1">—</p>
+        </div>
+        <span id="draft-status" class="text-xs px-3 py-1.5 rounded-full font-semibold" style="background:rgba(201,168,76,0.15);color:#C9A84C;">⏸ Paused</span>
+      </div>
+    </div>
+
+    <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Draft Picks</p>
+    <div id="pick-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading...</p></div>
+  </div>
+</body>
+</html>

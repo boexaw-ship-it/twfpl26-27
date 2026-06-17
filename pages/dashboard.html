@@ -1,1 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1B4D2E" />
+  <title>Dashboard — TW Fantasy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_AUTH_DOMAIN", projectId:"YOUR_PROJECT_ID", storageBucket:"YOUR_STORAGE_BUCKET", messagingSenderId:"YOUR_MESSAGING_SENDER_ID", appId:"YOUR_APP_ID" };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href="/index.html"; return; }
+      const snap = await getDoc(doc(db,"users",user.uid));
+      if (!snap.exists() || snap.data().status !== "approved") { window.location.href="/pages/pending.html"; return; }
+      document.getElementById("team-name").textContent = snap.data().teamName;
+      document.getElementById("fpl-id").textContent = "Team ID: " + snap.data().fplTeamId;
+    });
+    window.handleLogout = async () => { await signOut(auth); window.location.href="/index.html"; };
+    window.navigate = (page) => {
+      const pages = { team:"/pages/team.html", live:"/pages/live.html", leagues:"/pages/leagues.html", tournament:"/pages/tournament.html", scout:"/pages/scout.html" };
+      if (pages[page]) window.location.href = pages[page];
+    };
+  </script>
+  <style>
+    *{-webkit-tap-highlight-color:transparent;}
+    body{font-family:"Inter",sans-serif;background:#0D2B1A;min-height:100vh;overflow:hidden;}
+    .gold-text{background:linear-gradient(135deg,#C9A84C,#F0D060,#A07830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;color:#3A9E5F;transition:all 0.2s;cursor:pointer;}
+    .nav-item.active,.nav-item:active{color:#C9A84C;}
+    .nav-icon{font-size:1.3rem;}
+    .nav-label{font-size:0.6rem;font-weight:500;letter-spacing:0.05em;}
+    .menu-card{background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.2);border-radius:1rem;padding:1.25rem;cursor:pointer;transition:all 0.2s;}
+    .menu-card:active{transform:scale(0.97);border-color:#C9A84C;}
+    .fade-in{animation:fadeIn 0.5s ease-out;}
+    @keyframes fadeIn{from{opacity:0;transform:translateY(10px);}to{opacity:1;transform:translateY(0);}}
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:50;">
+    <div>
+      <h1 class="gold-text font-bold text-lg" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
+      <p id="fpl-id" class="text-xs" style="color:#3A9E5F;"></p>
+    </div>
+    <div class="flex items-center gap-3">
+      <span id="team-name" class="text-sm font-semibold" style="color:#E8D5A3;"></span>
+      <button onclick="handleLogout()" class="text-xs px-3 py-1.5 rounded-lg" style="border:1px solid #2A7A47;color:#3A9E5F;">Logout</button>
+    </div>
+  </div>
 
+  <!-- Main Content -->
+  <div style="padding-top:64px;padding-bottom:70px;height:100vh;overflow-y:auto;" class="px-4 py-4 fade-in">
+
+    <!-- Welcome Banner -->
+    <div class="rounded-2xl p-5 mb-4" style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);border:1px solid rgba(201,168,76,0.3);box-shadow:0 0 20px rgba(201,168,76,0.1);">
+      <p class="text-xs uppercase tracking-widest mb-1" style="color:#C9A84C;">Welcome Back</p>
+      <h2 id="welcome-name" class="text-white text-xl font-bold">TW Fantasy League</h2>
+      <p class="text-xs mt-1" style="color:#3A9E5F;">Season 2026-27 • Official Fantasy League</p>
+    </div>
+
+    <!-- Quick Menu Grid -->
+    <div class="grid grid-cols-2 gap-3 mb-4">
+      <div class="menu-card" onclick="navigate('team')">
+        <div class="text-2xl mb-2">👕</div>
+        <p class="text-white text-sm font-semibold">My Team</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Live Pitch View</p>
+      </div>
+      <div class="menu-card" onclick="navigate('live')">
+        <div class="text-2xl mb-2">⚡</div>
+        <p class="text-white text-sm font-semibold">Live</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Points + Chat</p>
+        <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-bold" style="background:#dc2626;color:white;">LIVE</span>
+      </div>
+      <div class="menu-card" onclick="navigate('leagues')">
+        <div class="text-2xl mb-2">🏆</div>
+        <p class="text-white text-sm font-semibold">Leagues</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Private Leagues</p>
+      </div>
+      <div class="menu-card" onclick="navigate('tournament')">
+        <div class="text-2xl mb-2">⚽</div>
+        <p class="text-white text-sm font-semibold">Tournament</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">32 သင်း Group + KO</p>
+      </div>
+      <div class="menu-card" onclick="navigate('scout')">
+        <div class="text-2xl mb-2">🔍</div>
+        <p class="text-white text-sm font-semibold">Player Scout</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Price & Ownership</p>
+      </div>
+      <div class="menu-card" onclick="navigate('draft')">
+        <div class="text-2xl mb-2">📋</div>
+        <p class="text-white text-sm font-semibold">Draft</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Transfer Draft</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div style="position:fixed;bottom:0;left:0;right:0;background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;z-index:50;">
+    <div class="nav-item active" onclick="window.location.href='/pages/dashboard.html'">
+      <span class="nav-icon">🏠</span>
+      <span class="nav-label">Home</span>
+    </div>
+    <div class="nav-item" onclick="navigate('live')">
+      <span class="nav-icon">⚡</span>
+      <span class="nav-label">Live</span>
+    </div>
+    <div class="nav-item" onclick="navigate('leagues')">
+      <span class="nav-icon">🏆</span>
+      <span class="nav-label">League</span>
+    </div>
+    <div class="nav-item" onclick="navigate('tournament')">
+      <span class="nav-icon">⚽</span>
+      <span class="nav-label">Cup</span>
+    </div>
+    <div class="nav-item" onclick="navigate('scout')">
+      <span class="nav-icon">🔍</span>
+      <span class="nav-label">Scout</span>
+    </div>
+  </div>
+</body>
+</html>

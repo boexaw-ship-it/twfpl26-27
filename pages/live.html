@@ -1,0 +1,130 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1B4D2E" />
+  <title>Live — TW Fantasy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, addDoc, onSnapshot, orderBy, query, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_AUTH_DOMAIN", projectId:"YOUR_PROJECT_ID", storageBucket:"YOUR_STORAGE_BUCKET", messagingSenderId:"YOUR_MESSAGING_SENDER_ID", appId:"YOUR_APP_ID" };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+    let currentUser = null;
+    let currentTeamName = "";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href="/index.html"; return; }
+      const snap = await getDoc(doc(db,"users",user.uid));
+      if (!snap.exists() || snap.data().status !== "approved") { window.location.href="/pages/pending.html"; return; }
+      currentUser = user;
+      currentTeamName = snap.data().teamName;
+      document.getElementById("user-team").textContent = currentTeamName;
+      loadChat();
+    });
+
+    function loadChat() {
+      const q = query(collection(db,"chat"), orderBy("createdAt","desc"), limit(50));
+      onSnapshot(q, (snapshot) => {
+        const msgs = [];
+        snapshot.forEach(d => msgs.unshift({id:d.id,...d.data()}));
+        const chatEl = document.getElementById("chat-messages");
+        chatEl.innerHTML = msgs.map(m => {
+          const isSelf = m.uid === currentUser?.uid;
+          const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString("en",{hour:"2-digit",minute:"2-digit"}) : "";
+          return isSelf
+            ? `<div class="flex flex-col items-end mb-3"><div class="text-xs mb-1" style="color:#C9A84C;">${m.teamName}</div><div class="rounded-2xl rounded-br-sm px-4 py-2 text-sm max-w-xs" style="background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;font-weight:500;">${m.text}</div><div class="text-xs mt-1" style="color:#3A9E5F;">${time}</div></div>`
+            : `<div class="flex flex-col items-start mb-3"><div class="text-xs mb-1" style="color:#E8D5A3;">${m.teamName}</div><div class="rounded-2xl rounded-bl-sm px-4 py-2 text-sm max-w-xs" style="background:#1F5C36;color:white;">${m.text}</div><div class="text-xs mt-1" style="color:#3A9E5F;">${time}</div></div>`;
+        }).join("");
+        chatEl.scrollTop = chatEl.scrollHeight;
+      });
+    }
+
+    window.sendMessage = async () => {
+      const input = document.getElementById("chat-input");
+      const text = input.value.trim();
+      if (!text || !currentUser) return;
+      input.value = "";
+      await addDoc(collection(db,"chat"), { text, teamName:currentTeamName, uid:currentUser.uid, createdAt:serverTimestamp() });
+    };
+
+    window.handleKeydown = (e) => { if(e.key==="Enter") window.sendMessage(); };
+  </script>
+  <style>
+    *{-webkit-tap-highlight-color:transparent;}
+    body{font-family:"Inter",sans-serif;background:#0D2B1A;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+    .gold-text{background:linear-gradient(135deg,#C9A84C,#F0D060,#A07830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;color:#3A9E5F;transition:all 0.2s;cursor:pointer;}
+    .nav-item.active,.nav-item:active{color:#C9A84C;}
+    .nav-icon{font-size:1.3rem;}
+    .nav-label{font-size:0.6rem;font-weight:500;}
+    #chat-messages::-webkit-scrollbar{width:3px;}
+    #chat-messages::-webkit-scrollbar-thumb{background:#C9A84C;border-radius:2px;}
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div class="flex items-center gap-2">
+      <a href="/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;">←</a>
+      <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.2rem;">LIVE</h1>
+      <span class="text-xs px-2 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626;color:white;">LIVE</span>
+    </div>
+    <span id="user-team" class="text-xs font-semibold" style="color:#E8D5A3;"></span>
+  </div>
+
+  <!-- Live Points Panel (50%) -->
+  <div style="flex:1;overflow-y:auto;border-bottom:2px solid rgba(201,168,76,0.3);" class="px-4 py-3">
+    <div class="rounded-2xl p-4 mb-3" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.2);">
+      <p class="text-xs uppercase tracking-widest mb-1" style="color:#C9A84C;">Gameweek Points</p>
+      <div class="flex items-end gap-2">
+        <span class="text-5xl font-bold" style="font-family:'Bebas Neue';color:#C9A84C;" id="gw-points">—</span>
+        <span class="text-sm mb-1" style="color:#E8D5A3;">pts</span>
+      </div>
+      <p class="text-xs mt-1" style="color:#3A9E5F;">Live updating every 5 minutes</p>
+    </div>
+    <div class="grid grid-cols-3 gap-2">
+      <div class="rounded-xl p-3 text-center" style="background:#1F5C36;border:1px solid #2A7A47;">
+        <p class="text-xs" style="color:#3A9E5F;">Rank</p>
+        <p class="font-bold text-white text-lg" style="font-family:'Bebas Neue';" id="gw-rank">—</p>
+      </div>
+      <div class="rounded-xl p-3 text-center" style="background:#1F5C36;border:1px solid #2A7A47;">
+        <p class="text-xs" style="color:#3A9E5F;">Overall</p>
+        <p class="font-bold text-white text-lg" style="font-family:'Bebas Neue';" id="overall-pts">—</p>
+      </div>
+      <div class="rounded-xl p-3 text-center" style="background:#1F5C36;border:1px solid #2A7A47;">
+        <p class="text-xs" style="color:#3A9E5F;">Captain</p>
+        <p class="font-bold text-lg" style="font-family:'Bebas Neue';color:#C9A84C;" id="captain-pts">—</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Chat Box (50%) -->
+  <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
+    <div style="padding:8px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;">
+      <p class="text-xs font-semibold uppercase tracking-widest" style="color:#C9A84C;">💬 Live Chat</p>
+    </div>
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:12px 16px;"></div>
+    <div style="padding:8px 12px;border-top:1px solid #1F5C36;display:flex;gap:8px;align-items:center;flex-shrink:0;background:#0D2B1A;">
+      <input id="chat-input" type="text" placeholder="Message ရိုက်ပါ..." onkeydown="handleKeydown(event)"
+        style="flex:1;background:#1F5C36;border:1px solid #2A7A47;color:white;border-radius:0.75rem;padding:10px 14px;font-size:0.85rem;outline:none;"
+        onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='#2A7A47'" />
+      <button onclick="sendMessage()" style="background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;border-radius:0.75rem;padding:10px 16px;font-weight:700;font-size:0.85rem;">Send</button>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
+    <div class="nav-item" onclick="window.location.href='/pages/dashboard.html'"><span class="nav-icon">🏠</span><span class="nav-label">Home</span></div>
+    <div class="nav-item active"><span class="nav-icon">⚡</span><span class="nav-label">Live</span></div>
+    <div class="nav-item" onclick="window.location.href='/pages/leagues.html'"><span class="nav-icon">🏆</span><span class="nav-label">League</span></div>
+    <div class="nav-item" onclick="window.location.href='/pages/tournament.html'"><span class="nav-icon">⚽</span><span class="nav-label">Cup</span></div>
+    <div class="nav-item" onclick="window.location.href='/pages/scout.html'"><span class="nav-icon">🔍</span><span class="nav-label">Scout</span></div>
+  </div>
+</body>
+</html>

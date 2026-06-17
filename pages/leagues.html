@@ -1,0 +1,97 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1B4D2E" />
+  <title>Leagues — TW Fantasy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { getFirestore, doc, getDoc, collection, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_AUTH_DOMAIN", projectId:"YOUR_PROJECT_ID", storageBucket:"YOUR_STORAGE_BUCKET", messagingSenderId:"YOUR_MESSAGING_SENDER_ID", appId:"YOUR_APP_ID" };
+    const app = initializeApp(firebaseConfig);
+    const auth = getAuth(app);
+    const db = getFirestore(app);
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href="/index.html"; return; }
+      const snap = await getDoc(doc(db,"users",user.uid));
+      if (!snap.exists() || snap.data().status !== "approved") { window.location.href="/pages/pending.html"; return; }
+      loadLeague("weekly", "weekly-table");
+      loadLeague("overall", "overall-table");
+    });
+
+    function loadLeague(leagueId, tableId) {
+      const q = query(collection(db, "leagues", leagueId, "standings"), orderBy("points","desc"));
+      onSnapshot(q, (snapshot) => {
+        const rows = [];
+        let rank = 1;
+        snapshot.forEach(d => { rows.push({rank:rank++,...d.data()}); });
+        const el = document.getElementById(tableId);
+        if (rows.length === 0) { el.innerHTML=`<p class="text-center text-xs py-4" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`; return; }
+        el.innerHTML = rows.map(r => `
+          <div class="flex items-center gap-3 py-2.5 px-3 rounded-xl mb-1 ${r.rank<=3?'border':''}` +
+          `" style="${r.rank===1?'background:rgba(201,168,76,0.15);border-color:rgba(201,168,76,0.4);':'r.rank===2?background:rgba(255,255,255,0.05);border-color:rgba(255,255,255,0.1);':'background:rgba(205,127,50,0.1);border-color:rgba(205,127,50,0.3);'}">
+            <span class="text-sm font-bold w-6 text-center" style="color:${r.rank===1?'#F0D060':r.rank===2?'#C0C0C0':r.rank===3?'#CD7F32':'#3A9E5F'};">${r.rank}</span>
+            <span class="flex-1 text-sm font-medium text-white">${r.teamName||"—"}</span>
+            <span class="font-bold" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points||0}</span>
+          </div>`).join("");
+      });
+    }
+
+    window.switchTab = (tab) => {
+      document.getElementById("tab-weekly").style.borderColor = tab==="weekly"?"#C9A84C":"transparent";
+      document.getElementById("tab-weekly").style.color = tab==="weekly"?"#C9A84C":"#3A9E5F";
+      document.getElementById("tab-overall").style.borderColor = tab==="overall"?"#C9A84C":"transparent";
+      document.getElementById("tab-overall").style.color = tab==="overall"?"#C9A84C":"#3A9E5F";
+      document.getElementById("panel-weekly").style.display = tab==="weekly"?"block":"none";
+      document.getElementById("panel-overall").style.display = tab==="overall"?"block":"none";
+    };
+  </script>
+  <style>
+    *{-webkit-tap-highlight-color:transparent;}
+    body{font-family:"Inter",sans-serif;background:#0D2B1A;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
+    .gold-text{background:linear-gradient(135deg,#C9A84C,#F0D060,#A07830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    .nav-item{display:flex;flex-direction:column;align-items:center;gap:2px;padding:8px 12px;color:#3A9E5F;transition:all 0.2s;cursor:pointer;}
+    .nav-item.active{color:#C9A84C;}
+  </style>
+</head>
+<body>
+  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;gap:2;flex-shrink:0;">
+    <a href="/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
+    <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">LEAGUES</h1>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;border-bottom:1px solid #1F5C36;flex-shrink:0;">
+    <button id="tab-weekly" onclick="switchTab('weekly')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid #C9A84C;color:#C9A84C;background:transparent;cursor:pointer;">
+      🗓 Weekly GW
+    </button>
+    <button id="tab-overall" onclick="switchTab('overall')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid transparent;color:#3A9E5F;background:transparent;cursor:pointer;">
+      🏆 Overall
+    </button>
+  </div>
+
+  <div style="flex:1;overflow-y:auto;" class="px-4 py-3">
+    <div id="panel-weekly">
+      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Gameweek Standings</p>
+      <div id="weekly-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
+    </div>
+    <div id="panel-overall" style="display:none;">
+      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Overall Standings</p>
+      <div id="overall-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
+    </div>
+  </div>
+
+  <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
+    <div class="nav-item" onclick="window.location.href='/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
+    <div class="nav-item active"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
+    <div class="nav-item" onclick="window.location.href='/pages/tournament.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Cup</span></div>
+    <div class="nav-item" onclick="window.location.href='/pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  </div>
+</body>
+</html>
