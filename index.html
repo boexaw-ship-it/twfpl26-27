@@ -9,8 +9,8 @@
   <title>TW Fantasy League</title>
 
   <!-- PWA Manifest -->
-  <link rel="manifest" href="/public/manifest.json" />
-  <link rel="apple-touch-icon" href="/public/icon-192x192.png" />
+  <link rel="manifest" href="/twfpl26-27/public/manifest.json" />
+  <link rel="apple-touch-icon" href="/twfpl26-27/public/icon-192x192.png" />
 
   <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
@@ -25,7 +25,7 @@
     import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // === Firebase Config (ဒီနေရာမှာ မင်းရဲ့ keys ထည့်) ===
+    // ⚠️ မင်းရဲ့ Firebase Keys ဒီနေရာမှာ ထည့်ပါ
     const firebaseConfig = {
       apiKey: "YOUR_API_KEY",
       authDomain: "YOUR_AUTH_DOMAIN",
@@ -46,9 +46,9 @@
         if (userDoc.exists()) {
           const status = userDoc.data().status;
           if (status === "approved") {
-            window.location.href = "/pages/dashboard.html";
+            window.location.href = "/twfpl26-27/pages/dashboard.html";
           } else {
-            window.location.href = "/pages/pending.html";
+            window.location.href = "/twfpl26-27/pages/pending.html";
           }
         }
       }
@@ -67,9 +67,8 @@
         return;
       }
 
-      // Loading state
       btnEl.disabled = true;
-      btnEl.innerHTML = `<span class="animate-spin inline-block mr-2">⏳</span> Logging in...`;
+      btnEl.innerHTML = `⏳ Logging in...`;
       errorEl.classList.add("hidden");
 
       try {
@@ -80,9 +79,9 @@
         if (userDoc.exists()) {
           const status = userDoc.data().status;
           if (status === "approved") {
-            window.location.href = "/pages/dashboard.html";
+            window.location.href = "/twfpl26-27/pages/dashboard.html";
           } else {
-            window.location.href = "/pages/pending.html";
+            window.location.href = "/twfpl26-27/pages/pending.html";
           }
         }
       } catch (err) {
@@ -90,6 +89,7 @@
         if (err.code === "auth/user-not-found") msg = "Account မရှိပါ။ Register လုပ်ပါ။";
         if (err.code === "auth/wrong-password") msg = "Password မှားနေသည်။";
         if (err.code === "auth/invalid-email") msg = "Email မှားနေသည်။";
+        if (err.code === "auth/invalid-credential") msg = "Email သို့မဟုတ် Password မှားနေသည်။";
         if (err.code === "auth/too-many-requests") msg = "အကြိမ်များလွန်းသည်။ နောက်မှ ထပ်ကြိုးစားပါ။";
 
         errorEl.textContent = msg;
@@ -99,7 +99,6 @@
       }
     };
 
-    // Enter key login
     window.addEventListener("keydown", (e) => {
       if (e.key === "Enter") window.handleLogin();
     });
@@ -119,9 +118,7 @@
       -webkit-text-fill-color: transparent;
       background-clip: text;
     }
-    .glow-gold {
-      box-shadow: 0 0 25px rgba(201, 168, 76, 0.3);
-    }
+    .glow-gold { box-shadow: 0 0 25px rgba(201, 168, 76, 0.3); }
     .btn-gold {
       background: linear-gradient(135deg, #C9A84C, #F0D060);
       color: #0D2B1A;
@@ -130,6 +127,7 @@
       transition: all 0.2s;
     }
     .btn-gold:active { transform: scale(0.97); }
+    .btn-gold:disabled { opacity: 0.7; }
     .tw-input {
       background: rgba(13, 43, 26, 0.8);
       border: 1px solid #2A7A47;
@@ -142,13 +140,6 @@
       box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2);
     }
     .tw-input::placeholder { color: #3A9E5F; }
-    .logo-ring {
-      animation: rotateSlow 20s linear infinite;
-    }
-    @keyframes rotateSlow {
-      from { transform: rotate(0deg); }
-      to   { transform: rotate(360deg); }
-    }
     .fade-in {
       animation: fadeIn 0.6s ease-out;
     }
@@ -177,7 +168,7 @@
       <div class="relative mb-4">
         <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold"
              style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
-          <img src="/public/icon-192x192.png"
+          <img src="/twfpl26-27/public/icon-192x192.png"
                onerror="this.style.display='none'; document.getElementById('logo-text').style.display='flex';"
                class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
           <div id="logo-text"
@@ -254,7 +245,7 @@
       </div>
 
       <!-- Register Link -->
-      <a href="/pages/register.html"
+      <a href="/twfpl26-27/pages/register.html"
          class="block text-center border rounded-xl py-3.5 text-sm font-semibold transition-all"
          style="border-color:#C9A84C; color:#C9A84C;"
          onmouseover="this.style.background='rgba(201,168,76,0.1)'"
@@ -278,3 +269,4 @@
 
 </body>
 </html>
+
