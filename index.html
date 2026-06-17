@@ -7,39 +7,18 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>TW Fantasy League</title>
-
-  <!-- PWA Manifest -->
   <link rel="manifest" href="/twfpl26-27/public/manifest.json" />
   <link rel="apple-touch-icon" href="/twfpl26-27/public/icon-192x192.png" />
-
-  <!-- Tailwind CDN -->
   <script src="https://cdn.tailwindcss.com"></script>
-
-  <!-- Google Fonts -->
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
 
-  <!-- Firebase CDN -->
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // ⚠️ မင်းရဲ့ Firebase Keys ဒီနေရာမှာ ထည့်ပါ
-    const firebaseConfig = {
-      apiKey: "YOUR_API_KEY",
-      authDomain: "YOUR_AUTH_DOMAIN",
-      projectId: "YOUR_PROJECT_ID",
-      storageBucket: "YOUR_STORAGE_BUCKET",
-      messagingSenderId: "YOUR_MESSAGING_SENDER_ID",
-      appId: "YOUR_APP_ID"
-    };
-
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
-
-    // === Auth State Check ===
+    // Auth State Check — Login ဝင်ပြီးသားဆိုရင် တန်းသွား
     onAuthStateChanged(auth, async (user) => {
       if (user) {
         const userDoc = await getDoc(doc(db, "users", user.uid));
@@ -54,7 +33,7 @@
       }
     });
 
-    // === Login Logic ===
+    // Login Logic
     window.handleLogin = async () => {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
@@ -68,7 +47,7 @@
       }
 
       btnEl.disabled = true;
-      btnEl.innerHTML = `⏳ Logging in...`;
+      btnEl.innerHTML = "⏳ Logging in...";
       errorEl.classList.add("hidden");
 
       try {
@@ -127,7 +106,7 @@
       transition: all 0.2s;
     }
     .btn-gold:active { transform: scale(0.97); }
-    .btn-gold:disabled { opacity: 0.7; }
+    .btn-gold:disabled { opacity: 0.7; cursor: not-allowed; }
     .tw-input {
       background: rgba(13, 43, 26, 0.8);
       border: 1px solid #2A7A47;
@@ -140,9 +119,7 @@
       box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2);
     }
     .tw-input::placeholder { color: #3A9E5F; }
-    .fade-in {
-      animation: fadeIn 0.6s ease-out;
-    }
+    .fade-in { animation: fadeIn 0.6s ease-out; }
     @keyframes fadeIn {
       from { opacity: 0; transform: translateY(20px); }
       to   { opacity: 1; transform: translateY(0); }
@@ -152,7 +129,7 @@
 
 <body class="flex items-center justify-center min-h-screen px-6">
 
-  <!-- Background decoration -->
+  <!-- Background Glow -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none">
     <div class="absolute top-[-100px] left-[-100px] w-80 h-80 rounded-full"
          style="background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)"></div>
@@ -160,21 +137,18 @@
          style="background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)"></div>
   </div>
 
-  <!-- Main Card -->
   <div class="fade-in w-full max-w-sm">
 
     <!-- Logo -->
     <div class="flex flex-col items-center mb-8">
-      <div class="relative mb-4">
-        <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold"
-             style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
-          <img src="/twfpl26-27/public/icon-192x192.png"
-               onerror="this.style.display='none'; document.getElementById('logo-text').style.display='flex';"
-               class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
-          <div id="logo-text"
-               style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
-            TW
-          </div>
+      <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold mb-4"
+           style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
+        <img src="/twfpl26-27/public/icon-192x192.png"
+             onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';"
+             class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
+        <div id="logo-text"
+             style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
+          TW
         </div>
       </div>
       <h1 class="gold-text text-3xl font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em;">
@@ -194,13 +168,8 @@
         <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">
           Email
         </label>
-        <input
-          id="email"
-          type="email"
-          placeholder="your@email.com"
-          autocomplete="email"
-          class="tw-input w-full rounded-xl px-4 py-3 text-sm"
-        />
+        <input id="email" type="email" placeholder="your@email.com"
+               autocomplete="email" class="tw-input w-full rounded-xl px-4 py-3 text-sm" />
       </div>
 
       <!-- Password -->
@@ -209,31 +178,21 @@
           Password
         </label>
         <div class="relative">
-          <input
-            id="password"
-            type="password"
-            placeholder="••••••••"
-            autocomplete="current-password"
-            class="tw-input w-full rounded-xl px-4 py-3 text-sm pr-12"
-          />
-          <button
-            onclick="togglePassword()"
-            class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">
-            👁
-          </button>
+          <input id="password" type="password" placeholder="••••••••"
+                 autocomplete="current-password" class="tw-input w-full rounded-xl px-4 py-3 text-sm pr-12" />
+          <button onclick="togglePassword()"
+                  class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">👁</button>
         </div>
       </div>
 
-      <!-- Error Message -->
+      <!-- Error -->
       <div id="error-msg"
            class="hidden bg-red-900 bg-opacity-50 border border-red-700 text-red-300 text-xs rounded-lg px-3 py-2 mb-4">
       </div>
 
       <!-- Login Button -->
-      <button
-        id="login-btn"
-        onclick="handleLogin()"
-        class="btn-gold w-full rounded-xl py-3.5 text-sm mb-4">
+      <button id="login-btn" onclick="handleLogin()"
+              class="btn-gold w-full rounded-xl py-3.5 text-sm mb-4">
         Login
       </button>
 
@@ -254,7 +213,6 @@
       </a>
     </div>
 
-    <!-- Footer -->
     <p class="text-center text-xs mt-6" style="color:#3A9E5F;">
       TW Fantasy Official League © 2026-27
     </p>
@@ -269,4 +227,3 @@
 
 </body>
 </html>
-
