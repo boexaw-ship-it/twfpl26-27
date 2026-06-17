@@ -1,0 +1,14 @@
+{
+  "name": "TW Fantasy Official League",
+  "short_name": "TW Fantasy",
+  "description": "TW FPL Mini League 2026-27",
+  "start_url": "/index.html",
+  "display": "standalone",
+  "background_color": "#0D2B1A",
+  "theme_color": "#1B4D2E",
+  "orientation": "portrait",
+  "icons": [
+    { "src": "/public/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/public/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
