@@ -8,38 +8,35 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_AUTH_DOMAIN", projectId:"YOUR_PROJECT_ID", storageBucket:"YOUR_STORAGE_BUCKET", messagingSenderId:"YOUR_MESSAGING_SENDER_ID", appId:"YOUR_APP_ID" };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, getDoc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
     onAuthStateChanged(auth, async (user) => {
-      if (!user) { window.location.href="/index.html"; return; }
-      const snap = await getDoc(doc(db,"users",user.uid));
-      if (!snap.exists() || snap.data().status !== "approved") { window.location.href="/pages/pending.html"; return; }
-      onSnapshot(doc(db,"tournament","playoffs"), (d) => {
-        if(d.exists()) renderBracket(d.data());
+      if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (!snap.exists() || snap.data().status !== "approved") { window.location.href = "/twfpl26-27/pages/pending.html"; return; }
+      onSnapshot(doc(db, "tournament", "playoffs"), (d) => {
+        if (d.exists()) renderBracket(d.data());
       });
     });
 
     function renderBracket(data) {
-      const rounds = ["r16","qf","sf","final"];
-      const labels = {"r16":"Round of 16","qf":"Quarter Finals","sf":"Semi Finals","final":"Final"};
+      const rounds = ["r16", "qf", "sf", "final"];
+      const labels = { r16: "Round of 16", qf: "Quarter Finals", sf: "Semi Finals", final: "Final" };
       document.getElementById("bracket").innerHTML = rounds.map(r => {
         const matches = data[r] || [];
         return `<div class="mb-6">
           <p class="text-xs font-bold uppercase tracking-widest mb-3" style="color:#C9A84C;">${labels[r]}</p>
-          <div class="space-y-2">${matches.map(m=>`
+          <div class="space-y-2">${matches.map(m => `
             <div class="rounded-xl overflow-hidden" style="border:1px solid rgba(201,168,76,0.2);">
-              <div class="flex items-center px-3 py-2.5 ${m.winner===m.home?'':'opacity-70'}" style="border-bottom:1px solid #2A7A47;background:${m.winner===m.home?'rgba(201,168,76,0.1)':'#1F5C36'};">
-                <span class="flex-1 text-sm font-medium text-white">${m.home||"TBD"}</span>
-                <span class="font-bold text-lg px-3" style="font-family:'Bebas Neue';color:#C9A84C;">${m.homeScore??"-"}</span>
+              <div class="flex items-center px-3 py-2.5" style="border-bottom:1px solid #2A7A47;background:${m.winner === m.home ? 'rgba(201,168,76,0.1)' : '#1F5C36'};">
+                <span class="flex-1 text-sm font-medium text-white">${m.home || "TBD"}</span>
+                <span class="font-bold text-lg px-3" style="font-family:'Bebas Neue';color:#C9A84C;">${m.homeScore ?? "-"}</span>
               </div>
-              <div class="flex items-center px-3 py-2.5 ${m.winner===m.away?'':'opacity-70'}" style="background:${m.winner===m.away?'rgba(201,168,76,0.1)':'#1F5C36'};">
-                <span class="flex-1 text-sm font-medium text-white">${m.away||"TBD"}</span>
-                <span class="font-bold text-lg px-3" style="font-family:'Bebas Neue';color:#C9A84C;">${m.awayScore??"-"}</span>
+              <div class="flex items-center px-3 py-2.5" style="background:${m.winner === m.away ? 'rgba(201,168,76,0.1)' : '#1F5C36'};">
+                <span class="flex-1 text-sm font-medium text-white">${m.away || "TBD"}</span>
+                <span class="font-bold text-lg px-3" style="font-family:'Bebas Neue';color:#C9A84C;">${m.awayScore ?? "-"}</span>
               </div>
             </div>`).join("")}
           </div>
@@ -48,14 +45,14 @@
     }
   </script>
   <style>
-    *{-webkit-tap-highlight-color:transparent;}
-    body{font-family:"Inter",sans-serif;background:#0D2B1A;height:100vh;overflow:hidden;display:flex;flex-direction:column;}
-    .gold-text{background:linear-gradient(135deg,#C9A84C,#F0D060,#A07830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
   </style>
 </head>
 <body>
   <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;flex-shrink:0;">
-    <a href="/pages/tournament.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
+    <a href="/twfpl26-27/pages/tournament.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
     <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">KNOCKOUT STAGE</h1>
   </div>
   <div style="flex:1;overflow-y:auto;" class="px-4 py-4">

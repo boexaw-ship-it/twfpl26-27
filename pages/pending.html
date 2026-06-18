@@ -8,68 +8,62 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script type="module">
-    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
-    import { getAuth, onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { getFirestore, doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
-    const firebaseConfig = { apiKey:"YOUR_API_KEY", authDomain:"YOUR_AUTH_DOMAIN", projectId:"YOUR_PROJECT_ID", storageBucket:"YOUR_STORAGE_BUCKET", messagingSenderId:"YOUR_MESSAGING_SENDER_ID", appId:"YOUR_APP_ID" };
-    const app = initializeApp(firebaseConfig);
-    const auth = getAuth(app);
-    const db = getFirestore(app);
+    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
     onAuthStateChanged(auth, (user) => {
-      if (!user) { window.location.href="/index.html"; return; }
-      onSnapshot(doc(db,"users",user.uid), (snap) => {
+      if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+      onSnapshot(doc(db, "users", user.uid), (snap) => {
         if (snap.exists()) {
           const data = snap.data();
           document.getElementById("team-name").textContent = data.teamName || "";
-          if (data.status === "approved") window.location.href="/pages/dashboard.html";
+          if (data.status === "approved") window.location.href = "/twfpl26-27/pages/dashboard.html";
           if (data.status === "rejected") {
-            document.getElementById("status-area").innerHTML = `<div class="text-red-400 text-center"><div class="text-4xl mb-3">❌</div><p class="font-semibold">Register ငြင်းပယ်ခံရသည်</p><p class="text-xs mt-2 text-red-300">Admin ကို ဆက်သွယ်ပါ</p></div>`;
+            document.getElementById("status-area").innerHTML = `
+              <div class="text-center">
+                <div class="text-4xl mb-3">❌</div>
+                <p class="font-semibold text-red-400">Register ငြင်းပယ်ခံရသည်</p>
+                <p class="text-xs mt-2 text-red-300">Admin ကို ဆက်သွယ်ပါ</p>
+              </div>`;
           }
         }
       });
     });
+
     window.handleLogout = async () => {
       await signOut(auth);
-      window.location.href="/index.html";
+      window.location.href = "/twfpl26-27/index.html";
     };
   </script>
   <style>
-    *{-webkit-tap-highlight-color:transparent;}
-    body{font-family:"Inter",sans-serif;background:linear-gradient(180deg,#0D2B1A 0%,#1B4D2E 50%,#0D2B1A 100%);min-height:100vh;}
-    .gold-text{background:linear-gradient(135deg,#C9A84C,#F0D060,#A07830);-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;}
-    .pulse-ring{animation:pulseRing 2s ease-out infinite;}
-    @keyframes pulseRing{0%{transform:scale(0.8);opacity:1;}100%{transform:scale(1.5);opacity:0;}}
-    .fade-in{animation:fadeIn 0.5s ease-out;}
-    @keyframes fadeIn{from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);}}
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: "Inter", sans-serif; background: linear-gradient(180deg, #0D2B1A 0%, #1B4D2E 50%, #0D2B1A 100%); min-height: 100vh; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .pulse-ring { animation: pulseRing 2s ease-out infinite; }
+    @keyframes pulseRing { 0% { transform:scale(0.8); opacity:1; } 100% { transform:scale(1.5); opacity:0; } }
+    .fade-in { animation: fadeIn 0.5s ease-out; }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(20px); } to { opacity:1; transform:translateY(0); } }
   </style>
 </head>
 <body class="flex items-center justify-center min-h-screen px-6">
   <div class="fade-in w-full max-w-sm text-center">
     <h1 class="gold-text text-3xl font-bold mb-2" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
     <p class="text-green-400 text-xs tracking-widest uppercase mb-8">Official Fantasy League</p>
-
     <div class="rounded-2xl p-8" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.3);box-shadow:0 0 25px rgba(201,168,76,0.15);">
-      <!-- Pulse Animation -->
       <div class="relative flex items-center justify-center mb-6">
         <div class="absolute w-20 h-20 rounded-full pulse-ring" style="background:rgba(201,168,76,0.15);"></div>
-        <div class="relative w-16 h-16 rounded-full flex items-center justify-center text-3xl" style="background:linear-gradient(145deg,#C9A84C,#A07830);">
-          ⏳
-        </div>
+        <div class="relative w-16 h-16 rounded-full flex items-center justify-center text-3xl" style="background:linear-gradient(145deg,#C9A84C,#A07830);">⏳</div>
       </div>
-
       <h2 class="text-white text-xl font-bold mb-2">Approval စောင့်နေသည်</h2>
       <p id="team-name" class="font-semibold mb-4" style="color:#C9A84C;"></p>
-
       <div id="status-area">
         <p class="text-sm mb-6" style="color:#E8D5A3;">မင်းရဲ့ Register Request ကို Admin စစ်ဆေးနေသည်။ Approve လုပ်ပြီးပါက အလိုအလျောက် Dashboard ဝင်သွားမည်။</p>
         <div class="rounded-xl p-4 mb-6" style="background:rgba(13,43,26,0.6);border:1px solid #2A7A47;">
           <p class="text-xs" style="color:#3A9E5F;">📱 Admin ကို Telegram သို့မဟုတ် FB Messenger မှတဆင့် ဆက်သွယ်နိုင်သည်</p>
         </div>
       </div>
-
-      <button onclick="handleLogout()" class="w-full rounded-xl py-3 text-sm font-semibold transition-all" style="border:1px solid #C9A84C;color:#C9A84C;">
-        Logout
-      </button>
+      <button onclick="handleLogout()" class="w-full rounded-xl py-3 text-sm font-semibold" style="border:1px solid #C9A84C;color:#C9A84C;">Logout</button>
     </div>
     <p class="text-center text-xs mt-6" style="color:#3A9E5F;">TW Fantasy Official League © 2026-27</p>
   </div>
