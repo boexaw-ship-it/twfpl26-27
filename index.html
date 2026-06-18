@@ -18,22 +18,13 @@
     import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // Auth State Check — Login ဝင်ပြီးသားဆိုရင် တန်းသွား
+    // Login ဝင်ပြီးသားဆိုရင် status မစစ်ဘဲ dashboard တန်းပို့
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-        if (userDoc.exists()) {
-          const status = userDoc.data().status;
-          if (status === "approved") {
-            window.location.href = "/twfpl26-27/pages/dashboard.html";
-          } else {
-            window.location.href = "/twfpl26-27/pages/pending.html";
-          }
-        }
+        window.location.href = "/twfpl26-27/pages/dashboard.html";
       }
     });
 
-    // Login Logic
     window.handleLogin = async () => {
       const email = document.getElementById("email").value.trim();
       const password = document.getElementById("password").value.trim();
@@ -51,18 +42,8 @@
       errorEl.classList.add("hidden");
 
       try {
-        const userCredential = await signInWithEmailAndPassword(auth, email, password);
-        const user = userCredential.user;
-        const userDoc = await getDoc(doc(db, "users", user.uid));
-
-        if (userDoc.exists()) {
-          const status = userDoc.data().status;
-          if (status === "approved") {
-            window.location.href = "/twfpl26-27/pages/dashboard.html";
-          } else {
-            window.location.href = "/twfpl26-27/pages/pending.html";
-          }
-        }
+        await signInWithEmailAndPassword(auth, email, password);
+        window.location.href = "/twfpl26-27/pages/dashboard.html";
       } catch (err) {
         let msg = "Login မအောင်မြင်ပါ။ ထပ်ကြိုးစားပါ။";
         if (err.code === "auth/user-not-found") msg = "Account မရှိပါ။ Register လုပ်ပါ။";
@@ -70,7 +51,6 @@
         if (err.code === "auth/invalid-email") msg = "Email မှားနေသည်။";
         if (err.code === "auth/invalid-credential") msg = "Email သို့မဟုတ် Password မှားနေသည်။";
         if (err.code === "auth/too-many-requests") msg = "အကြိမ်များလွန်းသည်။ နောက်မှ ထပ်ကြိုးစားပါ။";
-
         errorEl.textContent = msg;
         errorEl.classList.remove("hidden");
         btnEl.disabled = false;
@@ -85,125 +65,59 @@
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    body {
-      font-family: "Inter", sans-serif;
-      background: linear-gradient(180deg, #0D2B1A 0%, #1B4D2E 50%, #0D2B1A 100%);
-      min-height: 100vh;
-      overflow: hidden;
-    }
-    .gold-text {
-      background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830);
-      -webkit-background-clip: text;
-      -webkit-text-fill-color: transparent;
-      background-clip: text;
-    }
+    body { font-family: "Inter", sans-serif; background: linear-gradient(180deg, #0D2B1A 0%, #1B4D2E 50%, #0D2B1A 100%); min-height: 100vh; overflow: hidden; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .glow-gold { box-shadow: 0 0 25px rgba(201, 168, 76, 0.3); }
-    .btn-gold {
-      background: linear-gradient(135deg, #C9A84C, #F0D060);
-      color: #0D2B1A;
-      font-weight: 700;
-      letter-spacing: 0.05em;
-      transition: all 0.2s;
-    }
+    .btn-gold { background: linear-gradient(135deg, #C9A84C, #F0D060); color: #0D2B1A; font-weight: 700; letter-spacing: 0.05em; transition: all 0.2s; }
     .btn-gold:active { transform: scale(0.97); }
     .btn-gold:disabled { opacity: 0.7; cursor: not-allowed; }
-    .tw-input {
-      background: rgba(13, 43, 26, 0.8);
-      border: 1px solid #2A7A47;
-      color: white;
-      transition: border-color 0.2s;
-    }
-    .tw-input:focus {
-      outline: none;
-      border-color: #C9A84C;
-      box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2);
-    }
+    .tw-input { background: rgba(13, 43, 26, 0.8); border: 1px solid #2A7A47; color: white; transition: border-color 0.2s; }
+    .tw-input:focus { outline: none; border-color: #C9A84C; box-shadow: 0 0 0 2px rgba(201, 168, 76, 0.2); }
     .tw-input::placeholder { color: #3A9E5F; }
     .fade-in { animation: fadeIn 0.6s ease-out; }
-    @keyframes fadeIn {
-      from { opacity: 0; transform: translateY(20px); }
-      to   { opacity: 1; transform: translateY(0); }
-    }
+    @keyframes fadeIn { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
   </style>
 </head>
 
 <body class="flex items-center justify-center min-h-screen px-6">
-
-  <!-- Background Glow -->
   <div class="absolute inset-0 overflow-hidden pointer-events-none">
-    <div class="absolute top-[-100px] left-[-100px] w-80 h-80 rounded-full"
-         style="background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)"></div>
-    <div class="absolute bottom-[-100px] right-[-100px] w-80 h-80 rounded-full"
-         style="background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)"></div>
+    <div class="absolute top-[-100px] left-[-100px] w-80 h-80 rounded-full" style="background: radial-gradient(circle, rgba(201,168,76,0.08) 0%, transparent 70%)"></div>
+    <div class="absolute bottom-[-100px] right-[-100px] w-80 h-80 rounded-full" style="background: radial-gradient(circle, rgba(201,168,76,0.06) 0%, transparent 70%)"></div>
   </div>
 
   <div class="fade-in w-full max-w-sm">
-
-    <!-- Logo -->
     <div class="flex flex-col items-center mb-8">
       <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold mb-4"
            style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
         <img src="/twfpl26-27/public/icon-192x192.png"
              onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';"
              class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
-        <div id="logo-text"
-             style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">
-          TW
-        </div>
+        <div id="logo-text" style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">TW</div>
       </div>
-      <h1 class="gold-text text-3xl font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em;">
-        TW FANTASY
-      </h1>
+      <h1 class="gold-text text-3xl font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em;">TW FANTASY</h1>
       <p class="text-green-400 text-xs tracking-widest uppercase mt-1">Official Fantasy League</p>
     </div>
 
-    <!-- Login Form -->
-    <div class="rounded-2xl p-6 glow-gold"
-         style="background: linear-gradient(145deg, #1F5C36, #162F20); border: 1px solid rgba(201,168,76,0.3);">
-
+    <div class="rounded-2xl p-6 glow-gold" style="background: linear-gradient(145deg, #1F5C36, #162F20); border: 1px solid rgba(201,168,76,0.3);">
       <h2 class="text-white text-lg font-semibold mb-5 text-center">Login ဝင်ရောက်ရန်</h2>
-
-      <!-- Email -->
       <div class="mb-4">
-        <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">
-          Email
-        </label>
-        <input id="email" type="email" placeholder="your@email.com"
-               autocomplete="email" class="tw-input w-full rounded-xl px-4 py-3 text-sm" />
+        <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">Email</label>
+        <input id="email" type="email" placeholder="your@email.com" autocomplete="email" class="tw-input w-full rounded-xl px-4 py-3 text-sm" />
       </div>
-
-      <!-- Password -->
       <div class="mb-5">
-        <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">
-          Password
-        </label>
+        <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">Password</label>
         <div class="relative">
-          <input id="password" type="password" placeholder="••••••••"
-                 autocomplete="current-password" class="tw-input w-full rounded-xl px-4 py-3 text-sm pr-12" />
-          <button onclick="togglePassword()"
-                  class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">👁</button>
+          <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" class="tw-input w-full rounded-xl px-4 py-3 text-sm pr-12" />
+          <button onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">👁</button>
         </div>
       </div>
-
-      <!-- Error -->
-      <div id="error-msg"
-           class="hidden bg-red-900 bg-opacity-50 border border-red-700 text-red-300 text-xs rounded-lg px-3 py-2 mb-4">
-      </div>
-
-      <!-- Login Button -->
-      <button id="login-btn" onclick="handleLogin()"
-              class="btn-gold w-full rounded-xl py-3.5 text-sm mb-4">
-        Login
-      </button>
-
-      <!-- Divider -->
+      <div id="error-msg" class="hidden bg-red-900 bg-opacity-50 border border-red-700 text-red-300 text-xs rounded-lg px-3 py-2 mb-4"></div>
+      <button id="login-btn" onclick="handleLogin()" class="btn-gold w-full rounded-xl py-3.5 text-sm mb-4">Login</button>
       <div class="flex items-center gap-3 mb-4">
         <div class="flex-1 border-t" style="border-color:rgba(201,168,76,0.2)"></div>
         <span class="text-xs" style="color:#E8D5A3;">မရှိသေးဘူးလား?</span>
         <div class="flex-1 border-t" style="border-color:rgba(201,168,76,0.2)"></div>
       </div>
-
-      <!-- Register Link -->
       <a href="/twfpl26-27/pages/register.html"
          class="block text-center border rounded-xl py-3.5 text-sm font-semibold transition-all"
          style="border-color:#C9A84C; color:#C9A84C;"
@@ -212,10 +126,7 @@
         Register လုပ်ရန်
       </a>
     </div>
-
-    <p class="text-center text-xs mt-6" style="color:#3A9E5F;">
-      TW Fantasy Official League © 2026-27
-    </p>
+    <p class="text-center text-xs mt-6" style="color:#3A9E5F;">TW Fantasy Official League © 2026-27</p>
   </div>
 
   <script>
@@ -224,6 +135,5 @@
       pwd.type = pwd.type === "password" ? "text" : "password";
     }
   </script>
-
 </body>
 </html>
