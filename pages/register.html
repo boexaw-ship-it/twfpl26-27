@@ -39,7 +39,8 @@
           teamName, fplTeamId: fplId, email,
           status: "pending", createdAt: serverTimestamp()
         });
-        window.location.href = "/twfpl26-27/pages/pending.html";
+        // Approve မရသေးလည်း Dashboard တန်းပို့ (View only access)
+        window.location.href = "/twfpl26-27/pages/dashboard.html";
       } catch (err) {
         let msg = "Register မအောင်မြင်ပါ။";
         if (err.code === "auth/email-already-in-use") msg = "ဒီ Email နှင့် Account ရှိပြီးသား။";

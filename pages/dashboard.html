@@ -10,17 +10,45 @@
   <script type="module">
     import { auth, db } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { doc, onSnapshot } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
-      const snap = await getDoc(doc(db, "users", user.uid));
-      if (!snap.exists() || snap.data().status !== "approved") {
-        window.location.href = "/twfpl26-27/pages/pending.html"; return;
-      }
-      document.getElementById("team-name").textContent = snap.data().teamName;
-      document.getElementById("fpl-id").textContent = "Team ID: " + snap.data().fplTeamId;
-      document.getElementById("welcome-name").textContent = snap.data().teamName;
+
+      // Real-time status listener — Admin Approve လုပ်ချက်ချင်း badge ပြောင်းမယ်
+      onSnapshot(doc(db, "users", user.uid), (snap) => {
+        if (!snap.exists()) return;
+        const data = snap.data();
+        document.getElementById("team-name").textContent = data.teamName || "";
+        document.getElementById("fpl-id").textContent = "Team ID: " + (data.fplTeamId || "—");
+        document.getElementById("welcome-name").textContent = data.teamName || "TW Fantasy League";
+
+        const badge = document.getElementById("status-badge");
+        if (data.status === "approved") {
+          badge.textContent = "✅ Approved";
+          badge.style.background = "rgba(34,197,94,0.15)";
+          badge.style.color = "#4ade80";
+          badge.style.borderColor = "rgba(34,197,94,0.4)";
+        } else if (data.status === "rejected") {
+          badge.textContent = "❌ Rejected";
+          badge.style.background = "rgba(220,38,38,0.15)";
+          badge.style.color = "#f87171";
+          badge.style.borderColor = "rgba(220,38,38,0.4)";
+        } else {
+          badge.textContent = "⏳ Pending Approval";
+          badge.style.background = "rgba(201,168,76,0.15)";
+          badge.style.color = "#C9A84C";
+          badge.style.borderColor = "rgba(201,168,76,0.4)";
+        }
+
+        // Pending user အတွက် info banner ပြ
+        const infoBanner = document.getElementById("pending-banner");
+        if (data.status !== "approved") {
+          infoBanner.classList.remove("hidden");
+        } else {
+          infoBanner.classList.add("hidden");
+        }
+      });
     });
 
     window.handleLogout = async () => { await signOut(auth); window.location.href = "/twfpl26-27/index.html"; };
@@ -29,7 +57,7 @@
         team: "/twfpl26-27/pages/team.html",
         live: "/twfpl26-27/pages/live.html",
         leagues: "/twfpl26-27/pages/leagues.html",
-        tournament: "/twfpl26-27/pages/tournament.html",
+        fixtures: "/twfpl26-27/pages/fixtures.html",
         scout: "/twfpl26-27/pages/scout.html",
         draft: "/twfpl26-27/pages/draft.html"
       };
@@ -55,7 +83,7 @@
       <h1 class="gold-text font-bold text-lg" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
       <p id="fpl-id" class="text-xs" style="color:#3A9E5F;"></p>
     </div>
-    <div class="flex items-center gap-3">
+    <div class="flex items-center gap-2">
       <span id="team-name" class="text-sm font-semibold" style="color:#E8D5A3;"></span>
       <button onclick="handleLogout()" class="text-xs px-3 py-1.5 rounded-lg" style="border:1px solid #2A7A47;color:#3A9E5F;">Logout</button>
     </div>
@@ -63,12 +91,25 @@
 
   <!-- Content -->
   <div style="padding-top:64px;padding-bottom:70px;height:100vh;overflow-y:auto;" class="px-4 py-4 fade-in">
+
+    <!-- Status Badge -->
+    <div class="flex justify-end mb-3">
+      <span id="status-badge" class="text-xs font-semibold px-3 py-1.5 rounded-full border" style="background:rgba(201,168,76,0.15);color:#C9A84C;border-color:rgba(201,168,76,0.4);">⏳ Pending Approval</span>
+    </div>
+
+    <!-- Pending Info Banner -->
+    <div id="pending-banner" class="hidden rounded-xl p-3 mb-4" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);">
+      <p class="text-xs" style="color:#E8D5A3;">📋 Account Approve လုပ်ဆေးနေဆဲ — View များ ကြည့်ရှုနိုင်ပြီး၊ Approve ပြီးမှ Chat နှင့် Action များ သုံးနိုင်ပါမည်။</p>
+    </div>
+
+    <!-- Welcome Banner -->
     <div class="rounded-2xl p-5 mb-4" style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);border:1px solid rgba(201,168,76,0.3);box-shadow:0 0 20px rgba(201,168,76,0.1);">
       <p class="text-xs uppercase tracking-widest mb-1" style="color:#C9A84C;">Welcome Back</p>
       <h2 id="welcome-name" class="text-white text-xl font-bold">TW Fantasy League</h2>
       <p class="text-xs mt-1" style="color:#3A9E5F;">Season 2026-27 • Official Fantasy League</p>
     </div>
 
+    <!-- Quick Menu Grid -->
     <div class="grid grid-cols-2 gap-3 mb-4">
       <div class="menu-card" onclick="navigate('team')">
         <div class="text-2xl mb-2">👕</div>
@@ -86,10 +127,10 @@
         <p class="text-white text-sm font-semibold">Leagues</p>
         <p class="text-xs mt-0.5" style="color:#3A9E5F;">Private Leagues</p>
       </div>
-      <div class="menu-card" onclick="navigate('tournament')">
+      <div class="menu-card" onclick="navigate('fixtures')">
         <div class="text-2xl mb-2">⚽</div>
-        <p class="text-white text-sm font-semibold">Tournament</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">32 သင်း Group + KO</p>
+        <p class="text-white text-sm font-semibold">Fixtures</p>
+        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Premier League</p>
       </div>
       <div class="menu-card" onclick="navigate('scout')">
         <div class="text-2xl mb-2">🔍</div>
@@ -109,7 +150,7 @@
     <div class="nav-item active"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;font-weight:500;">Home</span></div>
     <div class="nav-item" onclick="navigate('live')"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;font-weight:500;">Live</span></div>
     <div class="nav-item" onclick="navigate('leagues')"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;font-weight:500;">League</span></div>
-    <div class="nav-item" onclick="navigate('tournament')"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;font-weight:500;">Cup</span></div>
+    <div class="nav-item" onclick="navigate('fixtures')"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;font-weight:500;">Fixtures</span></div>
     <div class="nav-item" onclick="navigate('scout')"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;font-weight:500;">Scout</span></div>
   </div>
 </body>

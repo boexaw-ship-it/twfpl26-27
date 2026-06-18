@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1B4D2E" />
+  <title>Fixtures — TW Fantasy</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <script type="module">
+    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
+      loadFixtures();
+    });
+
+    // CORS Proxy — FPL API ကို browser ကနေ တိုက်ရိုက် fetch မရလို့ proxy သုံးရတယ်
+    const PROXY = "https://api.allorigins.win/raw?url=";
+    const FPL_BOOTSTRAP = "https://fantasy.premierleague.com/api/bootstrap-static/";
+    const FPL_FIXTURES = "https://fantasy.premierleague.com/api/fixtures/";
+
+    let teamsMap = {};
+    let allFixtures = [];
+
+    async function loadFixtures() {
+      const listEl = document.getElementById("fixtures-list");
+      try {
+        // Teams data (logo, name, short name) ယူမယ်
+        const bootstrapRes = await fetch(PROXY + encodeURIComponent(FPL_BOOTSTRAP));
+        const bootstrap = await bootstrapRes.json();
+        bootstrap.teams.forEach(t => {
+          teamsMap[t.id] = { name: t.name, short: t.short_name, code: t.code };
+        });
+
+        // Current Gameweek ရှာမယ်
+        const currentGW = bootstrap.events.find(e => e.is_current) || bootstrap.events.find(e => e.is_next) || bootstrap.events[0];
+        document.getElementById("gw-label").textContent = "Gameweek " + (currentGW?.id || "—");
+
+        // Fixtures ယူမယ်
+        const fixturesRes = await fetch(PROXY + encodeURIComponent(FPL_FIXTURES));
+        allFixtures = await fixturesRes.json();
+
+        renderFixtures("all");
+      } catch (err) {
+        listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Fixtures Load မရပါ — ပြန်ကြိုးစားကြည့်ပါ</p>`;
+        console.error(err);
+      }
+    }
+
+    function teamBadge(teamId) {
+      const t = teamsMap[teamId];
+      if (!t) return `<span class="text-white text-sm">—</span>`;
+      return `<div class="flex items-center gap-2">
+        <img src="https://resources.premierleague.com/premierleague/badges/50/t${t.code}.png" 
+             onerror="this.style.display='none'" class="w-6 h-6" />
+        <span class="text-white text-sm font-medium">${t.short}</span>
+      </div>`;
+    }
+
+    function formatDate(kickoff) {
+      if (!kickoff) return { date: "TBC", time: "" };
+      const d = new Date(kickoff);
+      const date = d.toLocaleDateString("en-GB", { weekday: "short", day: "numeric", month: "short" });
+      const time = d.toLocaleTimeString("en-GB", { hour: "2-digit", minute: "2-digit" });
+      return { date, time };
+    }
+
+    function renderFixtures(filter) {
+      const listEl = document.getElementById("fixtures-list");
+      let fixtures = allFixtures;
+
+      if (filter === "upcoming") fixtures = allFixtures.filter(f => !f.finished);
+      if (filter === "finished") fixtures = allFixtures.filter(f => f.finished);
+
+      // GW အလိုက် group
+      const grouped = {};
+      fixtures.forEach(f => {
+        const gw = f.event || "TBC";
+        if (!grouped[gw]) grouped[gw] = [];
+        grouped[gw].push(f);
+      });
+
+      const gwKeys = Object.keys(grouped).sort((a,b) => a - b).slice(0, 5);
+
+      if (gwKeys.length === 0) {
+        listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#3A9E5F;">Fixtures မရှိပါ</p>`;
+        return;
+      }
+
+      listEl.innerHTML = gwKeys.map(gw => `
+        <div class="mb-5">
+          <p class="text-xs font-bold uppercase tracking-widest mb-2" style="color:#C9A84C;">Gameweek ${gw}</p>
+          <div class="space-y-2">
+            ${grouped[gw].map(f => {
+              const { date, time } = formatDate(f.kickoff_time);
+              const isLive = f.started && !f.finished;
+              const isFinished = f.finished;
+              return `
+              <div class="rounded-xl p-3" style="background:#1F5C36;border:1px solid ${isLive ? '#dc2626' : '#2A7A47'};">
+                <div class="flex items-center justify-between mb-2">
+                  <span class="text-xs" style="color:#3A9E5F;">${date}</span>
+                  ${isLive 
+                    ? `<span class="text-xs px-2 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626;color:white;">LIVE</span>` 
+                    : isFinished
+                    ? `<span class="text-xs px-2 py-0.5 rounded-full font-semibold" style="background:rgba(255,255,255,0.1);color:#9ca3af;">FT</span>`
+                    : `<span class="text-xs" style="color:#E8D5A3;">${time}</span>`
+                  }
+                </div>
+                <div class="flex items-center justify-between">
+                  ${teamBadge(f.team_h)}
+                  <span class="font-bold px-3" style="font-family:'Bebas Neue';font-size:1.3rem;color:${isFinished || isLive ? '#C9A84C' : '#3A9E5F'};">
+                    ${isFinished || isLive ? `${f.team_h_score ?? 0} - ${f.team_a_score ?? 0}` : 'vs'}
+                  </span>
+                  ${teamBadge(f.team_a)}
+                </div>
+              </div>`;
+            }).join("")}
+          </div>
+        </div>`).join("");
+    }
+
+    window.filterFixtures = (filter) => {
+      document.querySelectorAll(".tab-btn").forEach(b => {
+        b.style.borderColor = "transparent";
+        b.style.color = "#3A9E5F";
+      });
+      document.getElementById("tab-" + filter).style.borderColor = "#C9A84C";
+      document.getElementById("tab-" + filter).style.color = "#C9A84C";
+      renderFixtures(filter);
+    };
+  </script>
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
+    .nav-item.active { color:#C9A84C; }
+    .tab-btn { flex:1; padding:10px; font-size:0.8rem; font-weight:600; border-bottom:2px solid transparent; background:transparent; cursor:pointer; }
+  </style>
+</head>
+<body>
+  <!-- Top Bar -->
+  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div class="flex items-center gap-2">
+      <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;">←</a>
+      <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">FIXTURES</h1>
+    </div>
+    <span id="gw-label" class="text-xs font-semibold px-2 py-1 rounded-full" style="background:rgba(201,168,76,0.15);color:#C9A84C;">—</span>
+  </div>
+
+  <!-- Tabs -->
+  <div style="display:flex;border-bottom:1px solid #1F5C36;flex-shrink:0;">
+    <button id="tab-all" class="tab-btn" onclick="filterFixtures('all')" style="border-color:#C9A84C;color:#C9A84C;">All</button>
+    <button id="tab-upcoming" class="tab-btn" onclick="filterFixtures('upcoming')">Upcoming</button>
+    <button id="tab-finished" class="tab-btn" onclick="filterFixtures('finished')">Results</button>
+  </div>
+
+  <!-- Fixtures List -->
+  <div style="flex:1;overflow-y:auto;" class="px-4 py-4">
+    <div id="fixtures-list">
+      <div class="flex justify-center py-10">
+        <span class="text-xs" style="color:#3A9E5F;">⏳ Premier League Fixtures Loading...</span>
+      </div>
+    </div>
+  </div>
+
+  <!-- Bottom Nav -->
+  <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
+    <div class="nav-item active"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  </div>
+</body>
+</html>
