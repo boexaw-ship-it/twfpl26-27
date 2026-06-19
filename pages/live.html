@@ -20,7 +20,6 @@
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       currentUser = user;
 
-      // Real-time status listener
       onSnapshot(doc(db, "users", user.uid), (snap) => {
         if (!snap.exists()) return;
         const data = snap.data();
@@ -29,15 +28,17 @@
         isApproved = data.status === "approved";
         updateChatLock();
 
-        // Live points listener
         if (data.fplTeamId) {
           onSnapshot(doc(db, "livePoints", data.fplTeamId), (d) => {
             if (d.exists()) {
-              document.getElementById("gw-points").textContent = d.data().gwPoints || "—";
-              document.getElementById("overall-pts").textContent = d.data().totalPoints || "—";
-              document.getElementById("captain-pts").textContent = d.data().captainPoints || "—";
-              document.getElementById("gw-rank").textContent = d.data().gwRank || "—";
+              document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—";
+              document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—";
+              document.getElementById("captain-pts").textContent = d.data().captainPoints ?? "—";
+              document.getElementById("gw-rank").textContent = d.data().gwRank ?? "—";
             }
+          });
+          onSnapshot(doc(db, "liveTeams", data.fplTeamId), (d) => {
+            if (d.exists()) renderPitch(d.data());
           });
         }
       });
@@ -45,11 +46,51 @@
       loadChat();
     });
 
+    function playerCard(p) {
+      const ring = p.isCaptain ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
+      const badge = p.isCaptain
+        ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-weight:900;margin-left:2px;">C</span>'
+        : p.isVice
+        ? '<span style="font-size:0.55rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-weight:900;margin-left:2px;">V</span>'
+        : '';
+      return `<div class="flex flex-col items-center" style="min-width:54px;">
+        <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg mb-1" style="background:#1F5C36;border:2px solid ${ring};">👕</div>
+        <p class="text-white text-center font-medium" style="font-size:0.58rem;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
+        <div class="flex items-center mt-0.5">
+          <span style="font-size:0.62rem;color:#C9A84C;font-weight:700;">${p.livePoints ?? 0}</span>
+          ${badge}
+        </div>
+      </div>`;
+    }
+
+    function renderPitch(data) {
+      const picks = data.picks || [];
+      const starters = picks.filter(p => p.multiplier > 0);
+      const subs = picks.filter(p => p.multiplier === 0);
+      const gk = starters.filter(p => p.position === "GK");
+      const def = starters.filter(p => p.position === "DEF");
+      const mid = starters.filter(p => p.position === "MID");
+      const fwd = starters.filter(p => p.position === "FWD");
+      const render = (players) => `<div class="flex justify-center flex-wrap gap-3">${players.map(playerCard).join("")}</div>`;
+
+      document.getElementById("pitch").innerHTML = `
+        <div class="space-y-4">
+          ${render(gk)}
+          <div style="border-top:1px solid rgba(201,168,76,0.15);"></div>
+          ${render(def)}
+          <div style="border-top:1px solid rgba(201,168,76,0.15);"></div>
+          ${render(mid)}
+          <div style="border-top:1px solid rgba(201,168,76,0.15);"></div>
+          ${render(fwd)}
+        </div>
+        <div style="border-top:2px dashed rgba(201,168,76,0.3);margin:14px 0;"></div>
+        <div class="flex justify-center flex-wrap gap-3">${subs.map(playerCard).join("")}</div>`;
+    }
+
     function updateChatLock() {
       const input = document.getElementById("chat-input");
       const sendBtn = document.getElementById("send-btn");
       const lockBanner = document.getElementById("chat-lock-banner");
-
       if (isApproved) {
         input.disabled = false;
         input.placeholder = "Message ရိုက်ပါ...";
@@ -95,7 +136,7 @@
     }
 
     window.sendMessage = async () => {
-      if (!isApproved) return; // Approve မရသေးရင် ဘာမှ မဖြစ်
+      if (!isApproved) return;
       const input = document.getElementById("chat-input");
       const text = input.value.trim();
       if (!text || !currentUser) return;
@@ -111,9 +152,9 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
-    #chat-messages::-webkit-scrollbar { width:3px; }
-    #chat-messages::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
-    #chat-input:disabled { cursor: not-allowed; }
+    #chat-messages::-webkit-scrollbar, #pitch-wrap::-webkit-scrollbar { width:3px; }
+    #chat-messages::-webkit-scrollbar-thumb, #pitch-wrap::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
+    .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.85rem; padding:10px 8px; text-align:center; }
   </style>
 </head>
 <body>
@@ -127,28 +168,35 @@
     <span id="user-team" class="text-xs font-semibold" style="color:#E8D5A3;"></span>
   </div>
 
-  <!-- Live Points (50%) -->
-  <div style="flex:1;overflow-y:auto;border-bottom:2px solid rgba(201,168,76,0.3);" class="px-4 py-3">
-    <div class="rounded-2xl p-4 mb-3" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.2);">
-      <p class="text-xs uppercase tracking-widest mb-1" style="color:#C9A84C;">Gameweek Points</p>
-      <div class="flex items-end gap-2">
-        <span id="gw-points" class="text-5xl font-bold" style="font-family:'Bebas Neue';color:#C9A84C;">—</span>
-        <span class="text-sm mb-1" style="color:#E8D5A3;">pts</span>
+  <!-- Pitch + Stats (50%) -->
+  <div id="pitch-wrap" style="flex:1;overflow-y:auto;border-bottom:2px solid rgba(201,168,76,0.3);" class="px-3 py-3">
+    <div class="flex gap-3">
+      <!-- Pitch -->
+      <div id="pitch" style="flex:1;background:linear-gradient(180deg,#1a5c30,#0f3d1e);border-radius:1rem;padding:14px 8px;border:1px solid rgba(201,168,76,0.2);min-width:0;">
+        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Team loading...</p>
       </div>
-      <p class="text-xs mt-1" style="color:#3A9E5F;">Live updating every 5 minutes</p>
-    </div>
-    <div class="grid grid-cols-3 gap-2">
-      <div class="rounded-xl p-3 text-center" style="background:#1F5C36;border:1px solid #2A7A47;">
-        <p class="text-xs" style="color:#3A9E5F;">GW Rank</p>
-        <p id="gw-rank" class="font-bold text-white text-lg" style="font-family:'Bebas Neue';">—</p>
-      </div>
-      <div class="rounded-xl p-3 text-center" style="background:#1F5C36;border:1px solid #2A7A47;">
-        <p class="text-xs" style="color:#3A9E5F;">Overall</p>
-        <p id="overall-pts" class="font-bold text-white text-lg" style="font-family:'Bebas Neue';">—</p>
-      </div>
-      <div class="rounded-xl p-3 text-center" style="background:#1F5C36;border:1px solid #2A7A47;">
-        <p class="text-xs" style="color:#3A9E5F;">Captain</p>
-        <p id="captain-pts" class="font-bold text-lg" style="font-family:'Bebas Neue';color:#C9A84C;">—</p>
+
+      <!-- Stats Column -->
+      <div style="width:108px;flex-shrink:0;" class="flex flex-col gap-2">
+        <div class="rounded-xl p-3" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.25);">
+          <p class="text-xs uppercase tracking-wide mb-1" style="color:#C9A84C;font-size:0.55rem;">Gameweek</p>
+          <div class="flex items-end gap-1">
+            <span id="gw-points" class="font-bold" style="font-family:'Bebas Neue';font-size:1.8rem;line-height:1;color:#C9A84C;">—</span>
+            <span style="font-size:0.6rem;color:#E8D5A3;">pts</span>
+          </div>
+        </div>
+        <div class="stat-card">
+          <p style="font-size:0.55rem;color:#3A9E5F;">GW Rank</p>
+          <p id="gw-rank" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:1rem;">—</p>
+        </div>
+        <div class="stat-card">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Overall</p>
+          <p id="overall-pts" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:1rem;">—</p>
+        </div>
+        <div class="stat-card">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Captain</p>
+          <p id="captain-pts" class="font-bold" style="font-family:'Bebas Neue';font-size:1rem;color:#C9A84C;">—</p>
+        </div>
       </div>
     </div>
   </div>
@@ -159,7 +207,6 @@
       <p class="text-xs font-semibold uppercase tracking-widest" style="color:#C9A84C;">💬 Live Chat</p>
     </div>
 
-    <!-- Chat Lock Banner -->
     <div id="chat-lock-banner" class="hidden" style="padding:8px 16px;background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.2);flex-shrink:0;">
       <p class="text-xs" style="color:#E8D5A3;">🔒 Approve ပြီးမှ Chat ရေးနိုင်ပါမည် — View ကိုတော့ ကြည့်ရှုနိုင်ပါသည်</p>
     </div>
@@ -184,3 +231,4 @@
   </div>
 </body>
 </html>
+
