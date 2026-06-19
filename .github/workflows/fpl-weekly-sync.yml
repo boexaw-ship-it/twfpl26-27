@@ -9,7 +9,7 @@
 #
 # Trigger:
 #   - Manual: GitHub Actions tab ကနေ "Run workflow" ခလုတ်နှိပ်ပြီး run
-#   - Auto:   5 မိနစ်တိုင်း အလိုအလျောက် run
+#   - Auto:   6 နာရီတစ်ခါ အလိုအလျောက် run
 # ============================================
 
 name: FPL Weekly Live Sync
@@ -18,9 +18,9 @@ on:
   # Manual trigger — Admin လိုချင်တဲ့အချိန် run လို့ရအောင်
   workflow_dispatch:
 
-  # Auto trigger — 5 မိနစ်တိုင်း
+  # Auto trigger — 6 နာရီတစ်ခါ
   schedule:
-    - cron: "*/5 * * * *"
+    - cron: "0 */6 * * *"
 
 jobs:
   sync:
