@@ -1,0 +1,60 @@
+# ============================================
+# TW Fantasy Official League
+# Weekly Sync Workflow
+# ============================================
+# ဒီ Workflow က —
+#   1. scripts/weekly-live-sync.js  → User team picks + live points
+#   2. scripts/league-sync.js       → Private League 2 ခု standings
+# နှစ်ခုလုံးကို run ပြီး Firebase ထဲ data update လုပ်ပေးတယ်
+#
+# Trigger:
+#   - Manual: GitHub Actions tab ကနေ "Run workflow" ခလုတ်နှိပ်ပြီး run
+#   - Auto:   5 မိနစ်တိုင်း အလိုအလျောက် run
+# ============================================
+
+name: FPL Weekly Live Sync
+
+on:
+  # Manual trigger — Admin လိုချင်တဲ့အချိန် run လို့ရအောင်
+  workflow_dispatch:
+
+  # Auto trigger — 5 မိနစ်တိုင်း
+  schedule:
+    - cron: "*/5 * * * *"
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # Step 1 — Repo code ကို checkout လုပ်
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2 — Node.js Setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 3 — Dependencies Install
+      - name: Install Dependencies
+        run: npm install firebase-admin
+
+      # Step 4 — Weekly Live Sync (Team picks + Points)
+      - name: Run Weekly Live Sync
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/weekly-live-sync.js
+
+      # Step 5 — League Standings Sync (Private League 2 ခု)
+      - name: Run League Sync
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/league-sync.js
+
+      # Step 6 — Sync ပြီးရင် summary log
+      - name: Sync Complete
+        run: echo "✅ TW Fantasy Sync Completed at $(date)"
+        
