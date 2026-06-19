@@ -49,15 +49,15 @@
     function playerCard(p) {
       const ring = p.isCaptain ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
       const badge = p.isCaptain
-        ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-weight:900;margin-left:2px;">C</span>'
+        ? '<span style="font-size:0.5rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;width:12px;height:12px;display:flex;align-items:center;justify-content:center;font-weight:900;margin-left:2px;">C</span>'
         : p.isVice
-        ? '<span style="font-size:0.55rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;width:14px;height:14px;display:flex;align-items:center;justify-content:center;font-weight:900;margin-left:2px;">V</span>'
+        ? '<span style="font-size:0.5rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;width:12px;height:12px;display:flex;align-items:center;justify-content:center;font-weight:900;margin-left:2px;">V</span>'
         : '';
-      return `<div class="flex flex-col items-center" style="min-width:54px;">
-        <div class="w-10 h-10 rounded-full flex items-center justify-center text-lg mb-1" style="background:#1F5C36;border:2px solid ${ring};">👕</div>
-        <p class="text-white text-center font-medium" style="font-size:0.58rem;max-width:58px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
+      return `<div class="flex flex-col items-center" style="min-width:48px;">
+        <div class="w-8 h-8 rounded-full flex items-center justify-center text-sm mb-0.5" style="background:#1F5C36;border:2px solid ${ring};">👕</div>
+        <p class="text-white text-center font-medium" style="font-size:0.52rem;max-width:52px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
         <div class="flex items-center mt-0.5">
-          <span style="font-size:0.62rem;color:#C9A84C;font-weight:700;">${p.livePoints ?? 0}</span>
+          <span style="font-size:0.58rem;color:#C9A84C;font-weight:700;">${p.livePoints ?? 0}</span>
           ${badge}
         </div>
       </div>`;
@@ -71,10 +71,10 @@
       const def = starters.filter(p => p.position === "DEF");
       const mid = starters.filter(p => p.position === "MID");
       const fwd = starters.filter(p => p.position === "FWD");
-      const render = (players) => `<div class="flex justify-center flex-wrap gap-3">${players.map(playerCard).join("")}</div>`;
+      const render = (players) => `<div class="flex justify-center flex-wrap gap-2">${players.map(playerCard).join("")}</div>`;
 
       document.getElementById("pitch").innerHTML = `
-        <div class="space-y-4">
+        <div class="space-y-2">
           ${render(gk)}
           <div style="border-top:1px solid rgba(201,168,76,0.15);"></div>
           ${render(def)}
@@ -83,8 +83,8 @@
           <div style="border-top:1px solid rgba(201,168,76,0.15);"></div>
           ${render(fwd)}
         </div>
-        <div style="border-top:2px dashed rgba(201,168,76,0.3);margin:14px 0;"></div>
-        <div class="flex justify-center flex-wrap gap-3">${subs.map(playerCard).join("")}</div>`;
+        <div style="border-top:2px dashed rgba(201,168,76,0.3);margin:10px 0;"></div>
+        <div class="flex justify-center flex-wrap gap-2">${subs.map(playerCard).join("")}</div>`;
     }
 
     function updateChatLock() {
@@ -169,15 +169,15 @@
   </div>
 
   <!-- Pitch + Stats (50%) -->
-  <div id="pitch-wrap" style="flex:1;overflow-y:auto;border-bottom:2px solid rgba(201,168,76,0.3);" class="px-3 py-3">
-    <div class="flex gap-3">
+  <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-3">
+    <div class="flex gap-3" style="width:100%;height:100%;min-height:0;">
       <!-- Pitch -->
-      <div id="pitch" style="flex:1;background:linear-gradient(180deg,#1a5c30,#0f3d1e);border-radius:1rem;padding:14px 8px;border:1px solid rgba(201,168,76,0.2);min-width:0;">
+      <div id="pitch" style="flex:1;background:linear-gradient(180deg,#1a5c30,#0f3d1e);border-radius:1rem;padding:14px 8px;border:1px solid rgba(201,168,76,0.2);min-width:0;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;">
         <p class="text-center text-xs py-8" style="color:#3A9E5F;">Team loading...</p>
       </div>
 
       <!-- Stats Column -->
-      <div style="width:108px;flex-shrink:0;" class="flex flex-col gap-2">
+      <div style="width:108px;flex-shrink:0;height:100%;overflow-y:auto;" class="flex flex-col gap-2">
         <div class="rounded-xl p-3" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.25);">
           <p class="text-xs uppercase tracking-wide mb-1" style="color:#C9A84C;font-size:0.55rem;">Gameweek</p>
           <div class="flex items-end gap-1">
