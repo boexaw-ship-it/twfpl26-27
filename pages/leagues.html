@@ -15,30 +15,69 @@
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       const snap = await getDoc(doc(db, "users", user.uid));
-      if (!snap.exists() || snap.data().status !== "approved") { window.location.href = "/twfpl26-27/pages/pending.html"; return; }
-      loadLeague("weekly", "weekly-table");
-      loadLeague("overall", "overall-table");
+      if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
+      loadLeague("league1", "league1-table");
+      loadLeague("league2", "league2-table");
     });
 
-    function loadLeague(leagueId, tableId) {
-      const q = query(collection(db, "leagues", leagueId, "standings"), orderBy("points", "desc"));
+    // Chip code → Display label
+    const CHIP_LABELS = {
+      "3xc": "TC",
+      "bboost": "BB",
+      "wildcard": "WC",
+      "freehit": "FH",
+      "manager": "AM"
+    };
+
+    function chipBadge(chipCode) {
+      if (!chipCode || !CHIP_LABELS[chipCode]) return "";
+      return `<span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
+    }
+
+    function hitBadge(hitCost) {
+      if (!hitCost || hitCost === 0) return "";
+      return `<span class="text-xs font-bold" style="color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
+    }
+
+    function loadLeague(firebaseId, tableId) {
+      const q = query(collection(db, "leagues", firebaseId, "standings"), orderBy("points", "desc"));
       onSnapshot(q, (snapshot) => {
         const rows = [];
         let rank = 1;
         snapshot.forEach(d => { rows.push({ rank: rank++, ...d.data() }); });
         const el = document.getElementById(tableId);
-        if (rows.length === 0) { el.innerHTML = `<p class="text-center text-xs py-4" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`; return; }
-        el.innerHTML = rows.map(r => `
-          <div class="flex items-center gap-3 py-2.5 px-3 rounded-xl mb-1" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
+
+        if (rows.length === 0) {
+          el.innerHTML = `<p class="text-center text-xs py-6" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`;
+          return;
+        }
+
+        el.innerHTML = `
+          <div class="flex items-center px-3 py-1.5 text-xs" style="color:#3A9E5F;border-bottom:1px solid #2A7A47;">
+            <span class="w-6">#</span>
+            <span class="flex-1">Team</span>
+            <span class="w-12 text-center">GW</span>
+            <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
+          </div>
+          ${rows.map(r => `
+          <div class="flex items-center py-2.5 px-3 rounded-xl mb-1" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
             <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
-            <span class="flex-1 text-sm font-medium text-white">${r.teamName || "—"}</span>
-            <span class="font-bold" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points || 0}</span>
-          </div>`).join("");
+            <div class="flex-1 min-w-0">
+              <div class="flex items-center flex-wrap">
+                <span class="text-sm font-medium text-white truncate">${r.teamName || "—"}</span>
+                ${chipBadge(r.chip)}
+                ${hitBadge(r.hitCost)}
+              </div>
+            </div>
+            <span class="w-12 text-center text-sm font-semibold text-white">${r.gwPoints ?? 0}</span>
+            <span class="w-14 text-center font-bold" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points ?? 0}</span>
+          </div>`).join("")}
+        `;
       });
     }
 
     window.switchTab = (tab) => {
-      ["weekly", "overall"].forEach(t => {
+      ["league1", "league2"].forEach(t => {
         document.getElementById("tab-" + t).style.borderColor = t === tab ? "#C9A84C" : "transparent";
         document.getElementById("tab-" + t).style.color = t === tab ? "#C9A84C" : "#3A9E5F";
         document.getElementById("panel-" + t).style.display = t === tab ? "block" : "none";
@@ -51,33 +90,56 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
+    .truncate { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px; }
   </style>
 </head>
 <body>
+  <!-- Top Bar -->
   <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;flex-shrink:0;">
     <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
     <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">LEAGUES</h1>
   </div>
+
+  <!-- Tabs -->
   <div style="display:flex;border-bottom:1px solid #1F5C36;flex-shrink:0;">
-    <button id="tab-weekly" onclick="switchTab('weekly')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid #C9A84C;color:#C9A84C;background:transparent;cursor:pointer;">🗓 Weekly GW</button>
-    <button id="tab-overall" onclick="switchTab('overall')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid transparent;color:#3A9E5F;background:transparent;cursor:pointer;">🏆 Overall</button>
+    <button id="tab-league1" onclick="switchTab('league1')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid #C9A84C;color:#C9A84C;background:transparent;cursor:pointer;">
+      🗓 Weekly League
+    </button>
+    <button id="tab-league2" onclick="switchTab('league2')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid transparent;color:#3A9E5F;background:transparent;cursor:pointer;">
+      👥 All Friends
+    </button>
   </div>
+
+  <!-- League Legend -->
+  <div style="padding:8px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+    <span class="text-xs" style="color:#3A9E5F;">Chips:</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">TC</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">BB</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">WC</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">FH</span>
+    <span class="text-xs" style="color:#f87171;">(-4) = Hit</span>
+  </div>
+
+  <!-- Content -->
   <div style="flex:1;overflow-y:auto;" class="px-4 py-3">
-    <div id="panel-weekly">
-      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Gameweek Standings</p>
-      <div id="weekly-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
+    <div id="panel-league1">
+      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Weekly League Standings</p>
+      <div id="league1-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
     </div>
-    <div id="panel-overall" style="display:none;">
-      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Overall Standings</p>
-      <div id="overall-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
+    <div id="panel-league2" style="display:none;">
+      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">All Friends Standings</p>
+      <div id="league2-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
     </div>
   </div>
+
+  <!-- Bottom Nav -->
   <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
     <div class="nav-item active"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/tournament.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Cup</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
   </div>
 </body>
 </html>
+
