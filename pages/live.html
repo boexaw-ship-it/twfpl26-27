@@ -46,6 +46,13 @@
       loadChat();
     });
 
+    // Jersey image path ဆောက်မယ် — GK ဆိုရင် gk/ folder, ကျန်တာ outfield/ folder
+    function jerseyPath(p) {
+      const folder = p.position === "GK" ? "gk" : "outfield";
+      const code = p.teamCode || "unknown";
+      return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
+    }
+
     function playerCard(p) {
       const ring = p.isCaptain ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
       const badge = p.isCaptain
@@ -54,7 +61,12 @@
         ? '<span style="font-size:0.55rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">V</span>'
         : '';
       return `<div class="flex flex-col items-center" style="flex-shrink:0;">
-        <div class="w-9 h-9 rounded-full flex items-center justify-center text-base mb-1" style="background:#1F5C36;border:2px solid ${ring};">👕</div>
+        <div class="w-9 h-9 rounded-full flex items-center justify-center mb-1 overflow-hidden" style="background:#1F5C36;border:2px solid ${ring};">
+          <img src="${jerseyPath(p)}" 
+               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
+               class="w-7 h-7 object-contain" alt="${p.name}" />
+          <span style="display:none;align-items:center;justify-content:center;font-size:0.95rem;">👕</span>
+        </div>
         <p class="text-white text-center font-medium" style="font-size:0.55rem;max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
         <div class="flex items-center gap-1 mt-0.5">
           <span style="font-size:0.6rem;color:#C9A84C;font-weight:700;">${p.livePoints ?? 0}</span>
@@ -152,8 +164,8 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
-    #chat-messages::-webkit-scrollbar, #pitch-wrap::-webkit-scrollbar { width:3px; }
-    #chat-messages::-webkit-scrollbar-thumb, #pitch-wrap::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
+    #chat-messages::-webkit-scrollbar, #pitch::-webkit-scrollbar { width:3px; }
+    #chat-messages::-webkit-scrollbar-thumb, #pitch::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
     .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.85rem; padding:10px 8px; text-align:center; }
   </style>
 </head>
@@ -231,4 +243,3 @@
   </div>
 </body>
 </html>
-
