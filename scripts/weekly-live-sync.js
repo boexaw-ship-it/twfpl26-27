@@ -15,13 +15,13 @@
 //      - Captain 2x calculation
 //      - Transfer hits (-4, -8) နုတ်
 //      - Total GW points + Overall points + Rank
+//      - teamCode (jersey image file name အတွက် — Arsenal→"ars")
 //   4. Firebase ထဲ liveTeams/{fplId} နှင့် livePoints/{fplId} ရေး
 // ============================================
 
 const admin = require("firebase-admin");
 
 // === Firebase Admin Init ===
-// GitHub Secrets ထဲက Service Account Key သုံးမယ်
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
 
 admin.initializeApp({
@@ -46,7 +46,7 @@ async function fplFetch(url, retries = 3) {
     } catch (err) {
       console.log(`⚠️ Fetch failed (${i + 1}/${retries}): ${url}`);
       if (i === retries - 1) throw err;
-      await new Promise((r) => setTimeout(r, 1500)); // 1.5s wait ပြီး retry
+      await new Promise((r) => setTimeout(r, 1500));
     }
   }
 }
@@ -61,18 +61,28 @@ async function getCurrentGameweek(bootstrap) {
   return 1;
 }
 
-// === Step 2: Player position map ဆောက်မယ် (element_type → GK/DEF/MID/FWD) ===
+// === Step 2: Player position + team code map ဆောက်မယ် ===
+// (element_type → GK/DEF/MID/FWD, team → jersey file name)
 function buildPositionMap(bootstrap) {
   const posMap = {};
   bootstrap.element_types.forEach((et) => {
     posMap[et.id] = et.singular_name_short; // GKP, DEF, MID, FWD
   });
+
+  // FPL team.id → short_name (lowercase) — jersey image file name အဖြစ်သုံးမယ်
+  // ဥပမာ: Arsenal → "ars" → /public/jerseys/outfield/ars.png
+  const teamCodeMap = {};
+  bootstrap.teams.forEach((t) => {
+    teamCodeMap[t.id] = t.short_name.toLowerCase();
+  });
+
   const playerPosMap = {};
   bootstrap.elements.forEach((el) => {
     playerPosMap[el.id] = {
       name: el.web_name,
       position: posMap[el.element_type] === "GKP" ? "GK" : posMap[el.element_type],
       teamId: el.team,
+      teamCode: teamCodeMap[el.team] || "unknown", // jersey file name key
     };
   });
   return playerPosMap;
@@ -100,14 +110,19 @@ async function syncUserTeam(fplId, gw, livePointsMap, playerPosMap) {
     // Transfer cost (hits)
     const transferCost = picksData.entry_history?.event_transfers_cost || 0;
 
-    // Picks array ဆောက်မယ်
+    // Picks array ဆောက်မယ် — teamCode ပါအောင်
     const picks = picksData.picks.map((p) => {
-      const playerInfo = playerPosMap[p.element] || { name: "Unknown", position: "?" };
+      const playerInfo = playerPosMap[p.element] || {
+        name: "Unknown",
+        position: "?",
+        teamCode: "unknown",
+      };
       const rawPoints = livePointsMap[p.element] || 0;
       return {
         playerId: p.element,
         name: playerInfo.name,
         position: playerInfo.position,
+        teamCode: playerInfo.teamCode, // ← Jersey image အတွက် (ဥပမာ: "ars", "liv", "mun")
         multiplier: p.multiplier, // 0 = bench, 1 = normal, 2 = captain, 3 = triple captain
         isCaptain: p.is_captain,
         isVice: p.is_vice_captain,
@@ -115,15 +130,14 @@ async function syncUserTeam(fplId, gw, livePointsMap, playerPosMap) {
       };
     });
 
-    // Total GW points တွက်မယ် (Captain 2x ပါ၊ Hits နုတ်ပြီးသား)
-    const gwPointsRaw = picksData.entry_history?.points || 0;
-    const gwPointsFinal = gwPointsRaw; // FPL API ကိုယ်တိုင် captain+hits တွက်ပြီးသား value ပေးတယ်
+    // Total GW points (FPL API ကိုယ်တိုင် Captain+Hits တွက်ပြီးသား value)
+    const gwPointsFinal = picksData.entry_history?.points || 0;
 
     // Captain points ရှာမယ်
     const captainPick = picks.find((p) => p.isCaptain);
     const captainPoints = captainPick ? captainPick.livePoints * (captainPick.multiplier || 2) : 0;
 
-    // === Firebase ထဲ liveTeams ရေးမယ် (11+4 player list) ===
+    // === Firebase ထဲ liveTeams ရေးမယ် (11+4 player list, jersey code ပါ) ===
     await db.collection("liveTeams").doc(String(fplId)).set({
       fplTeamId: fplId,
       gameweek: gw,
@@ -158,7 +172,7 @@ async function main() {
   console.log("Time:", new Date().toISOString());
 
   try {
-    // Bootstrap data ယူမယ် (player info, gameweek info)
+    // Bootstrap data ယူမယ် (player info, gameweek info, team codes)
     console.log("📥 Fetching bootstrap data...");
     const bootstrap = await fplFetch(BOOTSTRAP_URL);
 
