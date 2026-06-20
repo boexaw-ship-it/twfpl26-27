@@ -38,20 +38,20 @@
 
     function playerCard(p, isCaptain = false, isVice = false) {
       const cornerBadge = isCaptain
-        ? '<span style="position:absolute;top:4px;right:4px;background:#F0D060;color:#0D2B1A;font-size:0.6rem;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.4);z-index:2;">C</span>'
+        ? '<span style="position:absolute;top:3px;left:3px;background:#2d2540;color:#F0D060;font-size:0.6rem;font-weight:900;width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:2;">C</span>'
         : isVice
-        ? '<span style="position:absolute;top:4px;right:4px;background:#C0C0C0;color:#0D2B1A;font-size:0.6rem;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.4);z-index:2;">V</span>'
+        ? '<span style="position:absolute;top:3px;left:3px;background:#2d2540;color:#C0C0C0;font-size:0.6rem;font-weight:900;width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:2;">V</span>'
         : '';
-      return `<div style="width:70px;background:rgba(31,92,54,0.55);border:1px solid rgba(201,168,76,0.25);border-radius:10px;padding:6px 4px 0;position:relative;backdrop-filter:blur(1px);">
+      return `<div style="width:78px;background:rgba(20,60,38,0.5);border-radius:8px;position:relative;padding:6px 3px 0;">
         ${cornerBadge}
         <img src="${jerseyPath(p)}" 
-             onerror="this.outerHTML='<div style=\\'width:100%;height:42px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;\\'>👕</div>'" 
-             style="width:100%;height:42px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.5));" alt="${p.name}" />
-        <div style="background:#0D2B1A;margin:5px -4px 0;padding:2px 2px;text-align:center;">
-          <p class="text-white font-semibold" style="font-size:0.56rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
+             onerror="this.outerHTML='<div style=\\'width:100%;height:48px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;\\'>👕</div>'" 
+             style="width:100%;height:48px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4));" alt="${p.name}" />
+        <div style="background:#ffffff;margin-top:4px;padding:3px 2px;text-align:center;border-radius:3px 3px 0 0;">
+          <p style="color:#1a1a2e;font-weight:700;font-size:0.62rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
         </div>
-        <div style="background:rgba(201,168,76,0.18);margin:0 -4px;padding:2px 2px;text-align:center;border-radius:0 0 9px 9px;">
-          <span style="font-size:0.65rem;color:#F0D060;font-weight:700;">${p.livePoints ?? 0}</span>
+        <div style="background:#2d1f47;padding:2px 2px;text-align:center;border-radius:0 0 3px 3px;">
+          <span style="font-size:0.68rem;color:#ffffff;font-weight:700;">${p.livePoints ?? 0}</span>
         </div>
       </div>`;
     }
@@ -67,7 +67,7 @@
       const totalPts = starters.reduce((s, p) => s + (p.livePoints || 0) * (p.multiplier || 1), 0);
       document.getElementById("gw-pts").textContent = totalPts;
 
-      const render = (players) => `<div class="flex justify-center flex-wrap gap-x-2.5 gap-y-4">${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}</div>`;
+      const render = (players) => `<div class="flex justify-center flex-wrap gap-x-1.5 gap-y-4">${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}</div>`;
 
       document.getElementById("pitch-rows").innerHTML = `
         <div class="space-y-6">
@@ -114,20 +114,20 @@
   <div style="flex:1;overflow-y:auto;" class="px-3 py-3">
 
     <!-- Field with markings -->
-    <div style="position:relative;background:linear-gradient(180deg,#1d6b3a 0%,#15512c 50%,#1d6b3a 100%);border-radius:1rem;padding:20px 10px;border:1px solid rgba(201,168,76,0.25);overflow:hidden;">
+    <div style="position:relative;background:#2a9d4a;border-radius:1rem;padding:20px 4px;border:1px solid rgba(201,168,76,0.25);overflow:hidden;">
 
       <!-- SVG field markings -->
-      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.35;pointer-events:none;" viewBox="0 0 300 420" preserveAspectRatio="none">
-        <rect x="8" y="8" width="284" height="404" fill="none" stroke="white" stroke-width="1.5"/>
-        <line x1="8" y1="210" x2="292" y2="210" stroke="white" stroke-width="1.5"/>
-        <circle cx="150" cy="210" r="38" fill="none" stroke="white" stroke-width="1.5"/>
+      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.6;pointer-events:none;" viewBox="0 0 300 420" preserveAspectRatio="none">
+        <rect x="8" y="8" width="284" height="404" fill="none" stroke="white" stroke-width="1.8"/>
+        <line x1="8" y1="210" x2="292" y2="210" stroke="white" stroke-width="1.8"/>
+        <circle cx="150" cy="210" r="38" fill="none" stroke="white" stroke-width="1.8"/>
         <circle cx="150" cy="210" r="2" fill="white"/>
-        <rect x="80" y="8" width="140" height="55" fill="none" stroke="white" stroke-width="1.5"/>
-        <rect x="80" y="357" width="140" height="55" fill="none" stroke="white" stroke-width="1.5"/>
-        <rect x="115" y="8" width="70" height="22" fill="none" stroke="white" stroke-width="1.5"/>
-        <rect x="115" y="390" width="70" height="22" fill="none" stroke="white" stroke-width="1.5"/>
-        <path d="M 115 63 A 38 38 0 0 0 185 63" fill="none" stroke="white" stroke-width="1.5"/>
-        <path d="M 115 357 A 38 38 0 0 1 185 357" fill="none" stroke="white" stroke-width="1.5"/>
+        <rect x="80" y="8" width="140" height="55" fill="none" stroke="white" stroke-width="1.8"/>
+        <rect x="80" y="357" width="140" height="55" fill="none" stroke="white" stroke-width="1.8"/>
+        <rect x="115" y="8" width="70" height="22" fill="none" stroke="white" stroke-width="1.8"/>
+        <rect x="115" y="390" width="70" height="22" fill="none" stroke="white" stroke-width="1.8"/>
+        <path d="M 115 63 A 38 38 0 0 0 185 63" fill="none" stroke="white" stroke-width="1.8"/>
+        <path d="M 115 357 A 38 38 0 0 1 185 357" fill="none" stroke="white" stroke-width="1.8"/>
       </svg>
 
       <!-- Player rows -->
@@ -141,7 +141,7 @@
     <!-- Bench -->
     <div class="mt-3 rounded-2xl p-4" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.2);">
       <p class="text-xs uppercase tracking-widest text-center mb-3" style="color:#C9A84C;">Bench</p>
-      <div id="bench-row" class="flex justify-center flex-wrap gap-x-2.5 gap-y-4"></div>
+      <div id="bench-row" class="flex justify-center flex-wrap gap-x-1.5 gap-y-4"></div>
     </div>
   </div>
 
@@ -155,4 +155,3 @@
   </div>
 </body>
 </html>
-
