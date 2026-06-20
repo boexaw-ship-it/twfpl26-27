@@ -38,14 +38,9 @@
           const hit = d.data().transferCost || 0;
           document.getElementById("hit-label").textContent = "Hit: -" + hit;
           
-          // Chip သုံးစွဲမှုအတွက် Badge Marking ပြောင်းလဲရန် Logic သန့်သန့်
           const chipLabel = document.querySelector(".chip-badge-text");
           if (chipLabel) {
-            if (d.data().activeChip) {
-              chipLabel.textContent = d.data().activeChip;
-            } else {
-              chipLabel.textContent = "NO CHIP";
-            }
+            chipLabel.textContent = d.data().activeChip ? d.data().activeChip : "NO CHIP";
           }
         }
       });
@@ -57,26 +52,29 @@
       return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
     }
 
-    // 🏆 Official Layout Player Card UI (Logic မပျက်စေရန် HTML Attribute များနှင့် Variable များကို ကွက်တိထိန်းသိမ်းထားပါသည်)
+    // 🏆 Official FPL စတိုင် Card နောက်ခံ Box ပါဝင်သော Player Card Component
     function playerCard(p, isCaptain = false, isVice = false) {
       const cornerBadge = isCaptain
-        ? '<span class="absolute -top-1 -right-1 bg-[#37003c] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-10">C</span>'
+        ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">C</span>'
         : isVice
-        ? '<span class="absolute -top-1 -right-1 bg-[#37003c] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-10">V</span>'
+        ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-20">V</span>'
         : '';
         
       return `
-        <div class="w-[66px] sm:w-[74px] flex flex-col items-center relative transition active:scale-95">
+        <div class="w-[68px] sm:w-[76px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-0 shadow-lg shadow-black/20 transition active:scale-95">
           ${cornerBadge}
-          <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1">
+          
+          <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1 relative z-10 pt-1">
             <img src="${jerseyPath(p)}" 
                  onerror="this.outerHTML='<div class=\\'w-full h-12 flex items-center justify-center text-2xl\\'>👕</div>'" 
-                 class="h-full object-contain filter drop-shadow-[0_4px_5px_rgba(0,0,0,0.4)]" alt="${p.name}" />
+                 class="h-full object-contain filter drop-shadow-[0_4px_4px_rgba(0,0,0,0.45)]" alt="${p.name}" />
           </div>
-          <div class="w-full bg-white px-0.5 py-0.5 rounded-t shadow-sm text-center">
+          
+          <div class="w-full bg-white px-0.5 py-0.5 rounded-t shadow-inner text-center relative z-10">
             <p class="text-[#37003c] font-black text-[9px] sm:text-[10px] truncate leading-tight tracking-tight">${p.name || "?"}</p>
           </div>
-          <div class="w-full bg-[#37003c] px-0.5 py-0.5 rounded-b text-center shadow border-t border-black/10">
+          
+          <div class="w-full bg-[#37003c] px-0.5 py-0.5 rounded-b text-center border-t border-black/10 relative z-10">
             <span class="text-[9px] sm:text-[10px] text-white font-extrabold leading-none">${p.livePoints ?? 0}</span>
           </div>
         </div>
@@ -94,9 +92,8 @@
       const totalPts = starters.reduce((s, p) => s + (p.livePoints || 0) * (p.multiplier || 1), 0);
       document.getElementById("gw-pts").textContent = totalPts;
 
-      // နေရာချကျပ်ညပ်မှု မရှိစေရန် Flex Row စနစ်သုံးထားပါသည်
       const renderRow = (players) => `
-        <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-4 w-full max-w-md mx-auto">
+        <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-3 w-full max-w-md mx-auto">
           ${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}
         </div>
       `;
@@ -158,12 +155,12 @@
 
     <div class="rounded-xl p-3 bg-[#131a26] border border-gray-800 shadow-lg">
       <div class="flex justify-around text-[10px] font-black text-yellow-500/80 tracking-widest border-b border-gray-800/65 pb-2 mb-2.5">
-        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">1</div>
-        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">2</div>
-        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">3</div>
-        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">4</div>
+        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">1</div>
+        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">2</div>
+        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">3</div>
+        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">4</div>
       </div>
-      <div id="bench-row" class="flex justify-center items-center gap-x-1.5 sm:gap-x-4 flex-wrap"></div>
+      <div id="bench-row" class="flex justify-center items-center gap-x-1.5 sm:gap-x-3 flex-wrap"></div>
     </div>
   </div>
 
@@ -176,4 +173,3 @@
   </div>
 </body>
 </html>
-
