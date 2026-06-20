@@ -21,9 +21,15 @@
       onSnapshot(doc(db, "liveTeams", fplId), (d) => {
         if (d.exists()) renderTeam(d.data());
       });
+      onSnapshot(doc(db, "livePoints", fplId), (d) => {
+        if (d.exists()) {
+          document.getElementById("gw-label").textContent = "GW: " + (d.data().gameweek ?? "—");
+          const hit = d.data().transferCost || 0;
+          document.getElementById("hit-label").textContent = "Hit: -" + hit;
+        }
+      });
     });
 
-    // Jersey image path ဆောက်မယ် — GK ဆိုရင် gk/ folder, ကျန်တာ outfield/ folder
     function jerseyPath(p) {
       const folder = p.position === "GK" ? "gk" : "outfield";
       const code = p.teamCode || "unknown";
@@ -31,24 +37,22 @@
     }
 
     function playerCard(p, isCaptain = false, isVice = false) {
-      const ring = isCaptain ? '#F0D060' : isVice ? '#C0C0C0' : '#2A7A47';
-      const badge = isCaptain
-        ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">C</span>'
+      const cornerBadge = isCaptain
+        ? '<span style="position:absolute;top:-4px;right:-2px;background:#F0D060;color:#0D2B1A;font-size:0.6rem;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.4);">C</span>'
         : isVice
-        ? '<span style="font-size:0.55rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">V</span>'
+        ? '<span style="position:absolute;top:-4px;right:-2px;background:#C0C0C0;color:#0D2B1A;font-size:0.6rem;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;box-shadow:0 1px 3px rgba(0,0,0,0.4);">V</span>'
         : '';
-      return `<div class="flex flex-col items-center" style="min-width:60px;">
-        <div class="w-12 h-12 rounded-full flex items-center justify-center mb-1 overflow-hidden" style="background:#1F5C36;border:2px solid ${ring};">
+      return `<div class="flex flex-col items-center" style="min-width:64px;">
+        <div style="position:relative;">
           <img src="${jerseyPath(p)}" 
-               onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-               class="w-9 h-9 object-contain" alt="${p.name}" />
-          <span style="display:none;align-items:center;justify-content:center;font-size:1.2rem;">👕</span>
+               onerror="this.outerHTML='<div style=\\'width:46px;height:46px;display:flex;align-items:center;justify-content:center;font-size:1.6rem;\\'>👕</div>'" 
+               style="width:46px;height:46px;object-fit:contain;filter:drop-shadow(0 2px 4px rgba(0,0,0,0.5));" alt="${p.name}" />
+          ${cornerBadge}
         </div>
-        <p class="text-white text-center font-medium" style="font-size:0.6rem;max-width:60px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
-        <div class="flex items-center gap-1 mt-0.5">
-          <span style="font-size:0.65rem;color:#C9A84C;font-weight:700;">${p.livePoints || 0}</span>
-          ${badge}
+        <div style="background:#0D2B1A;border:1px solid rgba(201,168,76,0.3);border-radius:5px;padding:2px 8px;margin-top:3px;min-width:60px;text-align:center;">
+          <p class="text-white font-semibold" style="font-size:0.58rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
         </div>
+        <span style="font-size:0.7rem;color:#C9A84C;font-weight:700;margin-top:2px;">${p.livePoints ?? 0}</span>
       </div>`;
     }
 
@@ -63,19 +67,17 @@
       const totalPts = starters.reduce((s, p) => s + (p.livePoints || 0) * (p.multiplier || 1), 0);
       document.getElementById("gw-pts").textContent = totalPts;
 
-      const render = (players) => `<div class="flex justify-center gap-3">${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}</div>`;
-      document.getElementById("pitch").innerHTML = `
-        <div class="space-y-3">
+      const render = (players) => `<div class="flex justify-center flex-wrap gap-x-2 gap-y-3">${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}</div>`;
+
+      document.getElementById("pitch-rows").innerHTML = `
+        <div class="space-y-5">
           ${render(gk)}
-          <div style="border-top:1px solid rgba(201,168,76,0.2);margin:4px 0;"></div>
           ${render(def)}
-          <div style="border-top:1px solid rgba(201,168,76,0.2);margin:4px 0;"></div>
           ${render(mid)}
-          <div style="border-top:1px solid rgba(201,168,76,0.2);margin:4px 0;"></div>
           ${render(fwd)}
-        </div>
-        <div style="border-top:2px dashed rgba(201,168,76,0.3);margin:12px 0;"></div>
-        <div class="flex justify-center gap-3">${subs.map(p => playerCard(p)).join("")}</div>`;
+        </div>`;
+
+      document.getElementById("bench-row").innerHTML = subs.map(p => playerCard(p)).join("");
     }
   </script>
   <style>
@@ -87,6 +89,7 @@
   </style>
 </head>
 <body>
+  <!-- Top Bar -->
   <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
     <div class="flex items-center gap-2">
       <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;">←</a>
@@ -98,12 +101,51 @@
     </div>
   </div>
 
-  <div style="flex:1;overflow-y:auto;" class="px-4 py-4">
-    <div id="pitch" style="background:linear-gradient(180deg,#1a5c30,#0f3d1e);border-radius:1rem;padding:16px;min-height:400px;border:1px solid rgba(201,168,76,0.2);">
-      <p class="text-center text-xs py-8" style="color:#3A9E5F;">Team data loading...</p>
+  <!-- Info Bar — Hit / GW / Chip -->
+  <div style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(201,168,76,0.2);">
+    <div class="flex items-center gap-3">
+      <span id="hit-label" class="text-xs font-semibold" style="color:#f87171;">Hit: -0</span>
+      <span id="gw-label" class="text-xs font-semibold" style="color:#E8D5A3;">GW: —</span>
+    </div>
+    <span class="text-xs font-bold px-3 py-1 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
+  </div>
+
+  <!-- Pitch -->
+  <div style="flex:1;overflow-y:auto;" class="px-3 py-3">
+
+    <!-- Field with markings -->
+    <div style="position:relative;background:linear-gradient(180deg,#1d6b3a 0%,#15512c 50%,#1d6b3a 100%);border-radius:1rem;padding:20px 10px;border:1px solid rgba(201,168,76,0.25);overflow:hidden;">
+
+      <!-- SVG field markings -->
+      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.35;pointer-events:none;" viewBox="0 0 300 420" preserveAspectRatio="none">
+        <rect x="8" y="8" width="284" height="404" fill="none" stroke="white" stroke-width="1.5"/>
+        <line x1="8" y1="210" x2="292" y2="210" stroke="white" stroke-width="1.5"/>
+        <circle cx="150" cy="210" r="38" fill="none" stroke="white" stroke-width="1.5"/>
+        <circle cx="150" cy="210" r="2" fill="white"/>
+        <rect x="80" y="8" width="140" height="55" fill="none" stroke="white" stroke-width="1.5"/>
+        <rect x="80" y="357" width="140" height="55" fill="none" stroke="white" stroke-width="1.5"/>
+        <rect x="115" y="8" width="70" height="22" fill="none" stroke="white" stroke-width="1.5"/>
+        <rect x="115" y="390" width="70" height="22" fill="none" stroke="white" stroke-width="1.5"/>
+        <path d="M 115 63 A 38 38 0 0 0 185 63" fill="none" stroke="white" stroke-width="1.5"/>
+        <path d="M 115 357 A 38 38 0 0 1 185 357" fill="none" stroke="white" stroke-width="1.5"/>
+      </svg>
+
+      <!-- Player rows -->
+      <div style="position:relative;z-index:1;">
+        <div id="pitch-rows">
+          <p class="text-center text-xs py-12" style="color:rgba(255,255,255,0.6);">Team loading...</p>
+        </div>
+      </div>
+    </div>
+
+    <!-- Bench -->
+    <div class="mt-3 rounded-2xl p-4" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.2);">
+      <p class="text-xs uppercase tracking-widest text-center mb-3" style="color:#C9A84C;">Bench</p>
+      <div id="bench-row" class="flex justify-center flex-wrap gap-x-3 gap-y-3"></div>
     </div>
   </div>
 
+  <!-- Bottom Nav -->
   <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
