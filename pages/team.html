@@ -3,10 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#1B4D2E" />
+  <meta name="theme-color" content="#0D2B1A" />
   <title>My Team — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: "Inter", sans-serif; background: #0b0e14; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
+    .nav-item.active { color:#C9A84C; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+  </style>
+
   <script type="module">
     import { auth, db } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -26,6 +37,16 @@
           document.getElementById("gw-label").textContent = "GW: " + (d.data().gameweek ?? "—");
           const hit = d.data().transferCost || 0;
           document.getElementById("hit-label").textContent = "Hit: -" + hit;
+          
+          // Chip သုံးစွဲမှုအတွက် Badge Marking ပြောင်းလဲရန် Logic သန့်သန့်
+          const chipLabel = document.querySelector(".chip-badge-text");
+          if (chipLabel) {
+            if (d.data().activeChip) {
+              chipLabel.textContent = d.data().activeChip;
+            } else {
+              chipLabel.textContent = "NO CHIP";
+            }
+          }
         }
       });
     });
@@ -36,24 +57,30 @@
       return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
     }
 
+    // 🏆 Official Layout Player Card UI (Logic မပျက်စေရန် HTML Attribute များနှင့် Variable များကို ကွက်တိထိန်းသိမ်းထားပါသည်)
     function playerCard(p, isCaptain = false, isVice = false) {
       const cornerBadge = isCaptain
-        ? '<span style="position:absolute;top:3px;left:3px;background:#2d2540;color:#F0D060;font-size:0.6rem;font-weight:900;width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:2;">C</span>'
+        ? '<span class="absolute -top-1 -right-1 bg-[#37003c] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-10">C</span>'
         : isVice
-        ? '<span style="position:absolute;top:3px;left:3px;background:#2d2540;color:#C0C0C0;font-size:0.6rem;font-weight:900;width:17px;height:17px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:2;">V</span>'
+        ? '<span class="absolute -top-1 -right-1 bg-[#37003c] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-10">V</span>'
         : '';
-      return `<div style="width:78px;background:rgba(20,60,38,0.5);border-radius:8px;position:relative;padding:6px 3px 0;">
-        ${cornerBadge}
-        <img src="${jerseyPath(p)}" 
-             onerror="this.outerHTML='<div style=\\'width:100%;height:48px;display:flex;align-items:center;justify-content:center;font-size:1.8rem;\\'>👕</div>'" 
-             style="width:100%;height:48px;object-fit:contain;filter:drop-shadow(0 2px 3px rgba(0,0,0,0.4));" alt="${p.name}" />
-        <div style="background:#ffffff;margin-top:4px;padding:3px 2px;text-align:center;border-radius:3px 3px 0 0;">
-          <p style="color:#1a1a2e;font-weight:700;font-size:0.62rem;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
+        
+      return `
+        <div class="w-[66px] sm:w-[74px] flex flex-col items-center relative transition active:scale-95">
+          ${cornerBadge}
+          <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1">
+            <img src="${jerseyPath(p)}" 
+                 onerror="this.outerHTML='<div class=\\'w-full h-12 flex items-center justify-center text-2xl\\'>👕</div>'" 
+                 class="h-full object-contain filter drop-shadow-[0_4px_5px_rgba(0,0,0,0.4)]" alt="${p.name}" />
+          </div>
+          <div class="w-full bg-white px-0.5 py-0.5 rounded-t shadow-sm text-center">
+            <p class="text-[#37003c] font-black text-[9px] sm:text-[10px] truncate leading-tight tracking-tight">${p.name || "?"}</p>
+          </div>
+          <div class="w-full bg-[#37003c] px-0.5 py-0.5 rounded-b text-center shadow border-t border-black/10">
+            <span class="text-[9px] sm:text-[10px] text-white font-extrabold leading-none">${p.livePoints ?? 0}</span>
+          </div>
         </div>
-        <div style="background:#2d1f47;padding:2px 2px;text-align:center;border-radius:0 0 3px 3px;">
-          <span style="font-size:0.68rem;color:#ffffff;font-weight:700;">${p.livePoints ?? 0}</span>
-        </div>
-      </div>`;
+      `;
     }
 
     function renderTeam(data) {
@@ -67,91 +94,86 @@
       const totalPts = starters.reduce((s, p) => s + (p.livePoints || 0) * (p.multiplier || 1), 0);
       document.getElementById("gw-pts").textContent = totalPts;
 
-      const render = (players) => `<div class="flex justify-center flex-wrap gap-x-1.5 gap-y-4">${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}</div>`;
+      // နေရာချကျပ်ညပ်မှု မရှိစေရန် Flex Row စနစ်သုံးထားပါသည်
+      const renderRow = (players) => `
+        <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-4 w-full max-w-md mx-auto">
+          ${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}
+        </div>
+      `;
 
       document.getElementById("pitch-rows").innerHTML = `
-        <div class="space-y-6">
-          ${render(gk)}
-          ${render(def)}
-          ${render(mid)}
-          ${render(fwd)}
+        <div class="flex flex-col justify-between h-full min-h-[390px] py-2 space-y-4">
+          ${renderRow(gk)}
+          ${renderRow(def)}
+          ${renderRow(mid)}
+          ${renderRow(fwd)}
         </div>`;
 
       document.getElementById("bench-row").innerHTML = subs.map(p => playerCard(p)).join("");
     }
   </script>
-  <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
-    .nav-item.active { color:#C9A84C; }
-  </style>
 </head>
-<body>
-  <!-- Top Bar -->
-  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
-    <div class="flex items-center gap-2">
-      <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;">←</a>
-      <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">MY TEAM</h1>
+<body class="scrollbar-none">
+
+  <div class="bg-[#0f141c] border-b border-gray-800 px-4 py-3 flex items-center justify-between flex-shrink-0">
+    <div class="flex items-center gap-3">
+      <a href="/twfpl26-27/pages/dashboard.html" class="text-yellow-500 text-lg font-bold">←</a>
+      <h1 class="gold-text font-bold text-xl tracking-wider font-['Bebas_Neue']">MY TEAM</h1>
     </div>
     <div class="text-right">
-      <p id="team-name" class="text-xs font-semibold" style="color:#E8D5A3;"></p>
-      <p class="text-xs" style="color:#3A9E5F;">GW Pts: <span id="gw-pts" style="color:#C9A84C;font-weight:700;">—</span></p>
+      <p id="team-name" class="text-xs font-bold tracking-wide text-[#E8D5A3]"></p>
+      <p class="text-[11px] text-gray-400 font-medium mt-0.5">GW Pts: <span id="gw-pts" class="text-yellow-500 font-extrabold text-xs">—</span></p>
     </div>
   </div>
 
-  <!-- Info Bar — Hit / GW / Chip -->
-  <div style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(201,168,76,0.2);">
-    <div class="flex items-center gap-3">
-      <span id="hit-label" class="text-xs font-semibold" style="color:#f87171;">Hit: -0</span>
-      <span id="gw-label" class="text-xs font-semibold" style="color:#E8D5A3;">GW: —</span>
+  <div class="bg-[#131a26] px-4 py-2 flex items-center justify-between flex-shrink-0 border-b border-gray-800">
+    <div class="flex items-center gap-4">
+      <span id="hit-label" class="text-xs font-bold text-red-400">Hit: -0</span>
+      <span id="gw-label" class="text-xs font-bold text-[#E8D5A3]">GW: —</span>
     </div>
-    <span class="text-xs font-bold px-3 py-1 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
+    <span id="chip-badge" class="chip-badge-text text-[9px] font-black px-2.5 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase">NO CHIP</span>
   </div>
 
-  <!-- Pitch -->
-  <div style="flex:1;overflow-y:auto;" class="px-3 py-3">
+  <div class="flex-1 overflow-y-auto px-2 py-2 scrollbar-none space-y-3">
 
-    <!-- Field with markings -->
-    <div style="position:relative;background:#2a9d4a;border-radius:1rem;padding:20px 4px;border:1px solid rgba(201,168,76,0.25);overflow:hidden;">
+    <div class="relative bg-gradient-to-b from-[#00874c] via-[#00a85a] to-[#005e34] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-hidden min-h-[430px]">
 
-      <!-- SVG field markings -->
-      <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.6;pointer-events:none;" viewBox="0 0 300 420" preserveAspectRatio="none">
-        <rect x="8" y="8" width="284" height="404" fill="none" stroke="white" stroke-width="1.8"/>
-        <line x1="8" y1="210" x2="292" y2="210" stroke="white" stroke-width="1.8"/>
-        <circle cx="150" cy="210" r="38" fill="none" stroke="white" stroke-width="1.8"/>
-        <circle cx="150" cy="210" r="2" fill="white"/>
-        <rect x="80" y="8" width="140" height="55" fill="none" stroke="white" stroke-width="1.8"/>
-        <rect x="80" y="357" width="140" height="55" fill="none" stroke="white" stroke-width="1.8"/>
-        <rect x="115" y="8" width="70" height="22" fill="none" stroke="white" stroke-width="1.8"/>
-        <rect x="115" y="390" width="70" height="22" fill="none" stroke="white" stroke-width="1.8"/>
-        <path d="M 115 63 A 38 38 0 0 0 185 63" fill="none" stroke="white" stroke-width="1.8"/>
-        <path d="M 115 357 A 38 38 0 0 1 185 357" fill="none" stroke="white" stroke-width="1.8"/>
+      <svg class="absolute inset-0 w-full h-full opacity-45 pointer-events-none" viewBox="0 0 300 420" preserveAspectRatio="none">
+        <rect x="6" y="6" width="288" height="408" fill="none" stroke="white" stroke-width="1.2"/>
+        <line x1="6" y1="210" x2="294" y2="210" stroke="white" stroke-width="1.2"/>
+        <circle cx="150" cy="210" r="35" fill="none" stroke="white" stroke-width="1.2"/>
+        <circle cx="150" cy="210" r="1.5" fill="white"/>
+        <rect x="65" y="6" width="170" height="55" fill="none" stroke="white" stroke-width="1.2"/>
+        <rect x="65" y="359" width="170" height="55" fill="none" stroke="white" stroke-width="1.2"/>
+        <rect x="105" y="6" width="90" height="20" fill="none" stroke="white" stroke-width="1.2"/>
+        <rect x="105" y="394" width="90" height="20" fill="none" stroke="white" stroke-width="1.2"/>
       </svg>
 
-      <!-- Player rows -->
-      <div style="position:relative;z-index:1;">
-        <div id="pitch-rows">
-          <p class="text-center text-xs py-12" style="color:rgba(255,255,255,0.6);">Team loading...</p>
+      <div class="relative z-10 h-full">
+        <div id="pitch-rows" class="h-full">
+          <p class="text-center text-xs py-24 text-white/50 font-medium tracking-wide">Team loading...</p>
         </div>
       </div>
     </div>
 
-    <!-- Bench -->
-    <div class="mt-3 rounded-2xl p-4" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.2);">
-      <p class="text-xs uppercase tracking-widest text-center mb-3" style="color:#C9A84C;">Bench</p>
-      <div id="bench-row" class="flex justify-center flex-wrap gap-x-1.5 gap-y-4"></div>
+    <div class="rounded-xl p-3 bg-[#131a26] border border-gray-800 shadow-lg">
+      <div class="flex justify-around text-[10px] font-black text-yellow-500/80 tracking-widest border-b border-gray-800/65 pb-2 mb-2.5">
+        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">1</div>
+        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">2</div>
+        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">3</div>
+        <div class="w-[66px] sm:w-[74px] text-center bg-black/30 py-0.5 rounded border border-gray-800">4</div>
+      </div>
+      <div id="bench-row" class="flex justify-center items-center gap-x-1.5 sm:gap-x-4 flex-wrap"></div>
     </div>
   </div>
 
-  <!-- Bottom Nav -->
-  <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  <div class="bg-[#0f141c] border-t border-gray-800 flex justify-around items-center py-1 flex-shrink-0 z-20">
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span class="text-lg">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span class="text-lg">⚡</span><span>Live</span></div>
+    <div class="nav-item active" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span class="text-lg">🏆</span><span>League</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span class="text-lg">⚽</span><span>Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span class="text-lg">🔍</span><span>Scout</span></div>
   </div>
 </body>
 </html>
+
