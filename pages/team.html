@@ -59,7 +59,7 @@
         : '';
 
       return `
-        <div class="w-[64px] sm:w-[72px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-1 shadow-lg shadow-black/20 transition active:scale-95">
+        <div class="w-[68px] sm:w-[78px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-1 shadow-lg shadow-black/20 transition active:scale-95">
           ${cornerBadge}
 
           <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1 relative z-10 pt-1">
@@ -68,8 +68,8 @@
                  class="h-full object-contain filter drop-shadow-[0_4px_4px_rgba(0,0,0,0.45)]" alt="${p.name}" />
           </div>
 
-          <div class="w-full bg-white px-1 py-1 rounded-t shadow-inner text-center relative z-10">
-            <p class="text-[#0D2B1A] font-black text-[10px] sm:text-[11px] truncate leading-tight tracking-tight">${p.name || "?"}</p>
+          <div class="w-full bg-white px-1 py-1 rounded-t shadow-inner text-center relative z-10 flex items-center justify-center" style="min-height:24px;">
+            <p class="text-[#0D2B1A] font-black text-[8px] sm:text-[9px] leading-[1.05] tracking-tight" style="word-break:break-word;">${p.name || "?"}</p>
           </div>
 
           <div class="w-full flex justify-center py-1 relative z-10">
@@ -91,7 +91,7 @@
       document.getElementById("gw-pts").textContent = totalPts;
 
       const renderRow = (players) => `
-        <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-2.5 w-full max-w-md mx-auto">
+        <div class="flex justify-center items-center gap-x-1 sm:gap-x-2 w-full max-w-md mx-auto">
           ${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}
         </div>
       `;
@@ -170,3 +170,4 @@
   </div>
 </body>
 </html>
+
