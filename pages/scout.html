@@ -115,10 +115,12 @@
       }
 
       document.getElementById("player-modal").classList.remove("hidden");
+      document.getElementById("player-modal").style.display = "flex";
     };
 
     window.closeModal = () => {
       document.getElementById("player-modal").classList.add("hidden");
+      document.getElementById("player-modal").style.display = "none";
     };
 
     window.filterPos = (pos) => {
@@ -198,7 +200,7 @@
   </div>
 
   <!-- Player Detail Modal -->
-  <div id="player-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeModal()">
+  <div id="player-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeModal()">
     <div style="background:linear-gradient(145deg,#1F5C36,#0D2B1A);border:1px solid rgba(201,168,76,0.4);border-radius:1.25rem;width:100%;max-width:360px;max-height:85vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,0,0,0.6);">
 
       <!-- Modal Header -->
