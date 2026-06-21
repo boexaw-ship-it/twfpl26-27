@@ -30,11 +30,11 @@
       const fplId = snap.data().fplTeamId;
       document.getElementById("team-name").textContent = snap.data().teamName;
 
-      onSnapshot(doc(db, "finalTeams", fplId), (d) => {
+      onSnapshot(doc(db, "liveTeams", fplId), (d) => {
         if (d.exists()) renderTeam(d.data());
       });
 
-      onSnapshot(doc(db, "finalPoints", fplId), (d) => {
+      onSnapshot(doc(db, "livePoints", fplId), (d) => {
         if (!d.exists()) return;
         document.getElementById("gw-label").textContent = "GW " + (d.data().gameweek ?? "—");
         // FPL API ကိုယ်တိုင်ပေးတဲ့ accurate GW points — Bench Boost + Hits အကုန် ပါပြီးသား
@@ -157,7 +157,7 @@
 
       <div class="relative z-10 h-full">
         <div id="pitch-rows" class="h-full">
-          <p class="text-center text-xs py-24 text-white/50 font-medium tracking-wide leading-relaxed px-6">GW ပြီးဆုံးတဲ့အခါ Final Team data ပေါ်လာပါမည်<br/>(Live points ကို Live page မှာ ကြည့်ပါ)</p>
+          <p class="text-center text-xs py-24 text-white/50 font-medium tracking-wide">Team loading...</p>
         </div>
       </div>
     </div>
