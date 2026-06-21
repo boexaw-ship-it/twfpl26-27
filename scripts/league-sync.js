@@ -31,8 +31,8 @@ const FPL_BASE = "https://fantasy.premierleague.com/api";
 
 // === League Config — Firebase collection name ↔ FPL League ID ===
 const LEAGUES = [
-  { firebaseId: "league1", fplLeagueId: 184965 }, // Weekly League
-  { firebaseId: "league2", fplLeagueId: 561639 }, // All Friends
+  { firebaseId: "league1", fplLeagueId: 151552 }, // Weekly League
+  { firebaseId: "league2", fplLeagueId: 184965 }, // All Friends
 ];
 
 // === Helper: FPL API fetch (retry ပါ) ===
