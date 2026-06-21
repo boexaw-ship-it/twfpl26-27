@@ -59,7 +59,7 @@
         : '';
 
       return `
-        <div class="w-[64px] sm:w-[72px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-0 shadow-lg shadow-black/20 transition active:scale-95">
+        <div class="w-[64px] sm:w-[72px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-1 shadow-lg shadow-black/20 transition active:scale-95">
           ${cornerBadge}
 
           <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1 relative z-10 pt-1">
@@ -68,12 +68,12 @@
                  class="h-full object-contain filter drop-shadow-[0_4px_4px_rgba(0,0,0,0.45)]" alt="${p.name}" />
           </div>
 
-          <div class="w-full bg-white px-1 py-[3px] rounded-t shadow-inner text-center relative z-10">
-            <p class="text-[#0D2B1A] font-black text-[9px] sm:text-[10px] truncate leading-tight tracking-tight">${p.name || "?"}</p>
+          <div class="w-full bg-white px-1 py-1 rounded-t shadow-inner text-center relative z-10">
+            <p class="text-[#0D2B1A] font-black text-[10px] sm:text-[11px] truncate leading-tight tracking-tight">${p.name || "?"}</p>
           </div>
 
-          <div class="w-full bg-black px-1 py-[1px] rounded-b text-center border-t border-white/10 relative z-10">
-            <span class="text-[7px] sm:text-[8px] text-white font-bold leading-tight">${p.livePoints ?? 0}</span>
+          <div class="w-full flex justify-center py-1 relative z-10">
+            <span class="bg-black text-white text-[8px] sm:text-[9px] font-bold leading-none px-2 py-[3px] rounded-full">${p.livePoints ?? 0}</span>
           </div>
         </div>
       `;
@@ -170,4 +170,3 @@
   </div>
 </body>
 </html>
-
