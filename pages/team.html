@@ -37,6 +37,10 @@
       onSnapshot(doc(db, "livePoints", fplId), (d) => {
         if (!d.exists()) return;
         document.getElementById("gw-label").textContent = "GW " + (d.data().gameweek ?? "—");
+        // FPL API ကိုယ်တိုင်ပေးတဲ့ accurate GW points — Bench Boost + Hits အကုန် ပါပြီးသား
+        document.getElementById("gw-pts").textContent = d.data().gwPoints ?? "—";
+        const overallRank = d.data().overallRank;
+        document.getElementById("rank-label").textContent = "Rank: " + (overallRank ? overallRank.toLocaleString() : "—");
         const hit = d.data().transferCost || 0;
         document.getElementById("hit-label").textContent = "Hit: -" + hit;
         const chip = d.data().activeChip;
@@ -52,7 +56,12 @@
 
     // 🏆 Official FPL style Player Card — jersey + name (white) + points (dark/black)
     function playerCard(p, isCaptain = false, isVice = false) {
-      const cornerBadge = isCaptain
+      const mult = p.multiplier || 1;
+      // Captain (mult=2) သို့မဟုတ် Triple Captain (mult=3) ဖြစ်ရင် raw points × multiplier ပြ
+      const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
+      const cornerBadge = mult === 3
+        ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">3x</span>'
+        : isCaptain
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">C</span>'
         : isVice
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-20">V</span>'
@@ -73,7 +82,7 @@
           </div>
 
           <div class="w-full flex justify-center py-1 relative z-10">
-            <span class="bg-black text-white text-[8px] sm:text-[9px] font-bold leading-none px-2 py-[3px] rounded-full">${p.livePoints ?? 0}</span>
+            <span class="bg-black text-white text-[8px] sm:text-[9px] font-bold leading-none px-2 py-[3px] rounded-full">${displayPoints}</span>
           </div>
         </div>
       `;
@@ -87,9 +96,6 @@
       const def = starters.filter(p => p.position === "DEF");
       const mid = starters.filter(p => p.position === "MID");
       const fwd = starters.filter(p => p.position === "FWD");
-      const totalPts = starters.reduce((s, p) => s + (p.livePoints || 0) * (p.multiplier || 1), 0);
-      document.getElementById("gw-pts").textContent = totalPts;
-
       const renderRow = (players) => `
         <div class="flex justify-center items-center gap-x-1 sm:gap-x-2 w-full max-w-md mx-auto">
           ${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}
@@ -115,7 +121,10 @@
   <div class="bg-[#0f141c] border-b border-gray-800 px-4 py-3 flex items-center gap-3 flex-shrink-0">
     <a href="/twfpl26-27/pages/dashboard.html" class="text-yellow-500 text-lg font-bold">←</a>
     <h1 class="gold-text font-bold text-xl tracking-wider font-['Bebas_Neue']">MY TEAM</h1>
-    <span id="team-name" class="text-xs font-bold tracking-wide text-[#E8D5A3] ml-auto"></span>
+    <div class="ml-auto text-right">
+      <span id="team-name" class="text-xs font-bold tracking-wide text-[#E8D5A3] block"></span>
+      <span id="rank-label" class="text-[10px] text-[#3A9E5F]">Rank: —</span>
+    </div>
   </div>
 
   <!-- Info Bar — Hit, GW, GW Pts, Chip — တစ်တန်းတည်း -->
@@ -170,4 +179,5 @@
   </div>
 </body>
 </html>
+
 
