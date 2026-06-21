@@ -1,0 +1,53 @@
+# ============================================
+# TW Fantasy Official League
+# Player Scout Sync Workflow
+# ============================================
+# ဒီ Workflow က scripts/player-scout-sync.js ကို run ပေးတယ်
+#   - Player price, ownership%, total points, form
+#   - Next 3 matches + FDR (Fixture Difficulty Rating)
+# ကို Firebase players/{id} ထဲ update လုပ်ပေးတယ်
+#
+# Trigger:
+#   - Manual: GitHub Actions tab ကနေ "Run workflow" ခလုတ်နှိပ်ပြီး run
+#   - Auto:   6 နာရီတစ်ခါ
+# ============================================
+
+name: FPL Player Scout Sync
+
+on:
+  # Manual trigger — Admin လိုချင်တဲ့အချိန် run လို့ရအောင်
+  workflow_dispatch:
+
+  # Auto trigger — 6 နာရီတစ်ခါ
+  schedule:
+    - cron: "0 */6 * * *"
+
+jobs:
+  scout-sync:
+    runs-on: ubuntu-latest
+    timeout-minutes: 10
+
+    steps:
+      # Step 1 — Repo code ကို checkout လုပ်
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      # Step 2 — Node.js Setup
+      - name: Setup Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20
+
+      # Step 3 — Dependencies Install
+      - name: Install Dependencies
+        run: npm install firebase-admin
+
+      # Step 4 — Player Scout Sync (Price/Ownership/Points/Form/Fixtures)
+      - name: Run Player Scout Sync
+        env:
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        run: node scripts/player-scout-sync.js
+
+      # Step 5 — Sync ပြီးရင် summary log
+      - name: Scout Sync Complete
+        run: echo "✅ TW Fantasy Player Scout Sync Completed at $(date)"
