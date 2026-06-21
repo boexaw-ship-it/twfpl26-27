@@ -4,7 +4,7 @@
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
   <meta name="theme-color" content="#1B4D2E" />
-  <title>Scout — TW Fantasy</title>
+  <title>Player Scout — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script type="module">
@@ -13,11 +13,13 @@
     import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     let allPlayers = [];
+    let currentFilter = "ALL";
+    let currentSort = null; // null = default order, ဒါမှမဟုတ် "price"/"ownership"/"points"/"form"
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       const snap = await getDoc(doc(db, "users", user.uid));
-      if (!snap.exists() || snap.data().status !== "approved") { window.location.href = "/twfpl26-27/pages/pending.html"; return; }
+      if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
       loadPlayers();
     });
 
@@ -25,42 +27,121 @@
       const snap = await getDocs(collection(db, "players"));
       allPlayers = [];
       snap.forEach(d => allPlayers.push(d.data()));
-      renderPlayers(allPlayers);
+      renderPlayers();
     }
 
-    function renderPlayers(players) {
+    function jerseyPath(p) {
+      const folder = p.position === "GK" ? "gk" : "outfield";
+      const code = p.teamCode || "unknown";
+      return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
+    }
+
+    function fdrColor(fdr) {
+      // FDR 1 (အလွယ်) → Green, 5 (အခက်ဆုံး) → Red
+      const colors = { 1: "#22c55e", 2: "#84cc16", 3: "#eab308", 4: "#f97316", 5: "#ef4444" };
+      return colors[fdr] || "#3A9E5F";
+    }
+
+    function getFiltered() {
+      let players = currentFilter === "ALL" ? allPlayers : allPlayers.filter(p => p.position === currentFilter);
+      if (currentSort) {
+        players = [...players].sort((a, b) => {
+          if (currentSort === "price") return parseFloat(b.price) - parseFloat(a.price);
+          if (currentSort === "ownership") return (b.ownership ?? 0) - (a.ownership ?? 0);
+          if (currentSort === "points") return (b.totalPoints ?? 0) - (a.totalPoints ?? 0);
+          if (currentSort === "form") return (b.form ?? 0) - (a.form ?? 0);
+          return 0;
+        });
+      }
+      return players;
+    }
+
+    function renderPlayers() {
+      const players = getFiltered();
       const el = document.getElementById("player-list");
-      if (players.length === 0) { el.innerHTML = `<p class="text-center text-xs py-8" style="color:#3A9E5F;">Player data မရှိသေးပါ</p>`; return; }
-      el.innerHTML = players.map(p => `
-        <div class="rounded-xl p-3 mb-2" style="background:#1F5C36;border:1px solid #2A7A47;">
+      if (players.length === 0) {
+        el.innerHTML = `<p class="text-center text-xs py-8" style="color:#3A9E5F;">Player data မရှိသေးပါ</p>`;
+        return;
+      }
+      el.innerHTML = players.map((p, i) => `
+        <div onclick="openPlayerModal(${i})" class="rounded-xl p-3 mb-2 cursor-pointer active:scale-[0.98] transition" style="background:#1F5C36;border:1px solid #2A7A47;">
           <div class="flex items-center justify-between">
             <div class="flex items-center gap-2">
-              <span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:${p.pos === 'GK' ? '#1d4ed8' : p.pos === 'DEF' ? '#15803d' : p.pos === 'MID' ? '#92400e' : '#9f1239'};color:white;">${p.pos || "?"}</span>
+              <span class="text-xs px-2 py-0.5 rounded-full font-bold" style="background:${p.position==='GK'?'#1d4ed8':p.position==='DEF'?'#15803d':p.position==='MID'?'#92400e':'#9f1239'};color:white;">${p.position||"?"}</span>
               <div>
-                <p class="text-white text-sm font-semibold">${p.name || "—"}</p>
-                <p class="text-xs" style="color:#3A9E5F;">${p.team || ""}</p>
+                <p class="text-white text-sm font-semibold">${p.name||"—"}</p>
+                <p class="text-xs" style="color:#3A9E5F;">${p.team||""}</p>
               </div>
             </div>
             <div class="text-right">
-              <p class="font-bold" style="color:#C9A84C;font-family:'Bebas Neue';font-size:1.1rem;">£${p.price || 0}m</p>
-              <p class="text-xs" style="color:#E8D5A3;">${p.ownership || 0}% owned</p>
+              <p class="font-bold" style="color:#C9A84C;font-family:'Bebas Neue';font-size:1.1rem;">£${p.price||0}m</p>
+              <p class="text-xs" style="color:#E8D5A3;">${p.ownership||0}% owned</p>
             </div>
           </div>
           <div class="mt-2 pt-2 flex justify-between" style="border-top:1px solid #2A7A47;">
-            <span class="text-xs" style="color:#3A9E5F;">Next: <span class="text-white">${p.nextMatch || "TBC"}</span></span>
-            <span class="text-xs" style="color:#3A9E5F;">Pts: <span style="color:#C9A84C;font-weight:700;">${p.totalPoints || 0}</span></span>
+            <span class="text-xs" style="color:#3A9E5F;">Form: <span class="text-white font-semibold">${p.form ?? 0}</span></span>
+            <span class="text-xs" style="color:#3A9E5F;">Pts: <span style="color:#C9A84C;font-weight:700;">${p.totalPoints||0}</span></span>
           </div>
         </div>`).join("");
     }
 
-    window.filterPos = (pos) => {
-      document.querySelectorAll(".filter-btn").forEach(b => b.style.background = "transparent");
-      document.getElementById("filter-" + pos).style.background = "rgba(201,168,76,0.2)";
-      renderPlayers(pos === "ALL" ? allPlayers : allPlayers.filter(p => p.pos === pos));
+    window.openPlayerModal = (index) => {
+      const players = getFiltered();
+      const p = players[index];
+      if (!p) return;
+
+      document.getElementById("modal-jersey").src = jerseyPath(p);
+      document.getElementById("modal-name").textContent = p.name || "—";
+      document.getElementById("modal-team").textContent = p.team || "";
+      document.getElementById("modal-position").textContent = p.position || "?";
+      document.getElementById("modal-price").textContent = "£" + (p.price || 0) + "m";
+      document.getElementById("modal-ownership").textContent = (p.ownership || 0) + "%";
+      document.getElementById("modal-points").textContent = p.totalPoints || 0;
+      document.getElementById("modal-form").textContent = p.form ?? 0;
+
+      const fixturesEl = document.getElementById("modal-fixtures");
+      const matches = p.nextMatches || [];
+      if (matches.length === 0) {
+        fixturesEl.innerHTML = `<p class="text-center text-xs py-3" style="color:#3A9E5F;">Fixture data မရှိသေးပါ</p>`;
+      } else {
+        fixturesEl.innerHTML = matches.map(m => `
+          <div class="flex items-center justify-between py-2 px-3 rounded-lg mb-1.5" style="background:#162F20;border:1px solid #2A7A47;">
+            <div class="flex items-center gap-2">
+              <span class="text-xs font-semibold" style="color:#E8D5A3;">GW${m.gw}</span>
+              <span class="text-sm text-white font-medium">${m.isHome ? "vs" : "@"} ${m.opponent}</span>
+            </div>
+            <span class="text-xs font-bold px-2 py-1 rounded-full text-white" style="background:${fdrColor(m.fdr)};">FDR ${m.fdr}</span>
+          </div>`).join("");
+      }
+
+      document.getElementById("player-modal").classList.remove("hidden");
     };
 
-    window.searchPlayer = (q) => {
-      renderPlayers(allPlayers.filter(p => p.name?.toLowerCase().includes(q.toLowerCase()) || p.team?.toLowerCase().includes(q.toLowerCase())));
+    window.closeModal = () => {
+      document.getElementById("player-modal").classList.add("hidden");
+    };
+
+    window.filterPos = (pos) => {
+      currentFilter = pos;
+      document.querySelectorAll(".filter-btn").forEach(b => b.style.background = "transparent");
+      document.getElementById("filter-" + pos).style.background = "rgba(201,168,76,0.2)";
+      renderPlayers();
+    };
+
+    window.toggleSort = (sortKey) => {
+      currentSort = currentSort === sortKey ? null : sortKey;
+      document.querySelectorAll(".sort-btn").forEach(b => {
+        b.style.background = "transparent";
+        b.style.color = "#3A9E5F";
+        b.style.borderColor = "#2A7A47";
+      });
+      if (currentSort) {
+        const btn = document.getElementById("sort-" + sortKey);
+        btn.style.background = "rgba(201,168,76,0.25)";
+        btn.style.color = "#C9A84C";
+        btn.style.borderColor = "#C9A84C";
+      }
+      renderPlayers();
     };
   </script>
   <style>
@@ -69,17 +150,20 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
-    .filter-btn { border:1px solid rgba(201,168,76,0.3); color:#E8D5A3; border-radius:0.5rem; padding:4px 10px; font-size:0.7rem; font-weight:600; cursor:pointer; background:transparent; transition:all 0.2s; }
+    .filter-btn { border:1px solid rgba(201,168,76,0.3); color:#E8D5A3; border-radius:0.5rem; padding:4px 10px; font-size:0.7rem; font-weight:600; cursor:pointer; background:transparent; transition:all 0.2s; white-space:nowrap; }
+    .sort-btn { border:1px solid #2A7A47; color:#3A9E5F; border-radius:9999px; padding:6px 14px; font-size:0.72rem; font-weight:700; cursor:pointer; background:transparent; transition:all 0.2s; white-space:nowrap; }
   </style>
 </head>
 <body>
+  <!-- Top Bar -->
   <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;flex-shrink:0;">
     <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
     <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">PLAYER SCOUT</h1>
   </div>
-  <div style="padding:10px 16px;flex-shrink:0;border-bottom:1px solid #1F5C36;">
-    <input oninput="searchPlayer(this.value)" placeholder="🔍 Player ရှာပါ..." style="width:100%;background:#1F5C36;border:1px solid #2A7A47;color:white;border-radius:0.75rem;padding:8px 14px;font-size:0.85rem;outline:none;margin-bottom:8px;" />
-    <div style="display:flex;gap:6px;overflow-x:auto;padding-bottom:2px;">
+
+  <!-- Position Filter -->
+  <div style="padding:10px 16px 6px;flex-shrink:0;">
+    <div style="display:flex;gap:6px;overflow-x:auto;">
       <button id="filter-ALL" class="filter-btn" onclick="filterPos('ALL')" style="background:rgba(201,168,76,0.2);">ALL</button>
       <button id="filter-GK" class="filter-btn" onclick="filterPos('GK')">GK</button>
       <button id="filter-DEF" class="filter-btn" onclick="filterPos('DEF')">DEF</button>
@@ -87,15 +171,75 @@
       <button id="filter-FWD" class="filter-btn" onclick="filterPos('FWD')">FWD</button>
     </div>
   </div>
+
+  <!-- Sort Switch -->
+  <div style="padding:6px 16px 10px;flex-shrink:0;border-bottom:1px solid #1F5C36;">
+    <p class="text-xs mb-2" style="color:#3A9E5F;">Sort by (နှိပ်မှ active):</p>
+    <div style="display:flex;gap:6px;overflow-x:auto;">
+      <button id="sort-price" class="sort-btn" onclick="toggleSort('price')">💰 Price</button>
+      <button id="sort-ownership" class="sort-btn" onclick="toggleSort('ownership')">👥 Ownership</button>
+      <button id="sort-points" class="sort-btn" onclick="toggleSort('points')">⭐ Points</button>
+      <button id="sort-form" class="sort-btn" onclick="toggleSort('form')">📈 Form</button>
+    </div>
+  </div>
+
+  <!-- Player List -->
   <div style="flex:1;overflow-y:auto;" class="px-4 py-3">
     <div id="player-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading players...</p></div>
   </div>
+
+  <!-- Bottom Nav -->
   <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/tournament.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Cup</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
     <div class="nav-item active"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  </div>
+
+  <!-- Player Detail Modal -->
+  <div id="player-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.7);z-index:100;display:flex;align-items:center;justify-content:center;padding:20px;" onclick="if(event.target===this)closeModal()">
+    <div style="background:linear-gradient(145deg,#1F5C36,#0D2B1A);border:1px solid rgba(201,168,76,0.4);border-radius:1.25rem;width:100%;max-width:360px;max-height:85vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,0,0,0.6);">
+
+      <!-- Modal Header -->
+      <div style="padding:16px;display:flex;justify-content:flex-end;">
+        <button onclick="closeModal()" style="color:#E8D5A3;font-size:1.3rem;background:rgba(255,255,255,0.1);width:28px;height:28px;border-radius:9999px;display:flex;align-items:center;justify-content:center;">✕</button>
+      </div>
+
+      <!-- Player Info -->
+      <div style="padding:0 20px 16px;text-align:center;">
+        <img id="modal-jersey" src="" onerror="this.style.display='none'" style="width:90px;height:90px;object-fit:contain;margin:0 auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));" />
+        <h2 id="modal-name" class="text-white font-bold text-xl mt-2" style="font-family:'Bebas Neue';letter-spacing:0.05em;"></h2>
+        <p id="modal-team" class="text-sm" style="color:#3A9E5F;"></p>
+        <span id="modal-position" class="inline-block mt-2 text-xs px-3 py-1 rounded-full font-bold" style="background:rgba(201,168,76,0.2);color:#C9A84C;"></span>
+      </div>
+
+      <!-- Stats Grid -->
+      <div class="grid grid-cols-4 gap-2 px-5 mb-4">
+        <div class="rounded-xl p-2 text-center" style="background:#162F20;border:1px solid #2A7A47;">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Price</p>
+          <p id="modal-price" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;">—</p>
+        </div>
+        <div class="rounded-xl p-2 text-center" style="background:#162F20;border:1px solid #2A7A47;">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Owned</p>
+          <p id="modal-ownership" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;">—</p>
+        </div>
+        <div class="rounded-xl p-2 text-center" style="background:#162F20;border:1px solid #2A7A47;">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Points</p>
+          <p id="modal-points" class="font-bold" style="color:#C9A84C;font-family:'Bebas Neue';font-size:0.95rem;">—</p>
+        </div>
+        <div class="rounded-xl p-2 text-center" style="background:#162F20;border:1px solid #2A7A47;">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Form</p>
+          <p id="modal-form" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;">—</p>
+        </div>
+      </div>
+
+      <!-- Next 3 Fixtures -->
+      <div style="padding:0 20px 20px;">
+        <p class="text-xs uppercase tracking-widest mb-2 font-semibold" style="color:#C9A84C;">Next 3 Matches</p>
+        <div id="modal-fixtures"></div>
+      </div>
+    </div>
   </div>
 </body>
 </html>
