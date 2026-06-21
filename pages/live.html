@@ -35,6 +35,10 @@
               document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—";
               document.getElementById("captain-pts").textContent = d.data().captainPoints ?? "—";
               document.getElementById("gw-rank").textContent = d.data().gwRank ?? "—";
+              const hit = d.data().transferCost || 0;
+              document.getElementById("hit-label").textContent = "Hit: -" + hit;
+              const chip = d.data().activeChip;
+              document.getElementById("chip-badge").textContent = chip ? chip : "NO CHIP";
             }
           });
           onSnapshot(doc(db, "liveTeams", data.fplTeamId), (d) => {
@@ -55,7 +59,12 @@
 
     function playerCard(p) {
       const ring = p.isCaptain ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
-      const badge = p.isCaptain
+      const mult = p.multiplier || 1;
+      // Captain (mult=2) သို့မဟုတ် Triple Captain (mult=3) ဖြစ်ရင် raw points × multiplier ပြ
+      const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
+      const badge = mult === 3
+        ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 4px;font-weight:900;">3x</span>'
+        : p.isCaptain
         ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">C</span>'
         : p.isVice
         ? '<span style="font-size:0.55rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">V</span>'
@@ -69,7 +78,7 @@
         </div>
         <p class="text-white text-center font-medium" style="font-size:0.55rem;max-width:48px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;">${p.name || "?"}</p>
         <div class="flex items-center gap-1 mt-0.5">
-          <span style="font-size:0.6rem;color:#C9A84C;font-weight:700;">${p.livePoints ?? 0}</span>
+          <span style="font-size:0.6rem;color:#C9A84C;font-weight:700;">${displayPoints}</span>
           ${badge}
         </div>
       </div>`;
@@ -180,6 +189,12 @@
     <span id="user-team" class="text-xs font-semibold" style="color:#E8D5A3;"></span>
   </div>
 
+  <!-- Info Bar — Hit / Chip -->
+  <div style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(201,168,76,0.2);">
+    <span id="hit-label" class="text-xs font-semibold" style="color:#f87171;">Hit: -0</span>
+    <span id="chip-badge" class="text-xs font-bold px-3 py-1 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
+  </div>
+
   <!-- Pitch + Stats (50%) -->
   <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-3">
     <div class="flex gap-3" style="width:100%;height:100%;min-height:0;">
@@ -256,4 +271,5 @@
   </div>
 </body>
 </html>
+
 
