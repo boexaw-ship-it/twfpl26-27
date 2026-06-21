@@ -7,7 +7,7 @@
   <title>My Team — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
-  
+
   <style>
     * { -webkit-tap-highlight-color: transparent; }
     body { font-family: "Inter", sans-serif; background: #0b0e14; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
@@ -29,23 +29,22 @@
       if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
       const fplId = snap.data().fplTeamId;
       document.getElementById("team-name").textContent = snap.data().teamName;
-      
-      onSnapshot(doc(db, "liveTeams", fplId), (d) => {
+
+      onSnapshot(doc(db, "finalTeams", fplId), (d) => {
         if (d.exists()) renderTeam(d.data());
       });
-      
-      onSnapshot(doc(db, "livePoints", fplId), (d) => {
-        if (d.exists()) {
-          document.getElementById("gw-label").textContent = "GW: " + (d.data().gameweek ?? "—");
-          const hit = d.data().transferCost || 0;
-          document.getElementById("hit-label").textContent = "Hit: -" + hit;
-          
-          // 🟢 ပြင်ဆင်ချက် - id စနစ်ဖြင့် စာသားပြောင်းလဲရန် ပိုမိုသေသပ်စွာ ညှိထားပါသည်
-          const chipLabel = document.getElementById("chip-badge");
-          if (chipLabel) {
-            chipLabel.textContent = d.data().activeChip ? d.data().activeChip : "NO CHIP";
-          }
-        }
+
+      onSnapshot(doc(db, "finalPoints", fplId), (d) => {
+        if (!d.exists()) return;
+        document.getElementById("gw-label").textContent = "GW " + (d.data().gameweek ?? "—");
+        // FPL API ကိုယ်တိုင်ပေးတဲ့ accurate GW points — Bench Boost + Hits အကုန် ပါပြီးသား
+        document.getElementById("gw-pts").textContent = d.data().gwPoints ?? "—";
+        const overallRank = d.data().overallRank;
+        document.getElementById("rank-label").textContent = "Rank: " + (overallRank ? overallRank.toLocaleString() : "—");
+        const hit = d.data().transferCost || 0;
+        document.getElementById("hit-label").textContent = "Hit: -" + hit;
+        const chip = d.data().activeChip;
+        document.getElementById("chip-badge").textContent = chip ? chip : "NO CHIP";
       });
     });
 
@@ -55,12 +54,11 @@
       return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
     }
 
-    // 🏆 Official FPL စတိုင် Card နောက်ခံ Box ပါဝင်သော Player Card Component
+    // 🏆 Official FPL style Player Card — jersey + name (white) + points (dark/black)
     function playerCard(p, isCaptain = false, isVice = false) {
       const mult = p.multiplier || 1;
-      // 🟢 Captain Points အတွက် အမှတ်ကို မြှောက်ဖော်ကိန်းအတိုင်း အော်တိုမြှောက်ပြမည့် Logic
+      // Captain (mult=2) သို့မဟုတ် Triple Captain (mult=3) ဖြစ်ရင် raw points × multiplier ပြ
       const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
-      
       const cornerBadge = mult === 3
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">3x</span>'
         : isCaptain
@@ -68,23 +66,23 @@
         : isVice
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-20">V</span>'
         : '';
-        
+
       return `
-        <div class="w-[68px] sm:w-[76px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-0 shadow-lg shadow-black/20 transition active:scale-95">
+        <div class="w-[68px] sm:w-[78px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-1 shadow-lg shadow-black/20 transition active:scale-95">
           ${cornerBadge}
-          
+
           <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1 relative z-10 pt-1">
-            <img src="${jerseyPath(p)}" 
-                 onerror="this.outerHTML='<div class=\\'w-full h-12 flex items-center justify-center text-2xl\\'>👕</div>'" 
+            <img src="${jerseyPath(p)}"
+                 onerror="this.outerHTML='<div class=\\'w-full h-12 flex items-center justify-center text-2xl\\'>👕</div>'"
                  class="h-full object-contain filter drop-shadow-[0_4px_4px_rgba(0,0,0,0.45)]" alt="${p.name}" />
           </div>
-          
-          <div class="w-full bg-white px-0.5 py-0.5 rounded-t shadow-inner text-center relative z-10">
-            <p class="text-[#37003c] font-black text-[9px] sm:text-[10px] truncate leading-tight tracking-tight">${p.name || "?"}</p>
+
+          <div class="w-full bg-white px-1 py-1 rounded-t shadow-inner text-center relative z-10 flex items-center justify-center" style="min-height:24px;">
+            <p class="text-[#0D2B1A] font-black text-[8px] sm:text-[9px] leading-[1.05] tracking-tight" style="word-break:break-word;">${p.name || "?"}</p>
           </div>
-          
-          <div class="w-full bg-[#37003c] px-0.5 py-0.5 rounded-b text-center border-t border-black/10 relative z-10">
-            <span class="text-[9px] sm:text-[10px] text-white font-extrabold leading-none">${displayPoints}</span>
+
+          <div class="w-full flex justify-center py-1 relative z-10">
+            <span class="bg-black text-white text-[8px] sm:text-[9px] font-bold leading-none px-2 py-[3px] rounded-full">${displayPoints}</span>
           </div>
         </div>
       `;
@@ -98,11 +96,8 @@
       const def = starters.filter(p => p.position === "DEF");
       const mid = starters.filter(p => p.position === "MID");
       const fwd = starters.filter(p => p.position === "FWD");
-      const totalPts = starters.reduce((s, p) => s + (p.livePoints || 0) * (p.multiplier || 1), 0);
-      document.getElementById("gw-pts").textContent = totalPts;
-
       const renderRow = (players) => `
-        <div class="flex justify-center items-center gap-x-1.5 sm:gap-x-3 w-full max-w-md mx-auto">
+        <div class="flex justify-center items-center gap-x-1 sm:gap-x-2 w-full max-w-md mx-auto">
           ${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}
         </div>
       `;
@@ -115,36 +110,38 @@
           ${renderRow(fwd)}
         </div>`;
 
+      // Bench — numbered placeholder boxes ဖျက်ပြီး player card တွေချည်း clean ပြ
       document.getElementById("bench-row").innerHTML = subs.map(p => playerCard(p)).join("");
     }
   </script>
 </head>
 <body class="scrollbar-none">
 
-  <!-- Top Bar -->
-  <div class="bg-[#0f141c] border-b border-gray-800 px-4 py-3 flex items-center justify-between flex-shrink-0">
-    <div class="flex items-center gap-3">
-      <a href="/twfpl26-27/pages/dashboard.html" class="text-yellow-500 text-lg font-bold">←</a>
-      <h1 class="gold-text font-bold text-xl tracking-wider font-['Bebas_Neue']">MY TEAM</h1>
-    </div>
-    <div class="text-right">
-      <p id="team-name" class="text-xs font-bold tracking-wide text-[#E8D5A3]"></p>
-      <p class="text-[11px] text-gray-400 font-medium mt-0.5">GW Pts: <span id="gw-pts" class="text-yellow-500 font-extrabold text-xs">—</span></p>
+  <!-- Top Bar — Team name only -->
+  <div class="bg-[#0f141c] border-b border-gray-800 px-4 py-3 flex items-center gap-3 flex-shrink-0">
+    <a href="/twfpl26-27/pages/dashboard.html" class="text-yellow-500 text-lg font-bold">←</a>
+    <h1 class="gold-text font-bold text-xl tracking-wider font-['Bebas_Neue']">MY TEAM</h1>
+    <div class="ml-auto text-right">
+      <span id="team-name" class="text-xs font-bold tracking-wide text-[#E8D5A3] block"></span>
+      <span id="rank-label" class="text-[10px] text-[#3A9E5F]">Rank: —</span>
     </div>
   </div>
 
-  <!-- Info Bar -->
-  <div class="bg-[#131a26] px-4 py-2 flex items-center justify-between flex-shrink-0 border-b border-gray-800">
-    <div class="flex items-center gap-4">
+  <!-- Info Bar — Hit, GW, GW Pts, Chip — တစ်တန်းတည်း -->
+  <div class="bg-[#131a26] px-4 py-2.5 flex items-center justify-between flex-shrink-0 border-b border-gray-800">
+    <div class="flex items-center gap-3 sm:gap-4">
       <span id="hit-label" class="text-xs font-bold text-red-400">Hit: -0</span>
-      <span id="gw-label" class="text-xs font-bold text-[#E8D5A3]">GW: —</span>
+      <span class="text-gray-700">|</span>
+      <span id="gw-label" class="text-xs font-bold text-[#E8D5A3]">GW —</span>
+      <span class="text-gray-700">|</span>
+      <span class="text-xs font-bold text-[#3A9E5F]">Pts: <span id="gw-pts" class="text-yellow-500 font-extrabold">—</span></span>
     </div>
-    <span id="chip-badge" class="text-[9px] font-black px-2.5 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase">NO CHIP</span>
+    <span id="chip-badge" class="text-[9px] font-black px-2.5 py-1 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase">NO CHIP</span>
   </div>
 
-  <!-- Pitch Content -->
   <div class="flex-1 overflow-y-auto px-2 py-2 scrollbar-none space-y-3">
 
+    <!-- Pitch -->
     <div class="relative bg-gradient-to-b from-[#00874c] via-[#00a85a] to-[#005e34] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-hidden min-h-[430px]">
 
       <svg class="absolute inset-0 w-full h-full opacity-45 pointer-events-none" viewBox="0 0 300 420" preserveAspectRatio="none">
@@ -160,20 +157,15 @@
 
       <div class="relative z-10 h-full">
         <div id="pitch-rows" class="h-full">
-          <p class="text-center text-xs py-24 text-white/50 font-medium tracking-wide">Team loading...</p>
+          <p class="text-center text-xs py-24 text-white/50 font-medium tracking-wide leading-relaxed px-6">GW ပြီးဆုံးတဲ့အခါ Final Team data ပေါ်လာပါမည်<br/>(Live points ကို Live page မှာ ကြည့်ပါ)</p>
         </div>
       </div>
     </div>
 
-    <!-- 🪑 Subs Bench View -->
+    <!-- Bench — clean, no numbered placeholder frames -->
     <div class="rounded-xl p-3 bg-[#131a26] border border-gray-800 shadow-lg">
-      <div class="flex justify-around text-[10px] font-black text-yellow-500/80 tracking-widest border-b border-gray-800/65 pb-2 mb-2.5">
-        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">1</div>
-        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">2</div>
-        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">3</div>
-        <div class="w-[68px] sm:w-[76px] text-center bg-black/30 py-0.5 rounded border border-gray-800">4</div>
-      </div>
-      <div id="bench-row" class="flex justify-center items-center gap-x-1.5 sm:gap-x-3 flex-wrap"></div>
+      <p class="text-[10px] font-black text-yellow-500/80 tracking-widest uppercase text-center mb-2.5">Bench</p>
+      <div id="bench-row" class="flex justify-center items-center gap-x-1.5 sm:gap-x-2.5 flex-wrap"></div>
     </div>
   </div>
 
@@ -187,3 +179,4 @@
   </div>
 </body>
 </html>
+
