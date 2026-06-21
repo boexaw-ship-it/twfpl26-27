@@ -10,78 +10,113 @@
   <script type="module">
     import { auth, db } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { doc, getDoc, collection, onSnapshot, orderBy, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { doc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+    let league1Data = [];
+    let league2Data = [];
+    let sortMode = "total"; // "total" or "gw"
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       const snap = await getDoc(doc(db, "users", user.uid));
       if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
-      loadLeague("league1", "league1-table");
-      loadLeague("league2", "league2-table");
+
+      onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
+        league1Data = [];
+        snapshot.forEach(d => league1Data.push(d.data()));
+        renderTable("league1");
+      });
+
+      onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
+        league2Data = [];
+        snapshot.forEach(d => league2Data.push(d.data()));
+        renderTable("league2");
+      });
     });
 
-    // Chip code → Display label
-    const CHIP_LABELS = {
-      "3xc": "TC",
-      "bboost": "BB",
-      "wildcard": "WC",
-      "freehit": "FH",
-      "manager": "AM"
-    };
+    const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
     function chipBadge(chipCode) {
       if (!chipCode || !CHIP_LABELS[chipCode]) return "";
-      return `<span class="text-xs font-bold px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
+      return `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.25);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
     }
 
     function hitBadge(hitCost) {
       if (!hitCost || hitCost === 0) return "";
-      return `<span class="text-xs font-bold" style="color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
+      return `<span class="text-[9px] font-bold" style="color:#f87171;margin-left:4px;" title="${hitCost} points deducted for extra transfers">(-${hitCost})</span>`;
     }
 
-    function loadLeague(firebaseId, tableId) {
-      const q = query(collection(db, "leagues", firebaseId, "standings"), orderBy("points", "desc"));
-      onSnapshot(q, (snapshot) => {
-        const rows = [];
-        let rank = 1;
-        snapshot.forEach(d => { rows.push({ rank: rank++, ...d.data() }); });
-        const el = document.getElementById(tableId);
+    function renderTable(firebaseId) {
+      const data = firebaseId === "league1" ? league1Data : league2Data;
+      const tableId = firebaseId === "league1" ? "league1-table" : "league2-table";
+      const el = document.getElementById(tableId);
 
-        if (rows.length === 0) {
-          el.innerHTML = `<p class="text-center text-xs py-6" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`;
-          return;
-        }
+      if (data.length === 0) {
+        el.innerHTML = `<p class="text-center text-xs py-6" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`;
+        return;
+      }
 
-        el.innerHTML = `
-          <div class="flex items-center px-3 py-1.5 text-xs" style="color:#3A9E5F;border-bottom:1px solid #2A7A47;">
-            <span class="w-6">#</span>
-            <span class="flex-1">Team</span>
-            <span class="w-12 text-center">GW</span>
-            <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
-          </div>
-          ${rows.map(r => `
-          <div class="flex items-center py-2.5 px-3 rounded-xl mb-1" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
-            <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center flex-wrap">
-                <span class="text-sm font-medium text-white truncate">${r.teamName || "—"}</span>
-                ${chipBadge(r.chip)}
-                ${hitBadge(r.hitCost)}
-              </div>
-            </div>
-            <span class="w-12 text-center text-sm font-semibold text-white">${r.gwPoints ?? 0}</span>
-            <span class="w-14 text-center font-bold" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points ?? 0}</span>
-          </div>`).join("")}
-        `;
+      // Sort mode အလိုက် rank ပြန်တွက်
+      const sorted = [...data].sort((a, b) => {
+        if (sortMode === "gw") return (b.gwPoints ?? 0) - (a.gwPoints ?? 0);
+        return (b.points ?? 0) - (a.points ?? 0);
       });
+
+      const rows = sorted.map((r, i) => ({ ...r, rank: i + 1 }));
+
+      el.innerHTML = `
+        <div class="flex items-center px-3 py-1.5 text-xs" style="color:#3A9E5F;border-bottom:1px solid #2A7A47;">
+          <span class="w-6">#</span>
+          <span class="flex-1">Team</span>
+          <span class="w-12 text-center">GW</span>
+          <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
+        </div>
+        ${rows.map(r => `
+        <div class="flex items-center py-2.5 px-3 rounded-xl mb-1" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
+          <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center flex-wrap">
+              <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
+              ${chipBadge(r.chip)}
+              ${hitBadge(r.hitCost)}
+            </div>
+          </div>
+          <span class="w-12 text-center text-sm font-semibold ${sortMode === 'gw' ? 'text-yellow-400' : 'text-white'}">${r.gwPoints ?? 0}</span>
+          <span class="w-14 text-center font-bold ${sortMode === 'total' ? '' : 'opacity-60'}" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points ?? 0}</span>
+        </div>`).join("")}
+      `;
     }
 
     window.switchTab = (tab) => {
       ["league1", "league2"].forEach(t => {
-        document.getElementById("tab-" + t).style.borderColor = t === tab ? "#C9A84C" : "transparent";
-        document.getElementById("tab-" + t).style.color = t === tab ? "#C9A84C" : "#3A9E5F";
+        const btn = document.getElementById("tab-" + t);
+        if (t === tab) {
+          btn.style.background = "linear-gradient(135deg,#C9A84C,#F0D060)";
+          btn.style.color = "#0D2B1A";
+        } else {
+          btn.style.background = "transparent";
+          btn.style.color = "#3A9E5F";
+        }
         document.getElementById("panel-" + t).style.display = t === tab ? "block" : "none";
       });
+    };
+
+    window.switchSort = (mode) => {
+      sortMode = mode;
+      ["total", "gw"].forEach(m => {
+        const btn = document.getElementById("sort-" + m);
+        if (m === mode) {
+          btn.style.background = "rgba(201,168,76,0.25)";
+          btn.style.color = "#C9A84C";
+          btn.style.borderColor = "#C9A84C";
+        } else {
+          btn.style.background = "transparent";
+          btn.style.color = "#3A9E5F";
+          btn.style.borderColor = "#2A7A47";
+        }
+      });
+      renderTable("league1");
+      renderTable("league2");
     };
   </script>
   <style>
@@ -90,7 +125,7 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
-    .truncate { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; max-width:120px; }
+    .truncate { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
   </style>
 </head>
 <body>
@@ -100,34 +135,47 @@
     <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">LEAGUES</h1>
   </div>
 
-  <!-- Tabs -->
-  <div style="display:flex;border-bottom:1px solid #1F5C36;flex-shrink:0;">
-    <button id="tab-league1" onclick="switchTab('league1')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid #C9A84C;color:#C9A84C;background:transparent;cursor:pointer;">
+  <!-- League Tabs — Button style -->
+  <div style="padding:10px 16px 6px;flex-shrink:0;display:flex;gap:8px;">
+    <button id="tab-league1" onclick="switchTab('league1')"
+      style="flex:1;padding:10px;font-size:0.8rem;font-weight:700;border-radius:0.75rem;background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;border:none;cursor:pointer;">
       🗓 Weekly League
     </button>
-    <button id="tab-league2" onclick="switchTab('league2')" style="flex:1;padding:12px;font-size:0.85rem;font-weight:600;border-bottom:2px solid transparent;color:#3A9E5F;background:transparent;cursor:pointer;">
+    <button id="tab-league2" onclick="switchTab('league2')"
+      style="flex:1;padding:10px;font-size:0.8rem;font-weight:700;border-radius:0.75rem;background:transparent;color:#3A9E5F;border:1px solid #2A7A47;cursor:pointer;">
       👥 All Friends
     </button>
   </div>
 
-  <!-- League Legend -->
-  <div style="padding:8px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;display:flex;gap:10px;align-items:center;flex-wrap:wrap;">
+  <!-- Chip Legend -->
+  <div style="padding:8px 16px;flex-shrink:0;display:flex;gap:8px;align-items:center;flex-wrap:wrap;">
     <span class="text-xs" style="color:#3A9E5F;">Chips:</span>
-    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">TC</span>
-    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">BB</span>
-    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">WC</span>
-    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;">FH</span>
-    <span class="text-xs" style="color:#f87171;">(-4) = Hit</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;" title="Triple Captain">TC</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;" title="Bench Boost">BB</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;" title="Wildcard">WC</span>
+    <span class="text-xs px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.2);color:#C9A84C;" title="Free Hit">FH</span>
+    <span class="text-xs" style="color:#f87171;">(-4) = ဒီ GW မှာ နုတ်ခံရသည့် Hit Points</span>
+  </div>
+
+  <!-- Sort Toggle — Total / This GW -->
+  <div style="padding:6px 16px 10px;flex-shrink:0;display:flex;gap:8px;align-items:center;">
+    <span class="text-xs" style="color:#E8D5A3;">Sort by:</span>
+    <button id="sort-total" onclick="switchSort('total')"
+      style="padding:6px 14px;font-size:0.75rem;font-weight:700;border-radius:9999px;background:rgba(201,168,76,0.25);color:#C9A84C;border:1px solid #C9A84C;cursor:pointer;">
+      Total
+    </button>
+    <button id="sort-gw" onclick="switchSort('gw')"
+      style="padding:6px 14px;font-size:0.75rem;font-weight:700;border-radius:9999px;background:transparent;color:#3A9E5F;border:1px solid #2A7A47;cursor:pointer;">
+      This GW
+    </button>
   </div>
 
   <!-- Content -->
-  <div style="flex:1;overflow-y:auto;" class="px-4 py-3">
+  <div style="flex:1;overflow-y:auto;" class="px-4 py-2">
     <div id="panel-league1">
-      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">Weekly League Standings</p>
       <div id="league1-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
     </div>
     <div id="panel-league2" style="display:none;">
-      <p class="text-xs uppercase tracking-widest mb-3" style="color:#C9A84C;">All Friends Standings</p>
       <div id="league2-table"><p class="text-center text-xs py-4" style="color:#3A9E5F;">Loading...</p></div>
     </div>
   </div>
@@ -142,4 +190,3 @@
   </div>
 </body>
 </html>
-
