@@ -30,12 +30,6 @@
       renderPlayers();
     }
 
-    function jerseyPath(p) {
-      const folder = p.position === "GK" ? "gk" : "outfield";
-      const code = p.teamCode || "unknown";
-      return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
-    }
-
     function fdrColor(fdr) {
       // FDR 1 (အလွယ်) → Green, 5 (အခက်ဆုံး) → Red
       const colors = { 1: "#22c55e", 2: "#84cc16", 3: "#eab308", 4: "#f97316", 5: "#ef4444" };
@@ -90,7 +84,6 @@
       const p = players[index];
       if (!p) return;
 
-      document.getElementById("modal-jersey").src = jerseyPath(p);
       document.getElementById("modal-name").textContent = p.name || "—";
       document.getElementById("modal-team").textContent = p.team || "";
       document.getElementById("modal-position").textContent = p.position || "?";
@@ -147,6 +140,7 @@
     };
   </script>
   <style>
+    #player-modal.hidden { display: none !important; }
     * { -webkit-tap-highlight-color: transparent; }
     body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -209,8 +203,7 @@
       </div>
 
       <!-- Player Info -->
-      <div style="padding:0 20px 16px;text-align:center;">
-        <img id="modal-jersey" src="" onerror="this.style.display='none'" style="width:90px;height:90px;object-fit:contain;margin:0 auto;filter:drop-shadow(0 4px 8px rgba(0,0,0,0.5));" />
+      <div style="padding:8px 20px 16px;text-align:center;">
         <h2 id="modal-name" class="text-white font-bold text-xl mt-2" style="font-family:'Bebas Neue';letter-spacing:0.05em;"></h2>
         <p id="modal-team" class="text-sm" style="color:#3A9E5F;"></p>
         <span id="modal-position" class="inline-block mt-2 text-xs px-3 py-1 rounded-full font-bold" style="background:rgba(201,168,76,0.2);color:#C9A84C;"></span>
