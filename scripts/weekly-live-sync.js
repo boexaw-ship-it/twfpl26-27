@@ -110,6 +110,9 @@ async function syncUserTeam(fplId, gw, livePointsMap, playerPosMap) {
     // Transfer cost (hits)
     const transferCost = picksData.entry_history?.event_transfers_cost || 0;
 
+    // Active chip (TC=3xc, BB=bboost, WC=wildcard, FH=freehit, null=none)
+    const activeChip = picksData.active_chip || null;
+
     // Picks array ဆောက်မယ် — teamCode ပါအောင်
     const picks = picksData.picks.map((p) => {
       const playerInfo = playerPosMap[p.element] || {
@@ -154,6 +157,7 @@ async function syncUserTeam(fplId, gw, livePointsMap, playerPosMap) {
       gwRank: entryData.summary_event_rank || null,
       overallRank: entryData.summary_overall_rank || null,
       transferCost: transferCost,
+      activeChip: activeChip,
       captainPoints: captainPoints,
       updatedAt: admin.firestore.FieldValue.serverTimestamp(),
     });
@@ -234,3 +238,4 @@ async function main() {
 }
 
 main();
+
