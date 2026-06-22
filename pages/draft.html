@@ -74,22 +74,62 @@
     </div>
 
     <div id="view-fixtures" class="tab-content hidden flex flex-col space-y-3">
+      
       <div class="rounded-xl p-3 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
-        <select onchange="filterFixtureTable(this.value)" id="team-filter-select" class="text-xs font-bold rounded px-2 py-1 focus:outline-none" style="background:#041e12; color:#C9A84C; border:1px solid #1e6a3c;">
+        <select onchange="filterFixtureTable(this.value)" class="text-xs font-bold rounded px-2 py-1 focus:outline-none" style="background:#041e12; color:#C9A84C; border:1px solid #1e6a3c;">
           <option value="ALL">Show All Teams (အသင်းအားလုံး)</option>
-          </select>
+          <option value="ARS">Arsenal (ARS)</option>
+          <option value="AVL">Aston Villa (AVL)</option>
+          <option value="BHA">Brighton (BHA)</option>
+          <option value="BOU">Bournemouth (BOU)</option>
+          <option value="BRE">Brentford (BRE)</option>
+          <option value="BUR">Burnley (BUR)</option>
+          <option value="CHE">Chelsea (CHE)</option>
+          <option value="CRY">Crystal Palace (CRY)</option>
+          <option value="EVE">Everton (EVE)</option>
+          <option value="FUL">Fulham (FUL)</option>
+          <option value="IPS">Ipswich Town (IPS)</option>
+          <option value="LEI">Leicester City (LEI)</option>
+          <option value="LIV">Liverpool (LIV)</option>
+          <option value="MCI">Man City (MCI)</option>
+          <option value="MUN">Man United (MUN)</option>
+          <option value="NEW">Newcastle (NEW)</option>
+          <option value="NFO">Nottm Forest (NFO)</option>
+          <option value="SOU">Southampton (SOU)</option>
+          <option value="TOT">Tottenham (TOT)</option>
+          <option value="WHA">West Ham (WHA)</option>
+        </select>
       </div>
 
       <div class="w-full overflow-x-auto rounded-xl border no-scrollbar" style="background:#124c2a; border-color:#1e6a3c; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
-        <table class="w-full text-center text-[10px] border-collapse">
+        <table class="text-center text-[10px] border-collapse table-fixed" style="width: calc(55px + ( (100vw - 87px) / 4 * 38 )); min-width: 2300px;">
           <thead class="text-[9px] uppercase tracking-wider border-b" style="background:#041e12; border-color:#1e6a3c; color:#3A9E5F;">
             <tr id="fixture-header-row">
-              <th class="p-2.5 text-left font-bold w-16 sticky left-0 z-20 border-r" style="background:#041e12; border-color:#1e6a3c;">Team</th>
+              <th class="text-left font-bold sticky left-0 z-20 border-r" style="background:#041e12; border-color:#1e6a3c; width: 55px; padding: 10px 6px;">Team</th>
               </tr>
           </thead>
           <tbody id="fixture-table-body" class="divide-y font-bold" style="border-color:#1e6a3c;">
-            <tr><td colspan="39" class="p-8 text-center" style="color:#3A9E5F;">Loading 38 Gameweek Fixtures...</td></tr>
+            <tr data-team="ARS"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">ARS</td></tr>
+            <tr data-team="AVL"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">AVL</td></tr>
+            <tr data-team="BHA"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">BHA</td></tr>
+            <tr data-team="BOU"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">BOU</td></tr>
+            <tr data-team="BRE"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">BRE</td></tr>
+            <tr data-team="BUR"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">BUR</td></tr>
+            <tr data-team="CHE"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">CHE</td></tr>
+            <tr data-team="CRY"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">CRY</td></tr>
+            <tr data-team="EVE"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">EVE</td></tr>
+            <tr data-team="FUL"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">FUL</td></tr>
+            <tr data-team="IPS"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">IPS</td></tr>
+            <tr data-team="LEI"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">LEI</td></tr>
+            <tr data-team="LIV"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">LIV</td></tr>
+            <tr data-team="MCI"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">MCI</td></tr>
+            <tr data-team="MUN"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">MUN</td></tr>
+            <tr data-team="NEW"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">NEW</td></tr>
+            <tr data-team="NFO"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">NFO</td></tr>
+            <tr data-team="SOU"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">SOU</td></tr>
+            <tr data-team="TOT"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">TOT</td></tr>
+            <tr data-team="WHA"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">WHA</td></tr>
           </tbody>
         </table>
       </div>
@@ -111,11 +151,21 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, doc, onSnapshot, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // 🗓️ GW1 မှ GW38 ခေါင်းစဉ်များကို Dynamic အော်တိုဆွဲထုတ်ခြင်း
+    // 🗓️ GW1 မှ GW38 ခေါင်းစဉ်တိုင်များကို Dynamic Loop ပတ်ဆွဲခြင်း (ကုဒ်အတိုဆုံးဖြစ်အောင် ညှိထားပါသည်)
     const headerRow = document.getElementById("fixture-header-row");
     for (let gw = 1; gw <= 38; gw++) {
-      headerRow.innerHTML += `<th class="p-2.5 border-r min-w-[65px]" style="border-color:rgba(30,106,60,0.15);">GW${gw}</th>`;
+      headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding: 10px 4px; text-align:center;" class="border-r">GW${gw}</th>`;
     }
+
+    // 🗓️ အသင်းတစ်သင်းချင်းစီရဲ့ အတန်းထဲမှာ GW ၃၈ ကွက်စာအတွက် Placeholder TD အလွတ်များ ကြိုတင်ထည့်သွင်းခြင်း
+    document.querySelectorAll("#fixture-table-body tr").forEach(row => {
+      const team = row.getAttribute("data-team");
+      let cellsHtml = "";
+      for (let gw = 1; gw <= 38; gw++) {
+        cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); padding: 10px 4px; text-align:center;" class="border-r">—</td>`;
+      }
+      row.innerHTML += cellsHtml;
+    });
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
@@ -123,62 +173,51 @@
     });
 
     function initRealtimeInsights() {
-      // Current Gameweek Sync
+      // Current Gameweek Live Sync
       onSnapshot(doc(db, "status", "current"), (d) => {
         if(d.exists()) document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
       });
 
-      // 👑 ၁။ Ownership Tab Data Query ခေါ်ယူပုံ
+      // 1. Ownership Tab Listener
       const qOwnership = query(collection(db, "playerStats"), orderBy("ownershipPct", "desc"), limit(5));
       onSnapshot(qOwnership, (snap) => {
         renderScoutStyleList("ownership-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
       });
 
-      // 👑 ၂။ Captains Tab Data Query ခေါ်ယူပုံ (အန်ကယ့် Algorithm: FDR <= 3 အနက် အမှတ်အများဆုံး)
+      // 2. Captains Tab Listener
       const qCaptains = query(collection(db, "playerStats"), where("nextFdr", "<=", 3), orderBy("captainScore", "desc"), limit(5));
       onSnapshot(qCaptains, (snap) => {
         renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Next: ${p.nextOpponent || ""} — FDR ${p.nextFdr}`);
       });
 
-      // 👑 ၃။ Differentials Tab Data Query ခေါ်ယူပုံ (Ownership < 10% အနက် Form အကောင်းဆုံး)
+      // 3. Differentials Tab Listener
       const qDiff = query(collection(db, "playerStats"), where("ownershipPct", "<", 10), orderBy("form", "desc"), limit(5));
       onSnapshot(qDiff, (snap) => {
         renderScoutStyleList("differentials-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
       });
 
-      // 👑 ၄။ Fixture Ease 38 Gameweeks Table Dynamic Builder
+      // 4. Fixture Ease 38 Gameweeks Real-time Listener (ဖုန်းစခရင်အကျယ်နှင့် ကွက်တိညှိစနစ်)
       onSnapshot(collection(db, "teamFixtures"), (snap) => {
-        let tableHtml = "";
-        let selectHtml = `<option value="ALL">Show All Teams (အသင်းအားလုံး)</option>`;
-        
         snap.forEach((doc) => {
           const t = doc.data();
-          const teamCode = t.teamCode || "—";
+          const team = t.teamCode;
           
-          // Dropdown filter list များကိုလည်း ဒေတာဘေ့စ်မှ အော်တိုတည်ဆောက်ပေးခြင်း
-          selectHtml += `<option value="${teamCode}">${teamCode}</option>`;
-          
-          // GW1 မှ GW38 အထိ ပွဲစဉ်ကွက်များကို အော်တို Loop ပတ်ဆွဲခြင်း
-          let gwCellsHtml = "";
-          for (let gw = 1; gw <= 38; gw++) {
-            const matchText = t[`gw${gw}`] || "—";
-            const fdrValue = t[`fdr${gw}`] || 3;
-            gwCellsHtml += `<td class="p-2.5 border-r fdr-${fdrValue}" style="border-color:rgba(30,106,60,0.15);">${matchText}</td>`;
+          // Firebase မှ ပွဲစဉ် ၃၈ ခုလုံးစာ ဒေတာရောက်လာလျှင် ကန့်သတ်ချက်ဘောင်အတိုင်း အော်တိုထိုးထည့်ခြင်း
+          for(let i = 1; i <= 38; i++) {
+            const cell = document.getElementById(`${team}-gw${i}`);
+            if(cell) {
+              cell.textContent = t[`gw${i}`] || "—";
+              cell.className = `fdr-${t[`fdr${i}`] || 3} border-r`;
+              cell.style.padding = "10px 4px";
+              cell.style.textAlign = "center";
+              cell.style.borderColor = "rgba(30,106,60,0.15)";
+            }
           }
-
-          tableHtml += `
-            <tr data-team="${teamCode}" style="border-color:#1e6a3c;">
-              <td class="p-2.5 text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c;">${teamCode}</td>
-              ${gwCellsHtml}
-            </tr>`;
         });
-        
-        document.getElementById("team-filter-select").innerHTML = selectHtml;
-        document.getElementById("fixture-table-body").innerHTML = tableHtml || `<tr><td colspan="39" class="p-4 text-center" style="color:#3A9E5F;">No fixture data available</td></tr>`;
       });
     }
 
-    // Scout Look List Renderer Engine
+    // Scout Look List Generator Engine
     function renderScoutStyleList(elementId, snapshot, rightLabelCallback, descCallback) {
       let html = "";
       let index = 1;
@@ -219,7 +258,8 @@
       document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
       
       document.getElementById('btn-' + tabId).classList.add('active');
-      document.getElementById('view-' + tabId).classList.remove('hidden');
+      document.getElementById('view-' + tabId).className = "tab-content space-y-2";
+      if(tabId === 'fixtures') document.getElementById('view-' + tabId).className = "tab-content flex flex-col space-y-3";
     }
 
     function filterFixtureTable(teamCode) {
@@ -235,3 +275,4 @@
   </script>
 </body>
 </html>
+
