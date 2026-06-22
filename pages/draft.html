@@ -21,7 +21,7 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* 🎨 အဆင့် ၃ ဆင့် FDR မူရင်း ကာလာ Logic မပြောင်းလဲပါ */
+    /* အဆင့် ၃ ဆင့် FDR ကာလာစနစ် (Easy, Normal, Difficult) */
     .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; }
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
@@ -112,7 +112,7 @@
           </tbody>
         </table>
       </div>
-      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: Easy (လွယ်ကူ) | Normal (အလတ်) | Difficult (ခက်ခဲ) | 🌗 DGW မှာ အရောင်နှစ်မျိုးခွဲပြမည်</p>
+      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: Easy (လွယ်ကူ) | Normal (အလတ်) | Difficult (ခက်ခဲ)</p>
     </div>
 
   </div>
@@ -138,21 +138,16 @@
   <script type="module">
     import { auth, db } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, doc, onSnapshot, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    import { collection, doc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // 🗓️ Column Headers Builder
+    // Header & Rows setup
     const headerRow = document.getElementById("fixture-header-row");
-    for (let gw = 1; gw <= 38; gw++) {
-      headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`;
-    }
+    for (let gw = 1; gw <= 38; gw++) { headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`; }
 
-    // 🗓️ Cells Setup
     document.querySelectorAll("#fixture-table-body tr").forEach(row => {
       const team = row.getAttribute("data-team");
       let cellsHtml = "";
-      for (let gw = 1; gw <= 38; gw++) {
-        cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); text-align:center;" class="border-r">—</td>`;
-      }
+      for (let gw = 1; gw <= 38; gw++) { cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); text-align:center;" class="border-r">—</td>`; }
       row.innerHTML += cellsHtml;
     });
 
@@ -178,8 +173,7 @@
     ];
 
     function buildCustomDropdownOptions() {
-      const listEl = document.getElementById("team-options-list");
-      listEl.innerHTML = plTeams.map(t => `
+      document.getElementById("team-options-list").innerHTML = plTeams.map(t => `
         <div onclick="selectTeamFilter('${t.code}', '${t.name}')" class="p-3 rounded-xl flex items-center justify-between cursor-pointer active:scale-[0.98] transition border border-[#1e6a3c]/30" style="background:#124c2a;">
           <span class="text-xs font-bold text-white">${t.name}</span>
           <span class="text-xs font-bold" style="color:#C9A84C;">⚽</span>
@@ -187,54 +181,43 @@
       `).join("");
     }
 
-    window.openTeamModal = () => {
-      const modal = document.getElementById("team-modal");
-      modal.classList.remove("hidden");
-      modal.style.display = "flex";
-    };
-
-    window.closeTeamModal = () => {
-      const modal = document.getElementById("team-modal");
-      modal.classList.add("hidden");
-      modal.style.display = "none";
-    };
-
+    window.openTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.remove("hidden"); m.style.display = "flex"; };
+    window.closeTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.add("hidden"); m.style.display = "none"; };
     window.selectTeamFilter = (code, label) => {
-      document.getElementById("selected-team-label").textContent = label;
-      closeTeamModal();
-      
-      const rows = document.querySelectorAll('#fixture-table-body tr');
-      rows.forEach(row => {
-        if (code === 'ALL' || row.getAttribute('data-team') === code) {
-          row.classList.remove('hidden');
-        } else {
-          row.classList.add('hidden');
-        }
+      document.getElementById("selected-team-label").textContent = label; closeTeamModal();
+      document.querySelectorAll('#fixture-table-body tr').forEach(r => {
+        if (code === 'ALL' || r.getAttribute('data-team') === code) r.classList.remove('hidden'); else r.classList.add('hidden');
       });
     };
 
+    // 🟢 အန်ကယ့် Firebase တည်ဆောက်ပုံအသစ် (Collection: "Players") သို့ လိုက်လျောညီထွေ ညှိနှိုင်းပြင်ဆင်ထားသော စနစ်
     function initRealtimeInsights() {
       onSnapshot(doc(db, "status", "current"), (d) => {
         if(d.exists()) document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
       });
 
-      const qOwnership = query(collection(db, "playerStats"), orderBy("ownershipPct", "desc"), limit(5));
+      // 1. Ownership Tab (အန်ကယ့် "Owner" field ကို အကြီးအသေးလိုက်ညှိပြီး စစ်ထုတ်သည်)
+      const qOwnership = query(collection(db, "Players"), orderBy("Owner", "desc"), limit(5));
       onSnapshot(qOwnership, (snap) => {
-        renderScoutStyleList("ownership-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
+        renderScoutStyleList("ownership-list", snap, (p) => `${p.Owner ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
       });
 
-      const qCaptains = query(collection(db, "playerStats"), where("nextFdr", "<=", 3), orderBy("captainScore", "desc"), limit(5));
+      // 2. Captains Tab (အန်ကယ့် "CaptainScore" အတိုင်း စစ်ထုတ်သည်)
+      const qCaptains = query(collection(db, "Players"), orderBy("CaptainScore", "desc"), limit(5));
       onSnapshot(qCaptains, (snap) => {
-        renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Next: ${p.nextOpponent || ""} — FDR ${p.nextFdr}`);
+        renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.Form ?? 0}`, (p) => `Next: ${p.NextOpponent || ""} — FDR ${p.NextFdr ?? 3}`);
       });
 
-      const qDiff = query(collection(db, "playerStats"), where("ownershipPct", "<", 10), orderBy("form", "desc"), limit(5));
+      // 3. Differentials Tab (အန်ကယ့် "Owner" နှင့် "Form" စနစ်အတိုင်း စစ်ထုတ်သည်)
+      const qDiff = query(collection(db, "Players"), orderBy("Form", "desc"), limit(20));
       onSnapshot(qDiff, (snap) => {
-        renderScoutStyleList("differentials-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
+        // JS ဖြင့် Owner < 10 ရှိသူများကို ကွက်တိ စစ်ထုတ်ပြသခြင်း
+        const filteredDocs = [];
+        snap.forEach(d => { if(parseFloat(d.data().Owner || 0) < 10) filteredDocs.push(d); });
+        renderScoutStyleListFromArr("differentials-list", filteredDocs.slice(0,5), (p) => `${p.Owner ?? 0}% owned`, (p) => `Form: ${p.Form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
       });
     }
 
-    // 🌗 အန်ကယ်ဖြစ်စေချင်သည့် "2+4" Logic ဖြင့် အရောင်နှစ်မျိုးခွဲပြပေးမည့် Dynamic JSON Loader စနစ်
     function loadFixturesFromLocalJSON() {
       fetch('../fixtures.json')
         .then(res => res.json())
@@ -246,42 +229,21 @@
               if(cell) {
                 const matchText = t[`gw${i}`] || "—";
                 const fdrValue = t[`fdr${i}`] !== undefined ? String(t[`fdr${i}`]) : "3";
+                cell.style.padding = "0px"; cell.style.borderColor = "rgba(30,106,60,0.15)";
                 
-                cell.style.padding = "0px"; 
-                cell.style.borderColor = "rgba(30,106,60,0.15)";
-                
-                // 1️⃣ BGW (Blank Week) Logic
                 if (matchText === "BLANK" || matchText === "—") {
                   cell.innerHTML = `<div class="w-full h-full bg-gray-800 text-gray-500 font-bold flex items-center justify-center" style="min-height:38px; font-size:10px;">${matchText}</div>`;
-                }
-                // 2️⃣ DGW Multi-Color Split Logic ("2+4" သို့မဟုတ် "+" ပါဝင်သော စနစ်)
-                else if (fdrValue.includes("+") && matchText.includes("+")) {
-                  const partsFDR = fdrValue.split("+");
-                  const partsText = matchText.split("+");
-                  
-                  const fdrA = partsFDR[0].trim();
-                  const fdrB = partsFDR[1].trim();
-                  const textA = partsText[0].trim();
-                  const textB = partsText[1].trim();
-                  
-                  // FDR Code အလိုက် Hex အရောင်များကို သတ်မှတ်ပေးခြင်း
-                  const getColor = (fdr) => {
-                    if (fdr === "1" || fdr === "2") return "#22c55e"; // Easy (🟢)
-                    if (fdr === "3") return "#eab308";                // Normal (🟡)
-                    return "#ef4444";                                  // Difficult (🔴)
-                  };
-
-                  const getTextColor = (fdr) => fdr === "3" ? "#041e12" : "#ffffff";
-
+                } else if (fdrValue.includes("+") && matchText.includes("+")) {
+                  const partsFDR = fdrValue.split("+"); const partsText = matchText.split("+");
+                  const fdrA = partsFDR[0].trim(); const fdrB = partsFDR[1].trim();
+                  const textA = partsText[0].trim(); const textB = partsText[1].trim();
+                  const getColor = (fdr) => (fdr === "1" || fdr === "2") ? "#22c55e" : (fdr === "3" ? "#eab308" : "#ef4444");
                   cell.innerHTML = `
                     <div class="flex w-full h-full font-bold" style="min-height:38px; font-size:8px; line-height:1.1;">
-                      <div class="w-1/2 flex items-center justify-center p-1 border-r border-black/10" style="background-color:${getColor(fdrA)}; color:${getTextColor(fdrA)};">${textA}</div>
-                      <div class="w-1/2 flex items-center justify-center p-1" style="background-color:${getColor(fdrB)}; color:${getTextColor(fdrB)};">${textB}</div>
-                    </div>
-                  `;
-                } 
-                // 3️⃣ Normal Single Match Logic
-                else {
+                      <div class="w-1/2 flex items-center justify-center p-1 border-r border-black/10" style="background-color:${getColor(fdrA)}; color:${fdrA==="3"?"#041e12":"#fff"};">${textA}</div>
+                      <div class="w-1/2 flex items-center justify-center p-1" style="background-color:${getColor(fdrB)}; color:${fdrB==="3"?"#041e12":"#fff"};">${textB}</div>
+                    </div>`;
+                } else {
                   cell.innerHTML = `<div class="w-full h-full fdr-${fdrValue} flex items-center justify-center" style="min-height:38px; font-size:10px; padding:10px 4px;">${matchText}</div>`;
                 }
               }
@@ -290,34 +252,48 @@
         }).catch(err => console.error(err));
     }
 
+    function buildHtmlRow(p, index, rightLabelCallback, desc) {
+      let posBg = "#9f1239";
+      const pos = String(p.Position || "").toUpperCase();
+      if (pos === "GK") posBg = "#1d4ed8";
+      else if (pos === "DEF") posBg = "#15803d";
+      else if (pos === "MID") posBg = "#92400e";
+
+      return `
+      <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+          <div class="flex items-center gap-3">
+            <span class="text-xs font-black w-5 text-center" style="color:#C9A84C;">#${index}</span>
+            <div class="flex items-center gap-2">
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${posBg};">${p.Position||"?"}</span>
+              <div>
+                <p class="text-white text-sm font-semibold">${p.Name || '—'}</p>
+                <p class="text-xs" style="color:#3A9E5F; font-size:0.72rem;">${desc}</p>
+              </div>
+            </div>
+          </div>
+          <div class="text-right">
+            <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.Price || 0}m</p>
+            <p class="text-[10px]" style="color:#E8D5A3;">${rightLabelCallback(p)}</p>
+          </div>
+        </div>`;
+    }
+
     function renderScoutStyleList(elementId, snapshot, rightLabelCallback, descCallback) {
-      let html = "";
-      let index = 1;
+      let html = ""; let index = 1;
       snapshot.forEach((doc) => {
         const p = doc.data();
         const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
-        let posBg = "#9f1239";
-        if (p.position === "GK") posBg = "#1d4ed8";
-        else if (p.position === "DEF") posBg = "#15803d";
-        else if (p.position === "MID") posBg = "#92400e";
+        html += buildHtmlRow(p, index++, rightLabelCallback, desc);
+      });
+      document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
+    }
 
-        html += `
-          <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
-            <div class="flex items-center gap-3">
-              <span class="text-xs font-black w-5 text-center" style="color:#C9A84C;">#${index++}</span>
-              <div class="flex items-center gap-2">
-                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${posBg};">${p.position||"?"}</span>
-                <div>
-                  <p class="text-white text-sm font-semibold">${p.name || '—'}</p>
-                  <p class="text-xs" style="color:#3A9E5F; font-size:0.72rem;">${desc}</p>
-                </div>
-              </div>
-            </div>
-            <div class="text-right">
-              <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.price || 0}m</p>
-              <p class="text-[10px]" style="color:#E8D5A3;">${rightLabelCallback(p)}</p>
-            </div>
-          </div>`;
+    function renderScoutStyleListFromArr(elementId, arr, rightLabelCallback, descCallback) {
+      let html = ""; let index = 1;
+      arr.forEach((doc) => {
+        const p = doc.data();
+        const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
+        html += buildHtmlRow(p, index++, rightLabelCallback, desc);
       });
       document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
     }
@@ -327,10 +303,8 @@
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.className = "tab-content hidden");
-      
       document.getElementById('btn-' + tabId).classList.add('active');
-      document.getElementById('view-' + tabId).className = "tab-content space-y-2";
-      if(tabId === 'fixtures') document.getElementById('view-' + tabId).className = "tab-content flex flex-col space-y-3";
+      document.getElementById('view-' + tabId).className = tabId === 'fixtures' ? "tab-content flex flex-col space-y-3" : "tab-content space-y-2";
     }
   </script>
 </body>
