@@ -3,69 +3,74 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0f141c" />
+  <meta name="theme-color" content="#0D2B1A" />
   <title>Insights — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #0b0e14; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .tab-btn.active { border-color: #F0D060; color: #F0D060; background: rgba(240,208,96,0.05); }
-    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
+    .nav-item.active { color:#C9A84C; }
+    .tab-btn { border: 1px solid rgba(201,168,76,0.3); color: #E8D5A3; border-radius: 0.5rem; padding: 6px 12px; font-size: 0.72rem; font-weight: 600; cursor: pointer; background: transparent; transition: all 0.2s; white-space: nowrap; }
+    .tab-btn.active { background: rgba(201,168,76,0.2); border-color: #C9A84C; color: #C9A84C; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* FDR Color-coded စနစ် */
-    .fdr-1, .fdr-2 { background-color: #00ff87; color: #37003c; font-weight: 900; }
-    .fdr-3 { background-color: #efff00; color: #37003c; font-weight: 900; }
-    .fdr-4, .fdr-5 { background-color: #ff005a; color: white; font-weight: 900; }
+    /* FDR Color-coded (Scout standard look အတိုင်း ညှိထားပါသည်) */
+    .fdr-1 { background-color: #22c55e; color: white; font-weight: bold; }
+    .fdr-2 { background-color: #84cc16; color: white; font-weight: bold; }
+    .fdr-3 { background-color: #eab308; color: #0D2B1A; font-weight: bold; }
+    .fdr-4 { background-color: #f97316; color: white; font-weight: bold; }
+    .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
   </style>
 </head>
 <body class="scrollbar-none">
 
-  <!-- Top Navigation Bar -->
-  <div class="bg-[#0f141c] border-b border-gray-800 px-4 py-3 flex justify-between items-center flex-shrink-0 shadow-lg">
-    <div class="flex items-center gap-2">
-      <a href="/twfpl26-27/pages/dashboard.html" class="text-yellow-500 text-lg font-bold">←</a>
-      <h1 class="gold-text font-black text-xl tracking-wider font-['Bebas_Neue']">TW VIP INSIGHTS</h1>
+  <div style="background:#0D2B1A; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
+    <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
+    <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">TW VIP INSIGHTS</h1>
+    <span id="gw-header-label" class="ml-auto text-xs font-bold px-2 py-0.5 rounded-md" style="background:#1F5C36; color:#E8D5A3;">GW —</span>
+  </div>
+
+  <div style="padding:10px 16px 10px; flex-shrink:0; border-bottom:1px solid #1F5C36;">
+    <div style="display:flex; gap:6px; overflow-x:auto;" class="no-scrollbar">
+      <button onclick="switchTab('ownership')" id="btn-ownership" class="tab-btn active">📊 Ownership</button>
+      <button onclick="switchTab('captains')" id="btn-captains" class="tab-btn">👑 Captains</button>
+      <button onclick="switchTab('differentials')" id="btn-differentials" class="tab-btn">⚡ Differentials</button>
+      <button onclick="switchTab('fixtures')" id="btn-fixtures" class="tab-btn">🗓️ Fixture Ease</button>
     </div>
-    <span id="gw-header-label" class="text-[10px] text-gray-400 font-bold bg-gray-800 px-2 py-0.5 rounded">GW —</span>
   </div>
 
-  <!-- Tabs Selector -->
-  <div class="bg-[#131a26] border-b border-gray-800 flex gap-x-2 px-3 py-2.5 overflow-x-auto no-scrollbar flex-shrink-0">
-    <button onclick="switchTab('ownership')" id="btn-ownership" class="tab-btn active text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 flex-shrink-0">📊 Ownership</button>
-    <button onclick="switchTab('captains')" id="btn-captains" class="tab-btn text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 flex-shrink-0">👑 Captains</button>
-    <button onclick="switchTab('differentials')" id="btn-differentials" class="tab-btn text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 flex-shrink-0">⚡ Differentials</button>
-    <button onclick="switchTab('fixtures')" id="btn-fixtures" class="tab-btn text-xs font-bold px-3 py-1.5 rounded-lg border border-gray-700 text-gray-400 flex-shrink-0">🗓️ Fixture Ease</button>
-  </div>
-
-  <!-- Main Content Display Area -->
-  <div class="flex-1 overflow-y-auto p-3 scrollbar-none">
+  <div class="flex-1 overflow-y-auto px-4 py-3 scrollbar-none">
     
-    <!-- TAB 1: OWNERSHIP VIEW -->
-    <div id="view-ownership" class="tab-content space-y-2.5">
-      <p class="text-[10px] text-gray-400 uppercase font-black tracking-wider px-1 mb-1">🔥 "မင်းမပါရင် template ကနေ ပြတ်ကျမယ်" Players</p>
-      <div id="ownership-list" class="space-y-2.5"><p class="text-center text-xs py-12 text-gray-500">Loading...</p></div>
+    <div id="view-ownership" class="tab-content space-y-2">
+      <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">🔥 "မင်းမပါရင် template ကနေ ပြတ်ကျမယ်" Players</p>
+      <div id="ownership-list" class="space-y-2">
+        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p>
+      </div>
     </div>
 
-    <!-- TAB 2: CAPTAINS VIEW -->
-    <div id="view-captains" class="tab-content space-y-2.5 hidden">
-      <p class="text-[10px] text-gray-400 uppercase font-black tracking-wider px-1 mb-1">🎯 HIGH POINTS + GOOD FORM + EASY NEXT FIXTURE (FDR ≤ 3)</p>
-      <div id="captains-list" class="space-y-2.5"><p class="text-center text-xs py-12 text-gray-500">Loading...</p></div>
+    <div id="view-captains" class="tab-content space-y-2 hidden">
+      <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">🎯 HIGH POINTS + GOOD FORM + EASY NEXT FIXTURE (FDR ≤ 3)</p>
+      <div id="captains-list" class="space-y-2">
+        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p>
+      </div>
     </div>
 
-    <!-- TAB 3: DIFFERENTIALS VIEW -->
-    <div id="view-differentials" class="tab-content space-y-2.5 hidden">
-      <p class="text-[10px] text-gray-400 uppercase font-black tracking-wider px-1 mb-1">💎 OWNERSHIP &lt; 10% "HIDDEN GEMS" CONCEPT</p>
-      <div id="differentials-list" class="space-y-2.5"><p class="text-center text-xs py-12 text-gray-500">Loading...</p></div>
+    <div id="view-differentials" class="tab-content space-y-2 hidden">
+      <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">💎 OWNERSHIP &lt; 10% "HIDDEN GEMS" CONCEPT</p>
+      <div id="differentials-list" class="space-y-2">
+        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p>
+      </div>
     </div>
 
-    <!-- TAB 4: FIXTURE EASE VIEW -->
     <div id="view-fixtures" class="tab-content hidden flex flex-col space-y-3">
-      <div class="flex items-center justify-between bg-[#131a26] p-2.5 rounded-xl border border-gray-800">
-        <span class="text-[10px] font-black text-gray-400 uppercase tracking-wider">🔍 Team Filter:</span>
-        <select onchange="filterFixtureTable(this.value)" class="bg-[#0f141c] text-xs text-yellow-500 font-bold border border-gray-700 rounded-lg px-3 py-1.5 focus:outline-none">
+      <div class="flex items-center justify-between p-2 rounded-xl" style="background:#1F5C36; border:1px solid #2A7A47;">
+        <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
+        <select onchange="filterFixtureTable(this.value)" class="text-xs font-bold rounded px-2 py-1 focus:outline-none" style="background:#0D2B1A; color:#C9A84C; border:1px solid #2A7A47;">
           <option value="ALL">Show All Teams (အသင်းအားလုံး)</option>
           <option value="ARS">Arsenal (ARS)</option>
           <option value="AVL">Aston Villa (AVL)</option>
@@ -76,29 +81,35 @@
         </select>
       </div>
 
-      <div class="w-full overflow-x-auto bg-[#131a26] rounded-xl border border-gray-800 shadow-xl no-scrollbar">
-        <table class="w-full text-center text-[10px] border-collapse min-w-[380px]">
-          <thead class="bg-[#0f1520] text-gray-400 text-[8px] uppercase tracking-wider border-b border-gray-800">
+      <div class="w-full overflow-x-auto rounded-xl border no-scrollbar" style="background:#1F5C36; border-color:#2A7A47; box-shadow:0 4px 15px rgba(0,0,0,0.2);">
+        <table class="w-full text-center text-[11px] border-collapse min-w-[380px]">
+          <thead class="text-[9px] uppercase tracking-wider border-b" style="background:#162F20; border-color:#2A7A47; color:#3A9E5F;">
             <tr>
-              <th class="p-2.5 text-left font-bold w-16 bg-[#0f1520] sticky left-0 z-20 border-r border-gray-800">Team</th>
-              <th class="p-2.5 border-r border-gray-800/40">GW39</th>
-              <th class="p-2.5 border-r border-gray-800/40">GW40</th>
-              <th class="p-2.5 border-r border-gray-800/40">GW41</th>
-              <th class="p-2.5 border-r border-gray-800/40">GW42</th>
+              <th class="p-2.5 text-left font-bold w-16 sticky left-0 z-20 border-r" style="background:#162F20; border-color:#2A7A47;">Team</th>
+              <th class="p-2.5 border-r border-gray-800/10">GW39</th>
+              <th class="p-2.5 border-r border-gray-800/10">GW40</th>
+              <th class="p-2.5 border-r border-gray-800/10">GW41</th>
+              <th class="p-2.5 border-r border-gray-800/10">GW42</th>
               <th class="p-2.5">GW43</th>
             </tr>
           </thead>
-          <tbody id="fixture-table-body" class="divide-y divide-gray-800/40 font-bold">
-            <!-- Table Rows များကို JavaScript မှ Real-time Render လုပ်ပေးမည် -->
-          </tbody>
+          <tbody id="fixture-table-body" class="divide-y font-bold" style="border-color:#2A7A47;">
+            </tbody>
         </table>
       </div>
-      <p class="text-[8px] text-gray-500 px-1">💡 ပြကွက်အညွှန်း: 🟢 Easy (FDR 1-2) | 🟡 Medium (FDR 3) | 🔴 Hard (FDR 4-5)</p>
+      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: FDR 1-2 (လွယ်ကူ) | FDR 3 (အလတ်) | FDR 4-5 (ခက်ခဲ)</p>
     </div>
 
   </div>
 
-  <!-- 📡 Firebase Real-time Data Logic Module -->
+  <div style="background:#0D2B1A; border-top:1px solid #1F5C36; display:flex; justify-content:space-around; align-items:center; padding:4px 0; flex-shrink:0;">
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
+    <div class="nav-item active"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  </div>
+
   <script type="module">
     import { auth, db } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -106,82 +117,81 @@
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
-      initRealtimeStats();
+      initRealtimeInsights();
     });
 
-    function initRealtimeStats() {
-      // Current Gameweek Header ဖတ်ရန်
+    function initRealtimeInsights() {
+      // Gameweek Status ဖတ်ရန်
       onSnapshot(doc(db, "status", "current"), (d) => {
         if(d.exists()) document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
       });
 
-      // 1. Ownership: ပိုင်ဆိုင်မှု % အမြင့်ဆုံး စီပြီး ထိပ်ဆုံး ၅ ယောက် ယူမည်
+      // 1. Ownership Tab (Top 5 Pct Owned)
       const qOwnership = query(collection(db, "playerStats"), orderBy("ownershipPct", "desc"), limit(5));
       onSnapshot(qOwnership, (snap) => {
-        renderPlayerList("ownership-list", snap, (p) => `${p.ownershipPct ?? 0}% Own`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
+        renderInsightsList("ownership-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
       });
 
-      // 2. Captains: အန်ကယ့် Algorithm (High Pts + Good Form + FDR <= 3) အရ Score အမြင့်ဆုံး ၅ ယောက်
+      // 2. Captains Tab (FDR <= 3 && Top CaptainScore)
       const qCaptains = query(collection(db, "playerStats"), where("nextFdr", "<=", 3), orderBy("captainScore", "desc"), limit(5));
       onSnapshot(qCaptains, (snap) => {
-        renderPlayerList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Next: ${p.nextOpponent || ""} — FDR ${p.nextFdr}`);
+        renderInsightsList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Next: ${p.nextOpponent || ""} — FDR ${p.nextFdr}`);
       });
 
-      // 3. Differentials: Ownership < 10% ဖြစ်ပြီး Form အကောင်းဆုံး ထိပ်ဆုံး ၅ ယောက်
+      // 3. Differentials Tab (Ownership < 10% && Top Form)
       const qDiff = query(collection(db, "playerStats"), where("ownershipPct", "<", 10), orderBy("form", "desc"), limit(5));
       onSnapshot(qDiff, (snap) => {
-        renderPlayerList("differentials-list", snap, (p) => `${p.ownershipPct ?? 0}% Own`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
+        renderInsightsList("differentials-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
       });
 
-      // 4. Fixture Ease: အသင်း ၂၀ လုံး၏ နောက်လာမည့် ၅ ပွဲ FDR ဇယားကွက်ဆွဲခြင်း
+      // 4. Fixture Ease Tab (Team 20 Table Row Builder)
       onSnapshot(collection(db, "teamFixtures"), (snap) => {
         let html = "";
         snap.forEach((doc) => {
-          const t = doc.data(); // t.teamCode, t.gw1, t.fdr1, t.gw2, t.fdr2 ... စသည်ဖြင့် မျှော်လင့်ပါသည်
+          const t = doc.data();
           html += `
-            <tr data-team="${t.teamCode || ''}">
-              <td class="p-2.5 text-left font-black text-white bg-[#131a26] sticky left-0 z-10 border-r border-gray-800">${t.teamCode || ''}</td>
-              <td class="p-2.5 border-r border-gray-800/20 fdr-${t.fdr1 || 3}">${t.gw1 || '—'}</td>
-              <td class="p-2.5 border-r border-gray-800/20 fdr-${t.fdr2 || 3}">${t.gw2 || '—'}</td>
-              <td class="p-2.5 border-r border-gray-800/20 fdr-${t.fdr3 || 3}">${t.gw3 || '—'}</td>
-              <td class="p-2.5 border-r border-gray-800/20 fdr-${t.fdr4 || 3}">${t.gw4 || '—'}</td>
+            <tr data-team="${t.teamCode || ''}" style="border-color:#2A7A47;">
+              <td class="p-2.5 text-left font-black text-white sticky left-0 z-10 border-r" style="background:#1F5C36; border-color:#2A7A47;">${t.teamCode || ''}</td>
+              <td class="p-2.5 border-r fdr-${t.fdr1 || 3}" style="border-color:rgba(42,122,71,0.2);">${t.gw1 || '—'}</td>
+              <td class="p-2.5 border-r fdr-${t.fdr2 || 3}" style="border-color:rgba(42,122,71,0.2);">${t.gw2 || '—'}</td>
+              <td class="p-2.5 border-r fdr-${t.fdr3 || 3}" style="border-color:rgba(42,122,71,0.2);">${t.gw3 || '—'}</td>
+              <td class="p-2.5 border-r fdr-${t.fdr4 || 3}" style="border-color:rgba(42,122,71,0.2);">${t.gw4 || '—'}</td>
               <td class="p-2.5 fdr-${t.fdr5 || 3}">${t.gw5 || '—'}</td>
             </tr>`;
         });
-        document.getElementById("fixture-table-body").innerHTML = html || `<tr><td colspan="6" class="p-4 text-gray-500">No data available</td></tr>`;
+        document.getElementById("fixture-table-body").innerHTML = html || `<tr><td colspan="6" class="p-4 text-center" style="color:#3A9E5F;">No data available</td></tr>`;
       });
     }
 
-    // Dynamic Player UI Generator Helper
-    function renderPlayerList(elementId, snapshot, badgeCallback, descCallback) {
+    // 🎨 Scout Style Card Row Builder
+    function renderInsightsList(elementId, snapshot, rightLabelCallback, descCallback) {
       let html = "";
       let index = 1;
       snapshot.forEach((doc) => {
         const p = doc.data();
         const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
         html += `
-          <div class="bg-[#131a26] border border-gray-800 rounded-xl p-2.5 flex items-center justify-between shadow-md">
+          <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#1F5C36; border:1px solid #2A7A47; box-shadow:0 2px 8px rgba(0,0,0,0.15);">
             <div class="flex items-center gap-3">
-              <span class="text-xs font-black text-yellow-500/80 w-4 text-center">${index++}</span>
-              <div class="w-[54px] bg-[#0d5e34]/40 border border-emerald-500/10 rounded-xl flex flex-col items-center p-1 pb-0 shadow-lg shadow-black/20">
-                <img src="https://fantasy.premierleague.com/dist/img/shirts/standard/shirt_${p.teamCode || '1-66'}.png" class="h-9 object-contain filter drop-shadow-md" onerror="this.src='/twfpl26-27/public/jerseys/outfield/unknown.png'"/>
-                <div class="w-full bg-white text-center text-[7.5px] text-[#37003c] font-black rounded-t mt-1 py-0.5 truncate">${p.name || '?'}</div>
-              </div>
-              <div>
-                <h4 class="font-bold text-xs text-white">${p.name || '?'} (${p.teamCode || ''})</h4>
-                <p class="text-[10px] text-gray-400 mt-0.5 leading-none">${desc}</p>
+              <span class="text-xs font-black w-5 text-center" style="color:#C9A84C;">#${index++}</span>
+              <div class="flex items-center gap-2">
+                <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${p.position==='GK'?'#1d4ed8':p.position==='DEF'?'#15803d':p.position==='MID'?'#92400e':'#9f1239'};">${p.position||"?"}</span>
+                <div>
+                  <p class="text-white text-sm font-semibold">${p.name || '—'}</p>
+                  <p class="text-xs" style="color:#E8D5A3; font-size:0.7rem;">${desc}</p>
+                </div>
               </div>
             </div>
-            <div class="bg-[#37003c] px-2.5 py-1.5 rounded-lg border border-purple-900/30 text-center min-w-[65px]">
-              <span class="text-[9px] font-extrabold text-white">${badgeCallback(p)}</span>
+            <div class="text-right">
+              <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.price || 0}m</p>
+              <p class="text-[10px]" style="color:#3A9E5F; font-weight:600;">${rightLabelCallback(p)}</p>
             </div>
           </div>`;
       });
-      document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8 text-gray-500">ဒေတာမရှိသေးပါ</p>`;
+      document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
     }
   </script>
 
-  <!-- Navigation Switcher Actions Script -->
   <script>
     function switchTab(tabId) {
       document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
@@ -204,4 +214,5 @@
   </script>
 </body>
 </html>
+
 
