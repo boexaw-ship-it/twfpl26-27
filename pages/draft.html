@@ -236,6 +236,7 @@
       });
     }
 
+    // 📡 DGW/BGW Logic များပါဝင်အောင် အဆင့်မြှင့်တင်ထားသော Local JSON Sync Core Function
     function loadFixturesFromLocalJSON() {
       fetch('../fixtures.json')
         .then(res => res.json())
@@ -245,9 +246,26 @@
             for(let i = 1; i <= 38; i++) {
               const cell = document.getElementById(`${team}-gw${i}`);
               if(cell) {
-                cell.textContent = t[`gw${i}`] || "—";
-                cell.className = `fdr-${t[`fdr${i}`] || 3} border-r`;
-                cell.style.padding = "10px 4px";
+                const matchText = t[`gw${i}`] || "—";
+                cell.textContent = matchText;
+                
+                // 💡 BGW (Blank Week) ဖြစ်ပါက အရောင်မှိန်ပေးမည့် Style Logic
+                if (matchText === "BLANK" || matchText === "—") {
+                  cell.className = "bg-gray-800 text-gray-500 border-r";
+                } else {
+                  cell.className = `fdr-${t[`fdr${i}`] || 3} border-r`;
+                }
+                
+                // 💡 DGW (Double Week) ဖြစ်၍ စာသားရှည်ပါက အကွက်မပျက်စေရန် Font အရွယ်အစား ညှိပေးမည့် Style Logic
+                if (matchText.includes("+") || matchText.includes("&")) {
+                  cell.style.fontSize = "8px";
+                  cell.style.lineHeight = "1.1";
+                } else {
+                  cell.style.fontSize = "10px";
+                  cell.style.lineHeight = "normal";
+                }
+
+                cell.style.padding = "10px 2px";
                 cell.style.textAlign = "center";
                 cell.style.borderColor = "rgba(30,106,60,0.15)";
               }
