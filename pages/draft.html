@@ -190,31 +190,30 @@
       });
     };
 
-    // 🟢 အန်ကယ့် Firebase တည်ဆောက်ပုံအသစ် (Collection: "Players") သို့ လိုက်လျောညီထွေ ညှိနှိုင်းပြင်ဆင်ထားသော စနစ်
+    // 🟢 အန်ကယ့် "players" (စာလုံးအသေး) ဘဏ်တိုက်ထဲက field နာမည်များ (name, position, price, ownership, form) အတိုင်း ကွက်တိ ပြောင်းလဲထားသော စနစ်
     function initRealtimeInsights() {
       onSnapshot(doc(db, "status", "current"), (d) => {
         if(d.exists()) document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
       });
 
-      // 1. Ownership Tab (အန်ကယ့် "Owner" field ကို အကြီးအသေးလိုက်ညှိပြီး စစ်ထုတ်သည်)
-      const qOwnership = query(collection(db, "Players"), orderBy("Owner", "desc"), limit(5));
+      // 1. Ownership Tab (scout.html အတိုင်း "ownership" field အသေးဖြင့် စစ်ထုတ်သည်)
+      const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"), limit(5));
       onSnapshot(qOwnership, (snap) => {
-        renderScoutStyleList("ownership-list", snap, (p) => `${p.Owner ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
+        renderScoutStyleList("ownership-list", snap, (p) => `${p.ownership ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
       });
 
-      // 2. Captains Tab (အန်ကယ့် "CaptainScore" အတိုင်း စစ်ထုတ်သည်)
-      const qCaptains = query(collection(db, "Players"), orderBy("CaptainScore", "desc"), limit(5));
+      // 2. Captains Tab (scout.html ထဲကအတိုင်း "form" သို့မဟုတ် totalPoints အခြေခံ၍ စစ်ထုတ်သည်)
+      const qCaptains = query(collection(db, "players"), orderBy("form", "desc"), limit(5));
       onSnapshot(qCaptains, (snap) => {
-        renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.Form ?? 0}`, (p) => `Next: ${p.NextOpponent || ""} — FDR ${p.NextFdr ?? 3}`);
+        renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Team: ${p.team || "—"} | ⭐ Pts: ${p.totalPoints ?? 0}`);
       });
 
-      // 3. Differentials Tab (အန်ကယ့် "Owner" နှင့် "Form" စနစ်အတိုင်း စစ်ထုတ်သည်)
-      const qDiff = query(collection(db, "Players"), orderBy("Form", "desc"), limit(20));
+      // 3. Differentials Tab (ownership < 10% ရှိပြီး Form အကောင်းဆုံးလူများကို တွက်ထုတ်ပြသခြင်း)
+      const qDiff = query(collection(db, "players"), orderBy("form", "desc"), limit(20));
       onSnapshot(qDiff, (snap) => {
-        // JS ဖြင့် Owner < 10 ရှိသူများကို ကွက်တိ စစ်ထုတ်ပြသခြင်း
         const filteredDocs = [];
-        snap.forEach(d => { if(parseFloat(d.data().Owner || 0) < 10) filteredDocs.push(d); });
-        renderScoutStyleListFromArr("differentials-list", filteredDocs.slice(0,5), (p) => `${p.Owner ?? 0}% owned`, (p) => `Form: ${p.Form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
+        snap.forEach(d => { if(parseFloat(d.data().ownership || 0) < 10) filteredDocs.push(d); });
+        renderScoutStyleListFromArr("differentials-list", filteredDocs.slice(0,5), (p) => `${p.ownership ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
       });
     }
 
@@ -254,25 +253,25 @@
 
     function buildHtmlRow(p, index, rightLabelCallback, desc) {
       let posBg = "#9f1239";
-      const pos = String(p.Position || "").toUpperCase();
+      const pos = String(p.position || "").toUpperCase();
       if (pos === "GK") posBg = "#1d4ed8";
       else if (pos === "DEF") posBg = "#15803d";
       else if (pos === "MID") posBg = "#92400e";
 
       return `
-      <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+        <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
           <div class="flex items-center gap-3">
             <span class="text-xs font-black w-5 text-center" style="color:#C9A84C;">#${index}</span>
             <div class="flex items-center gap-2">
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${posBg};">${p.Position||"?"}</span>
+              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${posBg};">${p.position||"?"}</span>
               <div>
-                <p class="text-white text-sm font-semibold">${p.Name || '—'}</p>
+                <p class="text-white text-sm font-semibold">${p.name || '—'}</p>
                 <p class="text-xs" style="color:#3A9E5F; font-size:0.72rem;">${desc}</p>
               </div>
             </div>
           </div>
           <div class="text-right">
-            <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.Price || 0}m</p>
+            <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.price || 0}m</p>
             <p class="text-[10px]" style="color:#E8D5A3;">${rightLabelCallback(p)}</p>
           </div>
         </div>`;
@@ -292,7 +291,7 @@
       let html = ""; let index = 1;
       arr.forEach((doc) => {
         const p = doc.data();
-        const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
+        const desc = typeof descCallback === "function" ? docCallback(p) : descCallback;
         html += buildHtmlRow(p, index++, rightLabelCallback, desc);
       });
       document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
