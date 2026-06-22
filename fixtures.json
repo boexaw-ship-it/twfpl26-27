@@ -1,32 +1,183 @@
 [
-  { "teamCode": "ARS", "gw1": "COV (H)", "fdr1": 2 },
-  { "teamCode": "COV", "gw1": "ARS (A)", "fdr1": 4 },
-  
-  { "teamCode": "HUL", "gw1": "MUN (H)", "fdr1": 3 },
-  { "teamCode": "MUN", "gw1": "HUL (A)", "fdr1": 2 },
-  
-  { "teamCode": "EVE", "gw1": "CRY (H)", "fdr1": 2 },
-  { "teamCode": "CRY", "gw1": "EVE (A)", "fdr1": 2 },
-  
-  { "teamCode": "IPS", "gw1": "SUN (H)", "fdr1": 2 },
-  { "teamCode": "SUN", "gw1": "IPS (A)", "fdr1": 3 },
-  
-  { "teamCode": "NFO", "gw1": "LEE (H)", "fdr1": 2 },
-  { "teamCode": "LEE", "gw1": "NFO (A)", "fdr1": 3 },
-  
-  { "teamCode": "NEW", "gw1": "LIV (H)", "fdr1": 4 },
-  { "teamCode": "LIV", "gw1": "NEW (A)", "fdr1": 3 },
-  
-  { "teamCode": "FUL", "gw1": "CHE (H)", "fdr1": 3 },
-  { "teamCode": "CHE", "gw1": "FUL (A)", "fdr1": 3 },
-
-  /* 💡 အောက်ပါအသင်းများသည် Round 1 ၏ ကျန်ရှိသောရက်များတွင် ကစားရမည့် အိမ်/အဝေး ပွဲစဉ်အမှန်များ ဖြစ်ပါသည် */
-  { "teamCode": "MCI", "gw1": "BOU (H)", "fdr1": 2 },
-  { "teamCode": "BOU", "gw1": "MCI (A)", "fdr1": 4 },
-  
-  { "teamCode": "BRE", "gw1": "TOT (H)", "fdr1": 3 },
-  { "teamCode": "TOT", "gw1": "BRE (A)", "fdr1": 2 },
-  
-  { "teamCode": "BHA", "gw1": "AVL (H)", "fdr1": 3 },
-  { "teamCode": "AVL", "gw1": "BHA (A)", "fdr1": 3 }
+  {
+    "teamCode": "ARS",
+    "gw1": "COV (H)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "AVL",
+    "gw1": "bha (A)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "BHA",
+    "gw1": "AVL (H)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "BOU",
+    "gw1": "mci (A)", "fdr1": 4,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "BRE",
+    "gw1": "TOT (H)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "CHE",
+    "gw1": "ful (A)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "COV",
+    "gw1": "ARS (H)", "fdr1": 4,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "CRY",
+    "gw1": "eve (A)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "EVE",
+    "gw1": "CRY (H)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "FUL",
+    "gw1": "CHE (H)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "HUL",
+    "gw1": "MUN (H)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "IPS",
+    "gw1": "SUN (H)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "LEE",
+    "gw1": "nfo (A)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "LIV",
+    "gw1": "new (A)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "MCI",
+    "gw1": "BOU (H)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "MUN",
+    "gw1": "hul (A)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "NEW",
+    "gw1": "LIV (H)", "fdr1": 4,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "NFO",
+    "gw1": "LEE (H)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "SUN",
+    "gw1": "ips (A)", "fdr1": 3,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  },
+  {
+    "teamCode": "TOT",
+    "gw1": "bre (A)", "fdr1": 2,
+    "gw2": "...", "fdr2": 3,
+    "gw3": "...", "fdr3": 3,
+    "gw4": "...", "fdr4": 3,
+    "gw5": "...", "fdr5": 3,
+    "gw38": "...", "fdr38": 3
+  }
 ]
+
