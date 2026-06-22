@@ -143,13 +143,13 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, doc, onSnapshot, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // 🗓️ GW1 to GW38 Headers
+    // 🗓️ Headers setup
     const headerRow = document.getElementById("fixture-header-row");
     for (let gw = 1; gw <= 38; gw++) {
       headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`;
     }
 
-    // 🗓️ Placeholder Cells Builder
+    // 🗓️ Cells setup
     document.querySelectorAll("#fixture-table-body tr").forEach(row => {
       const team = row.getAttribute("data-team");
       let cellsHtml = "";
@@ -163,10 +163,9 @@
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       initRealtimeInsights();
       loadFixturesFromLocalJSON();
-      buildCustomDropdownOptions(); // Menu စာရင်း တည်ဆောက်ခြင်း
+      buildCustomDropdownOptions();
     });
 
-    // 🟢 Dropdown ထဲတွင် ပြသမည့် ပရီးမီးယားလိဂ် အသင်း ၂၀ အမည်စာရင်း
     const plTeams = [
       { code: "ALL", name: "Show All Teams (အသင်းအားလုံး)" },
       { code: "ARS", name: "Arsenal (ARS)" }, { code: "AVL", name: "Aston Villa (AVL)" },
@@ -186,7 +185,7 @@
       listEl.innerHTML = plTeams.map(t => `
         <div onclick="selectTeamFilter('${t.code}', '${t.name}')" class="p-3 rounded-xl flex items-center justify-between cursor-pointer active:scale-[0.98] transition border border-[#1e6a3c]/30" style="background:#124c2a;">
           <span class="text-xs font-bold text-white">${t.name}</span>
-          <span class="text-xs font-bold" style="color:#C9A84C;">${t.code === 'ALL' ? '🌐' : '⚽'}</span>
+          <span class="text-xs font-bold" style="color:#C9A84C;">⚽</span>
         </div>
       `).join("");
     }
@@ -207,7 +206,6 @@
       document.getElementById("selected-team-label").textContent = label;
       closeTeamModal();
       
-      // Filter Table Rows
       const rows = document.querySelectorAll('#fixture-table-body tr');
       rows.forEach(row => {
         if (code === 'ALL' || row.getAttribute('data-team') === code) {
@@ -239,9 +237,13 @@
       });
     }
 
+    // 🟢 ပြင်ဆင်လိုက်သည့်နေရာ: draft.html က pages folder ထဲရောက်နေသဖြင့် fixtures.json ကို အပြင်ထွက်ဖတ်ရန် လမ်းကြောင်းအား "../fixtures.json" ဟု ပြောင်းထားပါသည်
     function loadFixturesFromLocalJSON() {
-      fetch('fixtures.json')
-        .then(res => res.json())
+      fetch('../fixtures.json')
+        .then(res => {
+          if (!res.ok) throw new Error("Local JSON data not found");
+          return res.json();
+        })
         .then(data => {
           data.forEach(t => {
             const team = t.teamCode;
@@ -304,5 +306,6 @@
   </script>
 </body>
 </html>
+
 
 
