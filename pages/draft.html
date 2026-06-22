@@ -21,10 +21,10 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* အဆင့် ၃ ဆင့် FDR ကာလာစနစ် (Easy, Normal, Difficult) */
-    .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; } /* Easy (🟢) */
-    .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }          /* Normal (🟡) */
-    .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; } /* Difficult (🔴) */
+    /* 🎨 အဆင့် ၃ ဆင့် FDR မူရင်း ကာလာ Logic မပြောင်းလဲပါ */
+    .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; }
+    .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
+    .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
   </style>
 </head>
 <body class="scrollbar-none">
@@ -112,7 +112,7 @@
           </tbody>
         </table>
       </div>
-      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: Easy (လွယ်ကူ) | Normal (အလတ်) | Difficult (ခက်ခဲ)</p>
+      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: Easy (လွယ်ကူ) | Normal (အလတ်) | Difficult (ခက်ခဲ) | 🌗 DGW မှာ အရောင်နှစ်မျိုးခွဲပြမည်</p>
     </div>
 
   </div>
@@ -131,8 +131,7 @@
         <span class="text-xs font-bold tracking-wider" style="color:#3A9E5F;">SELECT TEAM FILTER</span>
         <button onclick="closeTeamModal()" class="text-sm font-bold w-6 h-6 rounded-full flex items-center justify-center" style="background:#124c2a; color:#E8D5A3;">✕</button>
       </div>
-      <div class="overflow-y-auto flex-1 space-y-1.5 no-scrollbar pr-0.5" id="team-options-list">
-        </div>
+      <div class="overflow-y-auto flex-1 space-y-1.5 no-scrollbar pr-0.5" id="team-options-list"></div>
     </div>
   </div>
 
@@ -141,7 +140,7 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, doc, onSnapshot, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // 🗓️ GW1 to GW38 Headers Setup
+    // 🗓️ Column Headers Builder
     const headerRow = document.getElementById("fixture-header-row");
     for (let gw = 1; gw <= 38; gw++) {
       headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`;
@@ -152,7 +151,7 @@
       const team = row.getAttribute("data-team");
       let cellsHtml = "";
       for (let gw = 1; gw <= 38; gw++) {
-        cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">—</td>`;
+        cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); text-align:center;" class="border-r">—</td>`;
       }
       row.innerHTML += cellsHtml;
     });
@@ -164,7 +163,6 @@
       buildCustomDropdownOptions();
     });
 
-    // 🟢 အန်ကယ်ဖြစ်စေချင်သည့် အသင်း ၂၀ တိတိ Dropdown စာရင်း
     const plTeams = [
       { code: "ALL", name: "Show All Teams (အသင်းအားလုံး)" },
       { code: "ARS", name: "Arsenal (ARS)" }, { code: "AVL", name: "Aston Villa (AVL)" },
@@ -236,7 +234,7 @@
       });
     }
 
-    // 📡 DGW/BGW Logic များပါဝင်အောင် အဆင့်မြှင့်တင်ထားသော Local JSON Sync Core Function
+    // 🌗 အန်ကယ်ဖြစ်စေချင်သည့် "2+4" Logic ဖြင့် အရောင်နှစ်မျိုးခွဲပြပေးမည့် Dynamic JSON Loader စနစ်
     function loadFixturesFromLocalJSON() {
       fetch('../fixtures.json')
         .then(res => res.json())
@@ -247,27 +245,45 @@
               const cell = document.getElementById(`${team}-gw${i}`);
               if(cell) {
                 const matchText = t[`gw${i}`] || "—";
-                cell.textContent = matchText;
+                const fdrValue = t[`fdr${i}`] !== undefined ? String(t[`fdr${i}`]) : "3";
                 
-                // 💡 BGW (Blank Week) ဖြစ်ပါက အရောင်မှိန်ပေးမည့် Style Logic
-                if (matchText === "BLANK" || matchText === "—") {
-                  cell.className = "bg-gray-800 text-gray-500 border-r";
-                } else {
-                  cell.className = `fdr-${t[`fdr${i}`] || 3} border-r`;
-                }
-                
-                // 💡 DGW (Double Week) ဖြစ်၍ စာသားရှည်ပါက အကွက်မပျက်စေရန် Font အရွယ်အစား ညှိပေးမည့် Style Logic
-                if (matchText.includes("+") || matchText.includes("&")) {
-                  cell.style.fontSize = "8px";
-                  cell.style.lineHeight = "1.1";
-                } else {
-                  cell.style.fontSize = "10px";
-                  cell.style.lineHeight = "normal";
-                }
-
-                cell.style.padding = "10px 2px";
-                cell.style.textAlign = "center";
+                cell.style.padding = "0px"; 
                 cell.style.borderColor = "rgba(30,106,60,0.15)";
+                
+                // 1️⃣ BGW (Blank Week) Logic
+                if (matchText === "BLANK" || matchText === "—") {
+                  cell.innerHTML = `<div class="w-full h-full bg-gray-800 text-gray-500 font-bold flex items-center justify-center" style="min-height:38px; font-size:10px;">${matchText}</div>`;
+                }
+                // 2️⃣ DGW Multi-Color Split Logic ("2+4" သို့မဟုတ် "+" ပါဝင်သော စနစ်)
+                else if (fdrValue.includes("+") && matchText.includes("+")) {
+                  const partsFDR = fdrValue.split("+");
+                  const partsText = matchText.split("+");
+                  
+                  const fdrA = partsFDR[0].trim();
+                  const fdrB = partsFDR[1].trim();
+                  const textA = partsText[0].trim();
+                  const textB = partsText[1].trim();
+                  
+                  // FDR Code အလိုက် Hex အရောင်များကို သတ်မှတ်ပေးခြင်း
+                  const getColor = (fdr) => {
+                    if (fdr === "1" || fdr === "2") return "#22c55e"; // Easy (🟢)
+                    if (fdr === "3") return "#eab308";                // Normal (🟡)
+                    return "#ef4444";                                  // Difficult (🔴)
+                  };
+
+                  const getTextColor = (fdr) => fdr === "3" ? "#041e12" : "#ffffff";
+
+                  cell.innerHTML = `
+                    <div class="flex w-full h-full font-bold" style="min-height:38px; font-size:8px; line-height:1.1;">
+                      <div class="w-1/2 flex items-center justify-center p-1 border-r border-black/10" style="background-color:${getColor(fdrA)}; color:${getTextColor(fdrA)};">${textA}</div>
+                      <div class="w-1/2 flex items-center justify-center p-1" style="background-color:${getColor(fdrB)}; color:${getTextColor(fdrB)};">${textB}</div>
+                    </div>
+                  `;
+                } 
+                // 3️⃣ Normal Single Match Logic
+                else {
+                  cell.innerHTML = `<div class="w-full h-full fdr-${fdrValue} flex items-center justify-center" style="min-height:38px; font-size:10px; padding:10px 4px;">${matchText}</div>`;
+                }
               }
             }
           });
