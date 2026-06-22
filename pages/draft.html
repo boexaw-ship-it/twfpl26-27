@@ -21,12 +21,10 @@
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* FDR Colors matching Scout.html */
-    .fdr-1 { background-color: #22c55e; color: white; font-weight: bold; }
-    .fdr-2 { background-color: #84cc16; color: white; font-weight: bold; }
-    .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
-    .fdr-4 { background-color: #f97316; color: white; font-weight: bold; }
-    .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
+    /* 🟢 အန်ကယ်ဖြစ်စေချင်သည့် အဆင့် ၃ ဆင့် FDR ကာလာစနစ်စစ်စစ် (Easy, Normal, Difficult) */
+    .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; } /* Easy (🟢 အစိမ်း) */
+    .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }          /* Normal (🟡 အဝါ) */
+    .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; } /* Difficult (🔴 အနီ) */
   </style>
 </head>
 <body class="scrollbar-none">
@@ -114,7 +112,7 @@
           </tbody>
         </table>
       </div>
-      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: FDR 1-2 (လွယ်ကူ) | FDR 3 (အလတ်) | FDR 4-5 (ခက်ခဲ)</p>
+      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: Easy (လွယ်ကူ) | Normal (အလတ်) | Difficult (ခက်ခဲ)</p>
     </div>
 
   </div>
@@ -143,13 +141,13 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, doc, onSnapshot, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-    // 🗓️ Headers setup
+    // 🗓️ GW1 to GW38 Column Headers Builder
     const headerRow = document.getElementById("fixture-header-row");
     for (let gw = 1; gw <= 38; gw++) {
       headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`;
     }
 
-    // 🗓️ Cells setup
+    // 🗓️ Placeholder Cells Mapping Inside 20 Rows
     document.querySelectorAll("#fixture-table-body tr").forEach(row => {
       const team = row.getAttribute("data-team");
       let cellsHtml = "";
@@ -162,10 +160,11 @@
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       initRealtimeInsights();
-      loadFixturesFromLocalJSON();
+      loadFixturesFromLocalJSON(); // Local JSON Loader Action
       buildCustomDropdownOptions();
     });
 
+    // PL 26/27 Complete Team Database Array
     const plTeams = [
       { code: "ALL", name: "Show All Teams (အသင်းအားလုံး)" },
       { code: "ARS", name: "Arsenal (ARS)" }, { code: "AVL", name: "Aston Villa (AVL)" },
@@ -237,7 +236,7 @@
       });
     }
 
-    // 🟢 ပြင်ဆင်လိုက်သည့်နေရာ: draft.html က pages folder ထဲရောက်နေသဖြင့် fixtures.json ကို အပြင်ထွက်ဖတ်ရန် လမ်းကြောင်းအား "../fixtures.json" ဟု ပြောင်းထားပါသည်
+    // 🟢 Local "../fixtures.json" ဖိုင်မှ ၃၈ ပွဲလုံးစာ ဒေတာကို တစ်ခါတည်း ဆွဲယူ၍ အဆင့် ၃ ဆင့် FDR ကာလာစနစ်ဖြင့် ထိုးထည့်ပေးခြင်း
     function loadFixturesFromLocalJSON() {
       fetch('../fixtures.json')
         .then(res => {
