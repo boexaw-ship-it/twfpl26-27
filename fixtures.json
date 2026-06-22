@@ -1,1 +1,23 @@
+[
+  { "teamCode": "ARS", "gw1": "SOU (H)", "fdr1": 2, "gw2": "IPS (A)", "fdr2": 2, "gw3": "CHE (A)", "fdr3": 4, "gw4": "WHA (H)", "fdr4": 2, "gw5": "MCI (A)", "fdr5": 4 },
+  { "teamCode": "AVL", "gw1": "IPS (H)", "fdr1": 2, "gw2": "MUN (A)", "fdr2": 3, "gw3": "BOU (H)", "fdr3": 2, "gw4": "TOT (A)", "fdr4": 4, "gw5": "CRY (H)", "fdr5": 2 },
+  { "teamCode": "BHA", "gw1": "CHE (H)", "fdr1": 3, "gw2": "BUR (A)", "fdr2": 2, "gw3": "MCI (H)", "fdr3": 4, "gw4": "EVE (A)", "fdr4": 2, "gw5": "NEW (H)", "fdr5": 3 },
+  { "teamCode": "BOU", "gw1": "NEW (A)", "fdr1": 3, "gw2": "FUL (H)", "fdr2": 2, "gw3": "AVL (A)", "fdr3": 3, "gw4": "LEI (H)", "fdr4": 2, "gw5": "CHE (A)", "fdr5": 4 },
+  { "teamCode": "BRE", "gw1": "NFO (A)", "fdr1": 3, "gw2": "CRY (H)", "fdr2": 2, "gw3": "LIV (A)", "fdr3": 4, "gw4": "SOU (H)", "fdr4": 2, "gw5": "EVE (A)", "fdr5": 3 },
+  { "teamCode": "BUR", "gw1": "MCI (H)", "fdr1": 4, "gw2": "BHA (H)", "fdr2": 3, "gw3": "ARS (A)", "fdr3": 4, "gw4": "IPS (H)", "fdr4": 2, "gw5": "FUL (A)", "fdr5": 3 },
+  { "teamCode": "CHE", "gw1": "BHA (A)", "fdr1": 3, "gw2": "NFO (H)", "fdr2": 2, "gw3": "ARS (H)", "fdr3": 4, "gw4": "LIV (A)", "fdr4": 4, "gw5": "BOU (H)", "fdr5": 2 },
+  { "teamCode": "CRY", "gw1": "WHA (A)", "fdr1": 3, "gw2": "BRE (A)", "fdr2": 3, "gw3": "LEI (H)", "fdr3": 2, "gw4": "MUN (H)", "fdr4": 3, "gw5": "AVL (A)", "fdr5": 4 },
+  { "teamCode": "EVE", "gw1": "LEI (H)", "fdr1": 2, "gw2": "TOT (A)", "fdr2": 4, "gw3": "SOU (H)", "fdr3": 2, "gw4": "BHA (H)", "fdr4": 3, "gw5": "BRE (H)", "fdr5": 2 },
+  { "teamCode": "FUL", "gw1": "MUN (A)", "fdr1": 3, "gw2": "BOU (A)", "fdr2": 3, "gw3": "NFO (H)", "fdr3": 2, "gw4": "NEW (H)", "fdr4": 3, "gw5": "BUR (H)", "fdr5": 2 },
+  { "teamCode": "IPS", "gw1": "AVL (A)", "fdr1": 4, "gw2": "ARS (H)", "fdr2": 4, "gw3": "CRY (A)", "fdr3": 3, "gw4": "BUR (A)", "fdr4": 3, "gw5": "WHA (H)", "fdr5": 2 },
+  { "teamCode": "LEI", "gw1": "EVE (A)", "fdr1": 3, "gw2": "SOU (H)", "fdr2": 2, "gw3": "CRY (A)", "fdr3": 3, "gw4": "BOU (A)", "fdr4": 3, "gw5": "LIV (H)", "fdr5": 4 },
+  { "teamCode": "LIV", "gw1": "NFO (H)", "fdr1": 2, "gw2": "CRY (A)", "fdr2": 3, "gw3": "BRE (H)", "fdr1": 2, "gw4": "CHE (H)", "fdr4": 3, "gw5": "LEI (A)", "fdr5": 2 },
+  { "teamCode": "MCI", "gw1": "BUR (A)", "fdr1": 2, "gw2": "TOT (H)", "fdr2": 3, "gw3": "BHA (A)", "fdr3": 3, "gw4": "MUN (H)", "fdr4": 3, "gw5": "ARS (H)", "fdr5": 4 },
+  { "teamCode": "MUN", "gw1": "FUL (H)", "fdr1": 2, "gw2": "AVL (H)", "fdr2": 3, "gw3": "TOT (A)", "fdr3": 4, "gw4": "MCI (A)", "fdr4": 4, "gw5": "NFO (H)", "fdr5": 2 },
+  { "teamCode": "NEW", "gw1": "BOU (H)", "fdr1": 2, "gw2": "WHA (A)", "fdr2": 3, "gw3": "SOU (H)", "fdr3": 2, "gw4": "FUL (A)", "fdr4": 3, "gw5": "BHA (A)", "fdr5": 3 },
+  { "teamCode": "NFO", "gw1": "LIV (A)", "fdr1": 4, "gw2": "CHE (A)", "fdr2": 4, "gw3": "FUL (A)", "fdr3": 3, "gw4": "BRE (H)", "fdr4": 2, "gw5": "MUN (A)", "fdr5": 4 },
+  { "teamCode": "SOU", "gw1": "ARS (A)", "fdr1": 4, "gw2": "LEI (A)", "fdr2": 3, "gw3": "EVE (A)", "fdr3": 3, "gw4": "BRE (A)", "fdr4": 3, "gw5": "TOT (H)", "fdr5": 3 },
+  { "teamCode": "TOT", "gw1": "MCI (H)", "fdr1": 4, "gw2": "EVE (H)", "fdr2": 2, "gw3": "MUN (H)", "fdr3": 3, "gw4": "AVL (H)", "fdr4": 3, "gw5": "SOU (A)", "fdr5": 2 },
+  { "teamCode": "WHA", "gw1": "CRY (H)", "fdr1": 2, "gw2": "NEW (H)", "fdr2": 3, "gw3": "BUR (A)", "fdr3": 3, "gw4": "ARS (A)", "fdr4": 4, "gw5": "IPS (A)", "fdr5": 2 }
+]
 
