@@ -10,19 +10,18 @@
   
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    /* 🟢 အန်ကယ့်ပုံထဲက အစိမ်းရင့်ရောင် ပင်မနောက်ခံ (#041e12) */
     body { font-family: "Inter", sans-serif; background: #041e12; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
     .nav-item.active { color:#C9A84C; }
     
-    /* 🟢 အန်ကယ့်ပုံစံအတိုင်း Tab ခလုတ် ကာလာများ */
+    /* Scout Style Tab Buttons */
     .tab-btn { border: 1px solid rgba(201,168,76,0.3); color: #E8D5A3; border-radius: 0.5rem; padding: 4px 10px; font-size: 0.7rem; font-weight: 600; cursor: pointer; background: transparent; transition: all 0.2s; white-space: nowrap; }
     .tab-btn.active { background: rgba(201,168,76,0.2) !important; color: #C9A84C !important; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
     
-    /* 🟢 FDR အရောင်များကို Scout အတိုင်း ကွက်တိညှိထားခြင်း */
+    /* FDR Colors matching Scout.html */
     .fdr-1 { background-color: #22c55e; color: white; font-weight: bold; }
     .fdr-2 { background-color: #84cc16; color: white; font-weight: bold; }
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
@@ -77,31 +76,21 @@
     <div id="view-fixtures" class="tab-content hidden flex flex-col space-y-3">
       <div class="rounded-xl p-3 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
-        <select onchange="filterFixtureTable(this.value)" class="text-xs font-bold rounded px-2 py-1 focus:outline-none" style="background:#041e12; color:#C9A84C; border:1px solid #1e6a3c;">
+        <select onchange="filterFixtureTable(this.value)" id="team-filter-select" class="text-xs font-bold rounded px-2 py-1 focus:outline-none" style="background:#041e12; color:#C9A84C; border:1px solid #1e6a3c;">
           <option value="ALL">Show All Teams (အသင်းအားလုံး)</option>
-          <option value="ARS">Arsenal (ARS)</option>
-          <option value="AVL">Aston Villa (AVL)</option>
-          <option value="CHE">Chelsea (CHE)</option>
-          <option value="LIV">Liverpool (LIV)</option>
-          <option value="MCI">Man City (MCI)</option>
-          <option value="MUN">Man United (MUN)</option>
-        </select>
+          </select>
       </div>
 
       <div class="w-full overflow-x-auto rounded-xl border no-scrollbar" style="background:#124c2a; border-color:#1e6a3c; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
-        <table class="w-full text-center text-[11px] border-collapse min-w-[380px]">
+        <table class="w-full text-center text-[10px] border-collapse">
           <thead class="text-[9px] uppercase tracking-wider border-b" style="background:#041e12; border-color:#1e6a3c; color:#3A9E5F;">
-            <tr>
+            <tr id="fixture-header-row">
               <th class="p-2.5 text-left font-bold w-16 sticky left-0 z-20 border-r" style="background:#041e12; border-color:#1e6a3c;">Team</th>
-              <th class="p-2.5 border-r" style="border-color:rgba(30,106,60,0.2);">GW39</th>
-              <th class="p-2.5 border-r" style="border-color:rgba(30,106,60,0.2);">GW40</th>
-              <th class="p-2.5 border-r" style="border-color:rgba(30,106,60,0.2);">GW41</th>
-              <th class="p-2.5 border-r" style="border-color:rgba(30,106,60,0.2);">GW42</th>
-              <th class="p-2.5">GW43</th>
-            </tr>
+              </tr>
           </thead>
           <tbody id="fixture-table-body" class="divide-y font-bold" style="border-color:#1e6a3c;">
-            </tbody>
+            <tr><td colspan="39" class="p-8 text-center" style="color:#3A9E5F;">Loading 38 Gameweek Fixtures...</td></tr>
+          </tbody>
         </table>
       </div>
       <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: FDR 1-2 (လွယ်ကူ) | FDR 3 (အလတ်) | FDR 4-5 (ခက်ခဲ)</p>
@@ -122,54 +111,74 @@
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { collection, doc, onSnapshot, query, orderBy, where, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+    // 🗓️ GW1 မှ GW38 ခေါင်းစဉ်များကို Dynamic အော်တိုဆွဲထုတ်ခြင်း
+    const headerRow = document.getElementById("fixture-header-row");
+    for (let gw = 1; gw <= 38; gw++) {
+      headerRow.innerHTML += `<th class="p-2.5 border-r min-w-[65px]" style="border-color:rgba(30,106,60,0.15);">GW${gw}</th>`;
+    }
+
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       initRealtimeInsights();
     });
 
     function initRealtimeInsights() {
+      // Current Gameweek Sync
       onSnapshot(doc(db, "status", "current"), (d) => {
         if(d.exists()) document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
       });
 
-      // 1. Ownership Tab Data
+      // 👑 ၁။ Ownership Tab Data Query ခေါ်ယူပုံ
       const qOwnership = query(collection(db, "playerStats"), orderBy("ownershipPct", "desc"), limit(5));
       onSnapshot(qOwnership, (snap) => {
         renderScoutStyleList("ownership-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
       });
 
-      // 2. Captains Tab Data
+      // 👑 ၂။ Captains Tab Data Query ခေါ်ယူပုံ (အန်ကယ့် Algorithm: FDR <= 3 အနက် အမှတ်အများဆုံး)
       const qCaptains = query(collection(db, "playerStats"), where("nextFdr", "<=", 3), orderBy("captainScore", "desc"), limit(5));
       onSnapshot(qCaptains, (snap) => {
         renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Next: ${p.nextOpponent || ""} — FDR ${p.nextFdr}`);
       });
 
-      // 3. Differentials Tab Data
+      // 👑 ၃။ Differentials Tab Data Query ခေါ်ယူပုံ (Ownership < 10% အနက် Form အကောင်းဆုံး)
       const qDiff = query(collection(db, "playerStats"), where("ownershipPct", "<", 10), orderBy("form", "desc"), limit(5));
       onSnapshot(qDiff, (snap) => {
         renderScoutStyleList("differentials-list", snap, (p) => `${p.ownershipPct ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
       });
 
-      // 4. Fixture Ease Table Dynamic Row Builder
+      // 👑 ၄။ Fixture Ease 38 Gameweeks Table Dynamic Builder
       onSnapshot(collection(db, "teamFixtures"), (snap) => {
-        let html = "";
+        let tableHtml = "";
+        let selectHtml = `<option value="ALL">Show All Teams (အသင်းအားလုံး)</option>`;
+        
         snap.forEach((doc) => {
           const t = doc.data();
-          html += `
-            <tr data-team="${t.teamCode || ''}" style="border-color:#1e6a3c;">
-              <td class="p-2.5 text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c;">${t.teamCode || ''}</td>
-              <td class="p-2.5 border-r fdr-${t.fdr1 || 3}" style="border-color:rgba(30,106,60,0.15);">${t.gw1 || '—'}</td>
-              <td class="p-2.5 border-r fdr-${t.fdr2 || 3}" style="border-color:rgba(30,106,60,0.15);">${t.gw2 || '—'}</td>
-              <td class="p-2.5 border-r fdr-${t.fdr3 || 3}" style="border-color:rgba(30,106,60,0.15);">${t.gw3 || '—'}</td>
-              <td class="p-2.5 border-r fdr-${t.fdr4 || 3}" style="border-color:rgba(30,106,60,0.15);">${t.gw4 || '—'}</td>
-              <td class="p-2.5 fdr-${t.fdr5 || 3}">${t.gw5 || '—'}</td>
+          const teamCode = t.teamCode || "—";
+          
+          // Dropdown filter list များကိုလည်း ဒေတာဘေ့စ်မှ အော်တိုတည်ဆောက်ပေးခြင်း
+          selectHtml += `<option value="${teamCode}">${teamCode}</option>`;
+          
+          // GW1 မှ GW38 အထိ ပွဲစဉ်ကွက်များကို အော်တို Loop ပတ်ဆွဲခြင်း
+          let gwCellsHtml = "";
+          for (let gw = 1; gw <= 38; gw++) {
+            const matchText = t[`gw${gw}`] || "—";
+            const fdrValue = t[`fdr${gw}`] || 3;
+            gwCellsHtml += `<td class="p-2.5 border-r fdr-${fdrValue}" style="border-color:rgba(30,106,60,0.15);">${matchText}</td>`;
+          }
+
+          tableHtml += `
+            <tr data-team="${teamCode}" style="border-color:#1e6a3c;">
+              <td class="p-2.5 text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c;">${teamCode}</td>
+              ${gwCellsHtml}
             </tr>`;
         });
-        document.getElementById("fixture-table-body").innerHTML = html || `<tr><td colspan="6" class="p-4 text-center" style="color:#3A9E5F;">No data available</td></tr>`;
+        
+        document.getElementById("team-filter-select").innerHTML = selectHtml;
+        document.getElementById("fixture-table-body").innerHTML = tableHtml || `<tr><td colspan="39" class="p-4 text-center" style="color:#3A9E5F;">No fixture data available</td></tr>`;
       });
     }
 
-    // 🟢 အန်ကယ့်ပုံပါ Scout UI ဖွဲ့စည်းပုံနှင့် အရောင်စစ်စစ်အတိုင်း တည်ဆောက်ပေးသည့် Generator
+    // Scout Look List Renderer Engine
     function renderScoutStyleList(elementId, snapshot, rightLabelCallback, descCallback) {
       let html = "";
       let index = 1;
@@ -177,7 +186,6 @@
         const p = doc.data();
         const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
         
-        // Position အလိုက် တူညီသော အရောင် Marking Styles
         let posBg = "#9f1239";
         if (p.position === "GK") posBg = "#1d4ed8";
         else if (p.position === "DEF") posBg = "#15803d";
