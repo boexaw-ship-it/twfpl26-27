@@ -32,7 +32,8 @@
           onSnapshot(doc(db, "livePoints", data.fplTeamId), (d) => {
             if (d.exists()) {
               document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—";
-              document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—";
+              document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—"; // Overall Points ဖြည့်ခြင်း
+              document.getElementById("overall-rank").textContent = d.data().overallRank ?? "—"; // 💡 အသစ်တိုးလိုက်သည့် Overall Rank ဖြည့်ခြင်း
               document.getElementById("captain-pts").textContent = d.data().captainPoints ?? "—";
               document.getElementById("gw-rank").textContent = d.data().gwRank ?? "—";
               const hit = d.data().transferCost || 0;
@@ -50,7 +51,6 @@
       loadChat();
     });
 
-    // Jersey image path ဆောက်မယ် — GK ဆိုရင် gk/ folder, ကျန်တာ outfield/ folder
     function jerseyPath(p) {
       const folder = p.position === "GK" ? "gk" : "outfield";
       const code = p.teamCode || "unknown";
@@ -60,7 +60,6 @@
     function playerCard(p) {
       const ring = p.isCaptain ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
       const mult = p.multiplier || 1;
-      // Captain (mult=2) သို့မဟုတ် Triple Captain (mult=3) ဖြစ်ရင် raw points × multiplier ပြ
       const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
       const badge = mult === 3
         ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 4px;font-weight:900;">3x</span>'
@@ -179,7 +178,6 @@
   </style>
 </head>
 <body>
-  <!-- Top Bar -->
   <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
     <div class="flex items-center gap-2">
       <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;">←</a>
@@ -189,18 +187,14 @@
     <span id="user-team" class="text-xs font-semibold" style="color:#E8D5A3;"></span>
   </div>
 
-  <!-- Info Bar — Hit / Chip -->
   <div style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(201,168,76,0.2);">
     <span id="hit-label" class="text-xs font-semibold" style="color:#f87171;">Hit: -0</span>
     <span id="chip-badge" class="text-xs font-bold px-3 py-1 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
   </div>
 
-  <!-- Pitch + Stats (50%) -->
   <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-3">
     <div class="flex gap-3" style="width:100%;height:100%;min-height:0;">
-      <!-- Pitch (with field markings) -->
       <div style="flex:1;position:relative;border-radius:1rem;overflow:hidden;border:1.5px solid rgba(255,255,255,0.5);min-width:0;height:100%;background:linear-gradient(180deg,#1a5c30,#0f3d1e);">
-        <!-- Field markings (fixed, behind scroll content) -->
         <svg style="position:absolute;top:0;left:0;width:100%;height:100%;opacity:0.4;pointer-events:none;z-index:0;" viewBox="0 0 200 420" preserveAspectRatio="none">
           <rect x="6" y="6" width="188" height="408" fill="none" stroke="white" stroke-width="1.3"/>
           <line x1="6" y1="210" x2="194" y2="210" stroke="white" stroke-width="1.3"/>
@@ -216,7 +210,6 @@
         </div>
       </div>
 
-      <!-- Stats Column -->
       <div style="width:108px;flex-shrink:0;height:100%;overflow-y:auto;" class="flex flex-col gap-2">
         <div class="rounded-xl p-3" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.25);">
           <p class="text-xs uppercase tracking-wide mb-1" style="color:#C9A84C;font-size:0.55rem;">Gameweek</p>
@@ -225,14 +218,22 @@
             <span style="font-size:0.6rem;color:#E8D5A3;">pts</span>
           </div>
         </div>
+        
+        <div class="stat-card">
+          <p style="font-size:0.55rem;color:#3A9E5F;">Overall Rank</p>
+          <p id="overall-rank" class="font-bold" style="font-family:'Bebas Neue';font-size:1rem;color:#C9A84C;">—</p>
+        </div>
+
         <div class="stat-card">
           <p style="font-size:0.55rem;color:#3A9E5F;">GW Rank</p>
           <p id="gw-rank" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:1rem;">—</p>
         </div>
+        
         <div class="stat-card">
-          <p style="font-size:0.55rem;color:#3A9E5F;">Overall</p>
+          <p style="font-size:0.55rem;color:#3A9E5F;">Overall Pts</p>
           <p id="overall-pts" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:1rem;">—</p>
         </div>
+
         <div class="stat-card">
           <p style="font-size:0.55rem;color:#3A9E5F;">Captain</p>
           <p id="captain-pts" class="font-bold" style="font-family:'Bebas Neue';font-size:1rem;color:#C9A84C;">—</p>
@@ -241,7 +242,6 @@
     </div>
   </div>
 
-  <!-- Chat (50%) -->
   <div style="flex:1;display:flex;flex-direction:column;overflow:hidden;">
     <div style="padding:8px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;">
       <p class="text-xs font-semibold uppercase tracking-widest" style="color:#C9A84C;">💬 Live Chat</p>
@@ -261,7 +261,6 @@
     </div>
   </div>
 
-  <!-- Bottom Nav -->
   <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
     <div class="nav-item active"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
@@ -271,5 +270,3 @@
   </div>
 </body>
 </html>
-
-
