@@ -6,16 +6,33 @@
   <meta name="theme-color" content="#0D2B1A" />
   <title>My Team — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
 
   <style>
     * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #0b0e14; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    /* 🎨 အရောင်ပြင်ဆင်ချက်: #0b0e14 မှ မူရင်းအစိမ်းရင့်လွင်ပြင် #0D2B1A သို့ ပြန်လည် ပြင်ဆင်ထားသည် */
+    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
     .nav-item.active { color:#C9A84C; }
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+
+    /* 💡 အန်ကယ်ဖြစ်စေချင်သည့် ပိုမိုကြီးမားပြီး အမြင်ရှင်းသော အမဲရောင် အမှတ်အဝိုင်း စနစ်သစ် */
+    .player-point-circle {
+      background-color: #000000;
+      color: #ffffff;
+      font-weight: 900;
+      font-size: 0.85rem;   /* စာသားဂဏန်းကို ဗြုန်းခနဲ မြင်သာအောင် ကြီးပေးထားသည် */
+      min-width: 26px;      /* အဝိုင်းကို သိသိသာသာ ပိုမိုကြီးမားကျယ်ပြန့်အောင် လုပ်ထားသည် */
+      height: 26px;
+      border-radius: 9999px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
+      margin-top: 4px;
+    }
   </style>
 
   <script type="module">
@@ -37,10 +54,12 @@
       onSnapshot(doc(db, "livePoints", fplId), (d) => {
         if (!d.exists()) return;
         document.getElementById("gw-label").textContent = "GW " + (d.data().gameweek ?? "—");
-        // FPL API ကိုယ်တိုင်ပေးတဲ့ accurate GW points — Bench Boost + Hits အကုန် ပါပြီးသား
         document.getElementById("gw-pts").textContent = d.data().gwPoints ?? "—";
+        
+        // 💡 နေရာသစ်: Overall Rank ဒေတာကို အောက်က Frame အသစ်ထဲသို့ လှမ်းထည့်ပေးလိုက်ခြင်း
         const overallRank = d.data().overallRank;
-        document.getElementById("rank-label").textContent = "Rank: " + (overallRank ? overallRank.toLocaleString() : "—");
+        document.getElementById("overall-rank-box").textContent = overallRank ? overallRank.toLocaleString() : "—";
+        
         const hit = d.data().transferCost || 0;
         document.getElementById("hit-label").textContent = "Hit: -" + hit;
         const chip = d.data().activeChip;
@@ -54,36 +73,35 @@
       return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
     }
 
-    // 🏆 Official FPL style Player Card — jersey + name (white) + points (dark/black)
+    // 🏆 Official FPL style Player Card — ကြီးမားထင်ရှားသော စာသားစနစ်ဖြင့် အချောသတ်ထားသည်
     function playerCard(p, isCaptain = false, isVice = false) {
       const mult = p.multiplier || 1;
-      // Captain (mult=2) သို့မဟုတ် Triple Captain (mult=3) ဖြစ်ရင် raw points × multiplier ပြ
       const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
       const cornerBadge = mult === 3
-        ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">3x</span>'
-        : isCaptain
-        ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">C</span>'
-        : isVice
-        ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-20">V</span>'
+        ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>'
+        : p.isCaptain || isCaptain
+        ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>'
+        : p.isVice || isVice
+        ? '<span class="absolute -top-1.5 -right-1.5 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>'
         : '';
 
       return `
-        <div class="w-[68px] sm:w-[78px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-1 shadow-lg shadow-black/20 transition active:scale-95">
-          ${cornerBadge}
-
-          <div class="w-full h-14 sm:h-16 flex items-center justify-center mb-1 relative z-10 pt-1">
+        <div class="w-[72px] sm:w-[82px] flex flex-col items-center relative transition active:scale-95">
+          <!-- 👕 Jersey Frame Area -->
+          <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-hidden" style="background:#1F5C36; border:2px solid ${isCaptain || p.isCaptain ? '#F0D060' : isVice || p.isVice ? '#C0C0C0' : '#2A7A47'};">
             <img src="${jerseyPath(p)}"
-                 onerror="this.outerHTML='<div class=\\'w-full h-12 flex items-center justify-center text-2xl\\'>👕</div>'"
-                 class="h-full object-contain filter drop-shadow-[0_4px_4px_rgba(0,0,0,0.45)]" alt="${p.name}" />
+                 onerror="this.outerHTML='<div class=\\'w-full h-10 flex items-center justify-center text-xl\\'>👕</div>'"
+                 class="w-9 h-9 object-contain" alt="${p.name}" />
+            ${cornerBadge}
           </div>
 
-          <div class="w-full bg-white px-1 py-1 rounded-t shadow-inner text-center relative z-10 flex items-center justify-center" style="min-height:24px;">
-            <p class="text-[#0D2B1A] font-black text-[8px] sm:text-[9px] leading-[1.05] tracking-tight" style="word-break:break-word;">${p.name || "?"}</p>
+          <!-- 📛 Player Name Plate -->
+          <div class="w-full bg-white px-1 py-0.5 rounded shadow text-center flex items-center justify-center" style="min-height:20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
+            <p class="text-[#0D2B1A] font-bold text-[9px] leading-[1.1] tracking-tight truncate w-full">${p.name || "?"}</p>
           </div>
 
-          <div class="w-full flex justify-center py-1 relative z-10">
-            <span class="bg-black text-white text-[8px] sm:text-[9px] font-bold leading-none px-2 py-[3px] rounded-full">${displayPoints}</span>
-          </div>
+          <!-- 🔢 ကြီးမားထင်ရှားသော အမဲရောင် အမှတ်အဝိုင်း -->
+          <div class="player-point-circle">${displayPoints}</div>
         </div>
       `;
     }
@@ -97,62 +115,68 @@
       const mid = starters.filter(p => p.position === "MID");
       const fwd = starters.filter(p => p.position === "FWD");
       const renderRow = (players) => `
-        <div class="flex justify-center items-center gap-x-1 sm:gap-x-2 w-full max-w-md mx-auto">
+        <div class="flex justify-center items-center gap-x-2 w-full">
           ${players.map(p => playerCard(p, p.isCaptain, p.isVice)).join("")}
         </div>
       `;
 
       document.getElementById("pitch-rows").innerHTML = `
-        <div class="flex flex-col justify-between h-full min-h-[390px] py-2 space-y-4">
+        <div class="flex flex-col justify-between h-full py-1 space-y-4">
           ${renderRow(gk)}
           ${renderRow(def)}
           ${renderRow(mid)}
           ${renderRow(fwd)}
         </div>`;
 
-      // Bench — numbered placeholder boxes ဖျက်ပြီး player card တွေချည်း clean ပြ
       document.getElementById("bench-row").innerHTML = subs.map(p => playerCard(p)).join("");
     }
   </script>
 </head>
 <body class="scrollbar-none">
 
-  <!-- Top Bar — Team name only -->
-  <div class="bg-[#0f141c] border-b border-gray-800 px-4 py-3 flex items-center gap-3 flex-shrink-0">
-    <a href="/twfpl26-27/pages/dashboard.html" class="text-yellow-500 text-lg font-bold">←</a>
-    <h1 class="gold-text font-bold text-xl tracking-wider font-['Bebas_Neue']">MY TEAM</h1>
-    <div class="ml-auto text-right">
-      <span id="team-name" class="text-xs font-bold tracking-wide text-[#E8D5A3] block"></span>
-      <span id="rank-label" class="text-[10px] text-[#3A9E5F]">Rank: —</span>
+  <!-- Top Bar — သန့်ရှင်းသပ်ရပ်သော နာမည်နှင့် Layout -->
+  <div class="bg-[#0D2B1A] border-b border-[#1F5C36] px-4 py-3 flex items-center justify-between flex-shrink-0">
+    <div class="flex items-center gap-2">
+      <a href="/twfpl26-27/pages/dashboard.html" class="text-[#3A9E5F] text-lg font-bold">←</a>
+      <h1 class="gold-text font-bold text-xl tracking-wider font-['Bebas_Neue']">MY TEAM</h1>
     </div>
+    <span id="team-name" class="text-sm font-black tracking-wide text-[#E8D5A3]">zaw moe</span>
   </div>
 
-  <!-- Info Bar — Hit, GW, GW Pts, Chip — တစ်တန်းတည်း -->
-  <div class="bg-[#131a26] px-4 py-2.5 flex items-center justify-between flex-shrink-0 border-b border-gray-800">
-    <div class="flex items-center gap-3 sm:gap-4">
+  <!-- 📊 Info Bar — Hit, GW, GW Pts, Overall Rank, Chip (တစ်တန်းတည်း ကွက်တိ) -->
+  <div class="bg-[#1B4D2E] px-3 py-2.5 flex items-center justify-between flex-shrink-0 border-b border-gray-800 gap-x-1">
+    <div class="flex items-center gap-2.5 sm:gap-4">
       <span id="hit-label" class="text-xs font-bold text-red-400">Hit: -0</span>
-      <span class="text-gray-700">|</span>
-      <span id="gw-label" class="text-xs font-bold text-[#E8D5A3]">GW —</span>
-      <span class="text-gray-700">|</span>
+      <span class="text-gray-600">|</span>
+      <span id="gw-label" class="text-xs font-bold text-white">GW —</span>
+      <span class="text-gray-600">|</span>
       <span class="text-xs font-bold text-[#3A9E5F]">Pts: <span id="gw-pts" class="text-yellow-500 font-extrabold">—</span></span>
     </div>
-    <span id="chip-badge" class="text-[9px] font-black px-2.5 py-1 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase">NO CHIP</span>
+
+    <!-- 💡 နေရာသစ်: Overall Rank Frame လေးကို Pts နှင့် Chip ကြားထဲသို့ Frame လှလှလေးဖြင့် ရွှေ့ပြောင်းပေးလိုက်ခြင်း -->
+    <div class="rounded-md px-2 py-0.5 flex items-center gap-1 border border-[#C9A84C]/30" style="background:rgba(201,168,76,0.1);">
+      <span class="text-[9px] font-bold uppercase tracking-wider text-[#E8D5A3]">Rank:</span>
+      <span id="overall-rank-box" class="text-xs font-black text-[#F0D060]">——</span>
+    </div>
+
+    <span id="chip-badge" class="text-[9px] font-black px-2 py-0.5 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase">NO CHIP</span>
   </div>
 
-  <div class="flex-1 overflow-y-auto px-2 py-2 scrollbar-none space-y-3">
+  <!-- Main Canvas Content Area -->
+  <div class="flex-1 overflow-y-auto px-3 py-3 scrollbar-none space-y-3">
 
-    <!-- Pitch -->
-    <div class="relative bg-gradient-to-b from-[#00874c] via-[#00a85a] to-[#005e34] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-hidden min-h-[430px]">
-
-      <svg class="absolute inset-0 w-full h-full opacity-45 pointer-events-none" viewBox="0 0 300 420" preserveAspectRatio="none">
-        <rect x="6" y="6" width="288" height="408" fill="none" stroke="white" stroke-width="1.2"/>
-        <line x1="6" y1="210" x2="294" y2="210" stroke="white" stroke-width="1.2"/>
-        <circle cx="150" cy="210" r="35" fill="none" stroke="white" stroke-width="1.2"/>
-        <circle cx="150" cy="210" r="1.5" fill="white"/>
-        <rect x="65" y="6" width="170" height="55" fill="none" stroke="white" stroke-width="1.2"/>
-        <rect x="65" y="359" width="170" height="55" fill="none" stroke="white" stroke-width="1.2"/>
-        <rect x="105" y="6" width="90" height="20" fill="none" stroke="white" stroke-width="1.2"/>
-        <rect x="105" y="394" width="90" height="20" fill="none" stroke="white" stroke-width="1.2"/>
+    <!-- 🏟️ Pitch Frame (အစိမ်းရောင် ကွင်းပြင်စစ်စစ် ဖြစ်သွားပါပြီ) -->
+    <div class="relative bg-gradient-to-b from-[#1a5c30] via-[#144d24] to-[#0f3d1e] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-hidden">
+      <!-- Field Line Markings -->
+      <svg class="absolute inset-0 w-full h-full opacity-35 pointer-events-none" viewBox="0 0 200 420" preserveAspectRatio="none">
+        <rect x="6" y="6" width="188" height="408" fill="none" stroke="white" stroke-width="1.3"/>
+        <line x1="6" y1="210" x2="194" y2="210" stroke="white" stroke-width="1.3"/>
+        <circle cx="100" cy="210" r="32" fill="none" stroke="white" stroke-width="1.3"/>
+        <circle cx="100" cy="210" r="1.5" fill="white"/>
+        <rect x="40" y="6" width="120" height="45" fill="none" stroke="white" stroke-width="1.3"/>
+        <rect x="40" y="369" width="120" height="45" fill="none" stroke="white" stroke-width="1.3"/>
+        <rect x="68" y="6" width="64" height="18" fill="none" stroke="white" stroke-width="1.3"/>
+        <rect x="68" y="396" width="64" height="18" fill="none" stroke="white" stroke-width="1.3"/>
       </svg>
 
       <div class="relative z-10 h-full">
@@ -162,15 +186,15 @@
       </div>
     </div>
 
-    <!-- Bench — clean, no numbered placeholder frames -->
-    <div class="rounded-xl p-3 bg-[#131a26] border border-gray-800 shadow-lg">
-      <p class="text-[10px] font-black text-yellow-500/80 tracking-widest uppercase text-center mb-2.5">Bench</p>
-      <div id="bench-row" class="flex justify-center items-center gap-x-1.5 sm:gap-x-2.5 flex-wrap"></div>
+    <!-- Bench Area -->
+    <div class="rounded-xl p-3 bg-[#113a21] border border-[#1F5C36] shadow-lg">
+      <p class="text-[10px] font-black text-[#C9A84C] tracking-widest uppercase text-center mb-2.5">Bench (အရန်လူစာရင်း)</p>
+      <div id="bench-row" class="flex justify-center items-center gap-x-2 flex-wrap"></div>
     </div>
   </div>
 
-  <!-- Bottom Nav -->
-  <div class="bg-[#0f141c] border-t border-gray-800 flex justify-around items-center py-1 flex-shrink-0 z-20">
+  <!-- Bottom Navigation Menu -->
+  <div class="bg-[#0D2B1A] border-t border-[#1F5C36] flex justify-around items-center py-1 flex-shrink-0 z-20">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span class="text-lg">🏠</span><span>Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span class="text-lg">⚡</span><span>Live</span></div>
     <div class="nav-item active" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span class="text-lg">🏆</span><span>League</span></div>
