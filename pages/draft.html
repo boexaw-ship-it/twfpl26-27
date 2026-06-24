@@ -14,14 +14,10 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
     .nav-item.active { color:#C9A84C; }
-    
-    /* Scout Style Tab Buttons */
     .tab-btn { border: 1px solid rgba(201,168,76,0.3); color: #E8D5A3; border-radius: 0.5rem; padding: 4px 10px; font-size: 0.7rem; font-weight: 600; cursor: pointer; background: transparent; transition: all 0.2s; white-space: nowrap; }
     .tab-btn.active { background: rgba(201,168,76,0.2) !important; color: #C9A84C !important; }
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
-    /* အဆင့် ၃ ဆင့် FDR ကာလာစနစ် (Easy, Normal, Difficult) */
     .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; }
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
@@ -52,27 +48,20 @@
     
     <div id="view-ownership" class="tab-content space-y-2">
       <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">🔥 "မင်းမပါရင် template ကနေ ပြတ်ကျမယ်" Players</p>
-      <div id="ownership-list" class="space-y-2">
-        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p>
-      </div>
+      <div id="ownership-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p></div>
     </div>
 
     <div id="view-captains" class="tab-content space-y-2 hidden">
       <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">🎯 HIGH POINTS + GOOD FORM + EASY NEXT FIXTURE (FDR ≤ 3)</p>
-      <div id="captains-list" class="space-y-2">
-        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p>
-      </div>
+      <div id="captains-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p></div>
     </div>
 
     <div id="view-differentials" class="tab-content space-y-2 hidden">
       <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">💎 OWNERSHIP &lt; 10% "HIDDEN GEMS" CONCEPT</p>
-      <div id="differentials-list" class="space-y-2">
-        <p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p>
-      </div>
+      <div id="differentials-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p></div>
     </div>
 
     <div id="view-fixtures" class="tab-content hidden flex flex-col space-y-3">
-      
       <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer active:scale-[0.99] transition" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
         <div class="flex items-center gap-1.5">
@@ -112,17 +101,15 @@
           </tbody>
         </table>
       </div>
-      <p class="text-[9px]" style="color:#3A9E5F;">💡 ပြကွက်အညွှန်း: Easy (လွယ်ကူ) | Normal (အလတ်) | Difficult (ခက်ခဲ)</p>
     </div>
-
   </div>
 
   <div style="background:#041e12; border-top:1px solid #1F5C36; display:flex; justify-content:space-around; align-items:center; padding:4px 0; flex-shrink:0;">
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
-    <div class="nav-item active"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span>🏠</span><span style="font-size:0.6rem;">Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span>⚡</span><span style="font-size:0.6rem;">Live</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/leagues.html'"><span>🏆</span><span style="font-size:0.6rem;">League</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span>⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
+    <div class="nav-item active"><span>🔍</span><span style="font-size:0.6rem;">Scout</span></div>
   </div>
 
   <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
@@ -136,28 +123,39 @@
   </div>
 
   <script type="module">
-    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { auth } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-    import { collection, doc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+    
+    // 💡 အပြင်ဖိုင်နှစ်ခုမှ ခွဲထုတ်လိုက်သော Main Logic များကို လှမ်းယူချိတ်ဆက်ခြင်း
+    import { initRealtimeInsights } from "../js/insights.js";
+    import { loadFixturesFromLocalJSON, buildCustomDropdownOptions } from "../js/fixtures.js";
 
-    // Header & Rows setup
+    // 🗓️ ၃၈ ပတ်စာ ဇယားခေါင်းစဉ် (Header Column) အော်တိုဆောက်ခြင်း
     const headerRow = document.getElementById("fixture-header-row");
-    for (let gw = 1; gw <= 38; gw++) { headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`; }
+    for (let gw = 1; gw <= 38; gw++) { 
+      headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`; 
+    }
 
+    // 🗓️ အသင်းတစ်သင်းချင်းစီအတွက် ပွဲစဉ်အကွက်လွတ် (Cells) များ ကြိုဆောက်ခြင်း
     document.querySelectorAll("#fixture-table-body tr").forEach(row => {
       const team = row.getAttribute("data-team");
       let cellsHtml = "";
-      for (let gw = 1; gw <= 38; gw++) { cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); text-align:center;" class="border-r">—</td>`; }
+      for (let gw = 1; gw <= 38; gw++) { 
+        cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); text-align:center;" class="border-r">—</td>`; 
+      }
       row.innerHTML += cellsHtml;
     });
 
+    // User Login ဖြစ်မဖြစ်စစ်ဆေးပြီး Logic အသစ်များကို စတင်မောင်းနှင်ခြင်း
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
-      initRealtimeInsights();
-      loadFixturesFromLocalJSON();
-      buildCustomDropdownOptions();
+      
+      initRealtimeInsights();       // Real-time Scout List မောင်းနှင်ရန်
+      loadFixturesFromLocalJSON();  // ဒေါင်လိုက် JSON ပွဲစဉ်ဇယားဆွဲရန်
+      buildCustomDropdownOptions(plTeams); // Dropdown Filter ဆောက်ရန်
     });
 
+    // EPL Teams Data List
     const plTeams = [
       { code: "ALL", name: "Show All Teams (အသင်းအားလုံး)" },
       { code: "ARS", name: "Arsenal (ARS)" }, { code: "AVL", name: "Aston Villa (AVL)" },
@@ -172,15 +170,7 @@
       { code: "SUN", name: "Sunderland (SUN)" }, { code: "TOT", name: "Tottenham (TOT)" }
     ];
 
-    function buildCustomDropdownOptions() {
-      document.getElementById("team-options-list").innerHTML = plTeams.map(t => `
-        <div onclick="selectTeamFilter('${t.code}', '${t.name}')" class="p-3 rounded-xl flex items-center justify-between cursor-pointer active:scale-[0.98] transition border border-[#1e6a3c]/30" style="background:#124c2a;">
-          <span class="text-xs font-bold text-white">${t.name}</span>
-          <span class="text-xs font-bold" style="color:#C9A84C;">⚽</span>
-        </div>
-      `).join("");
-    }
-
+    // Filter Sheet ဖွင့်/ပိတ်နှင့် အသင်းရွေးချယ်မှု Logic များ
     window.openTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.remove("hidden"); m.style.display = "flex"; };
     window.closeTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.add("hidden"); m.style.display = "none"; };
     window.selectTeamFilter = (code, label) => {
@@ -189,113 +179,6 @@
         if (code === 'ALL' || r.getAttribute('data-team') === code) r.classList.remove('hidden'); else r.classList.add('hidden');
       });
     };
-
-    // 🟢 အန်ကယ့် "players" (စာလုံးအသေး) ဘဏ်တိုက်ထဲက field နာမည်များ (name, position, price, ownership, form) အတိုင်း ကွက်တိ ပြောင်းလဲထားသော စနစ်
-    function initRealtimeInsights() {
-      onSnapshot(doc(db, "status", "current"), (d) => {
-        if(d.exists()) document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
-      });
-
-      // 1. Ownership Tab (scout.html အတိုင်း "ownership" field အသေးဖြင့် စစ်ထုတ်သည်)
-      const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"), limit(5));
-      onSnapshot(qOwnership, (snap) => {
-        renderScoutStyleList("ownership-list", snap, (p) => `${p.ownership ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
-      });
-
-      // 2. Captains Tab (scout.html ထဲကအတိုင်း "form" သို့မဟုတ် totalPoints အခြေခံ၍ စစ်ထုတ်သည်)
-      const qCaptains = query(collection(db, "players"), orderBy("form", "desc"), limit(5));
-      onSnapshot(qCaptains, (snap) => {
-        renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Team: ${p.team || "—"} | ⭐ Pts: ${p.totalPoints ?? 0}`);
-      });
-
-      // 3. Differentials Tab (ownership < 10% ရှိပြီး Form အကောင်းဆုံးလူများကို တွက်ထုတ်ပြသခြင်း)
-      const qDiff = query(collection(db, "players"), orderBy("form", "desc"), limit(20));
-      onSnapshot(qDiff, (snap) => {
-        const filteredDocs = [];
-        snap.forEach(d => { if(parseFloat(d.data().ownership || 0) < 10) filteredDocs.push(d); });
-        renderScoutStyleListFromArr("differentials-list", filteredDocs.slice(0,5), (p) => `${p.ownership ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
-      });
-    }
-
-    function loadFixturesFromLocalJSON() {
-      fetch('../fixtures.json')
-        .then(res => res.json())
-        .then(data => {
-          data.forEach(t => {
-            const team = t.teamCode;
-            for(let i = 1; i <= 38; i++) {
-              const cell = document.getElementById(`${team}-gw${i}`);
-              if(cell) {
-                const matchText = t[`gw${i}`] || "—";
-                const fdrValue = t[`fdr${i}`] !== undefined ? String(t[`fdr${i}`]) : "3";
-                cell.style.padding = "0px"; cell.style.borderColor = "rgba(30,106,60,0.15)";
-                
-                if (matchText === "BLANK" || matchText === "—") {
-                  cell.innerHTML = `<div class="w-full h-full bg-gray-800 text-gray-500 font-bold flex items-center justify-center" style="min-height:38px; font-size:10px;">${matchText}</div>`;
-                } else if (fdrValue.includes("+") && matchText.includes("+")) {
-                  const partsFDR = fdrValue.split("+"); const partsText = matchText.split("+");
-                  const fdrA = partsFDR[0].trim(); const fdrB = partsFDR[1].trim();
-                  const textA = partsText[0].trim(); const textB = partsText[1].trim();
-                  const getColor = (fdr) => (fdr === "1" || fdr === "2") ? "#22c55e" : (fdr === "3" ? "#eab308" : "#ef4444");
-                  cell.innerHTML = `
-                    <div class="flex w-full h-full font-bold" style="min-height:38px; font-size:8px; line-height:1.1;">
-                      <div class="w-1/2 flex items-center justify-center p-1 border-r border-black/10" style="background-color:${getColor(fdrA)}; color:${fdrA==="3"?"#041e12":"#fff"};">${textA}</div>
-                      <div class="w-1/2 flex items-center justify-center p-1" style="background-color:${getColor(fdrB)}; color:${fdrB==="3"?"#041e12":"#fff"};">${textB}</div>
-                    </div>`;
-                } else {
-                  cell.innerHTML = `<div class="w-full h-full fdr-${fdrValue} flex items-center justify-center" style="min-height:38px; font-size:10px; padding:10px 4px;">${matchText}</div>`;
-                }
-              }
-            }
-          });
-        }).catch(err => console.error(err));
-    }
-
-    function buildHtmlRow(p, index, rightLabelCallback, desc) {
-      let posBg = "#9f1239";
-      const pos = String(p.position || "").toUpperCase();
-      if (pos === "GK") posBg = "#1d4ed8";
-      else if (pos === "DEF") posBg = "#15803d";
-      else if (pos === "MID") posBg = "#92400e";
-
-      return `
-        <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
-          <div class="flex items-center gap-3">
-            <span class="text-xs font-black w-5 text-center" style="color:#C9A84C;">#${index}</span>
-            <div class="flex items-center gap-2">
-              <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${posBg};">${p.position||"?"}</span>
-              <div>
-                <p class="text-white text-sm font-semibold">${p.name || '—'}</p>
-                <p class="text-xs" style="color:#3A9E5F; font-size:0.72rem;">${desc}</p>
-              </div>
-            </div>
-          </div>
-          <div class="text-right">
-            <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.price || 0}m</p>
-            <p class="text-[10px]" style="color:#E8D5A3;">${rightLabelCallback(p)}</p>
-          </div>
-        </div>`;
-    }
-
-    function renderScoutStyleList(elementId, snapshot, rightLabelCallback, descCallback) {
-      let html = ""; let index = 1;
-      snapshot.forEach((doc) => {
-        const p = doc.data();
-        const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
-        html += buildHtmlRow(p, index++, rightLabelCallback, desc);
-      });
-      document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
-    }
-
-    function renderScoutStyleListFromArr(elementId, arr, rightLabelCallback, descCallback) {
-      let html = ""; let index = 1;
-      arr.forEach((doc) => {
-        const p = doc.data();
-        const desc = typeof descCallback === "function" ? docCallback(p) : descCallback;
-        html += buildHtmlRow(p, index++, rightLabelCallback, desc);
-      });
-      document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
-    }
   </script>
 
   <script>
