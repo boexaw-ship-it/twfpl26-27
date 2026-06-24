@@ -14,7 +14,7 @@
 
     let league1Data = [];
     let league2Data = [];
-    let sortMode = "total"; 
+    let sortMode = "total"; // "total" or "gw"
 
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
@@ -23,13 +23,111 @@
 
       onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
         league1Data = [];
-        snapshot.forEach(d => league1Data.push(d.data()));
+        // 💡 စနစ်သစ်အမှန်: Firebase Document ID ကိုပါ အသုံးပြုနိုင်ရန် map လုပ်ထားသည်
+        snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() }));
         renderTable("league1");
       });
 
       onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
         league2Data = [];
-        snapshot.forEach(d => league2Data.push(d.data()));
+        snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
+        renderTable("league2");
+      });
+    });
+
+    const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
+
+    function chipBadge(chipCode) {
+      if (!chipCode || !CHIP_LABELS[chipCode]) return "";
+      return `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.25);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
+    }
+
+    function hitBadge(hitCost) {
+      if (!hitCost || hitCost === 0) return "";
+      return `<span class="text-[9px] font-bold" style="color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
+    }
+
+    function renderTable(firebaseId) {
+      const data = firebaseId === "league1" ? league1Data : league2Data;
+      const tableId = firebaseId === "league1" ? "league1-table" : "league2-table";
+      const el = document.getElementById(tableId);
+
+      if (data.length === 0) {
+        el.innerHTML = `<p class="text-center text-xs py-6" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`;
+        return;
+      }
+
+      const sorted = [...data].sort((a, b) => {
+        if (sortMode === "gw") return (b.gwPoints ?? 0) - (a.gwPoints ?? 0);
+        return (b.points ?? 0) - (a.points ?? 0);
+      });
+
+      const rows = sorted.map((r, i) => ({ ...r, rank: i + 1 }));
+
+      el.innerHTML = `
+        <div class="flex items-center px-3 py-1.5 text-xs" style="color:#3A9E5F;border-bottom:1px solid #2A7A47;">
+          <span class="w-6">#</span>
+          <span class="flex-1">TeamI have analyzed the provided code, the screenshot of the Firebase structure, and your Python script.
+
+Here is the key realization: The necessary Real-time data—including the active chip, hit cost, and total points—is stored directly within the same standings document that we use to render the league table (e.g., `leagues/leagueX/standings/fplID`).
+
+We no longer need to call a separate collection. By modifying the `openTeamPopup()` function to listen to this standings document directly, we can ensure that the Team View Pop-up Modal displays up-to-date FPL data without any loading issues.
+
+### 📄 `pages/leagues.html` — Comprehensive UI & Logic Solution (Full Code)
+
+```html
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <meta name="theme-color" content="#1B4D2E" />
+  <title>Leagues — TW Fantasy</title>
+  <script src="[https://cdn.tailwindcss.com](https://cdn.tailwindcss.com)"></script>
+  <link href="[https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap](https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap)" rel="stylesheet" />
+  
+  <style>
+    * { -webkit-tap-highlight-color: transparent; }
+    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
+    .nav-item.active { color:#C9A84C; }
+    .scrollbar-none::-webkit-scrollbar { display: none; }
+    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    .popup-pts-circle {
+      background-color: #000000; color: #ffffff; font-weight: 900; font-size: 1rem;
+      min-width: 32px; height: 32px; border-radius: 9999px;
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 3px 6px rgba(0,0,0,0.5); margin-top: 4px;
+    }
+  </style>
+
+  <script type="module">
+    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { onAuthStateChanged } from "[https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js](https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js)";
+    import { doc, getDoc, collection, onSnapshot, query } from "[https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js](https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js)";
+
+    let league1Data = [];
+    let league2Data = [];
+    let sortMode = "total"; // "total" or "gw"
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+      const snap = await getDoc(doc(db, "users", user.uid));
+      if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
+
+      // 📡 Subscribe to League 1 Standings
+      onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
+        league1Data = [];
+        snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() })); // Map ID
+        renderTable("league1");
+      });
+
+      // 📡 Subscribe to League 2 Standings
+      onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
+        league2Data = [];
+        snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() })); // Map ID
         renderTable("league2");
       });
     });
@@ -70,26 +168,56 @@
           <span class="w-12 text-center">GW</span>
           <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
         </div>
-        ${rows.map(r => {
-          // 💡 စစ်ဆေးချက်ပြင်ဆင်ခြင်း: fplTeamId, fplTeamID သို့မဟုတ် id ဖြစ်နိုင်ချေရှိသမျှ key အကုန် စိတ်ချရအောင် ကြိုထုတ်ခြင်း
-          const actualID = r.fplTeamId || r.fplTeamID || r.id || "";
-          return `
-          <div onclick="openTeamPopup('${actualID}', '${r.teamName || '—'}')" class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
-            <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
-            <div class="flex-1 min-w-0">
-              <div class="flex items-center flex-wrap">
-                <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
-                ${chipBadge(r.chip)}
-                ${hitBadge(r.hitCost)}
-              </div>
+        ${rows.map(r => `
+        <div onclick="openTeamPopup('${firebaseId}', '${r.id}', '${r.teamName || '—'}')" class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
+          <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
+          <div class="flex-1 min-w-0">
+            <div class="flex items-center flex-wrap">
+              <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
+              ${chipBadge(r.chip)}
+              ${hitBadge(r.hitCost)}
             </div>
-            <span class="w-12 text-center text-sm font-semibold ${sortMode === 'gw' ? 'text-yellow-400' : 'text-white'}">${r.gwPoints ?? 0}</span>
-            <span class="w-14 text-center font-bold ${sortMode === 'total' ? '' : 'opacity-60'}" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points ?? 0}</span>
-          </div>`;
-        }).join("")}
+          </div>
+          <span class="w-12 text-center text-sm font-semibold ${sortMode === 'gw' ? 'text-yellow-400' : 'text-white'}">${r.gwPoints ?? 0}</span>
+          <span class="w-14 text-center font-bold ${sortMode === 'total' ? '' : 'opacity-60'}" style="font-family:'Bebas Neue';font-size:1.1rem;color:#C9A84C;">${r.points ?? 0}</span>
+        </div>`).join("")}
       `;
     }
 
+    // 💡 =================== MODAL & REAL-TIME LOGIC ===================
+    let unsubscribePopup = null;
+
+    window.openTeamPopup = (leagueId, fplID, teamName) => {
+      const modal = document.getElementById("team-popup-modal");
+      modal.style.display = "flex";
+      modal.classList.add("modal-open");
+      document.getElementById("modal-team-title").textContent = teamName;
+      document.getElementById("modal-fpl-id").textContent = fplID; //
+      
+      // Real-time subscribe to Standings doc
+      const docRef = doc(db, "leagues", leagueId, "standings", fplID);
+      unsubscribePopup = onSnapshot(docRef, (docSnap) => {
+        if (!docSnap.exists()) return;
+        const data = docSnap.data();
+        
+        // Populate popup
+        document.getElementById("modal-total-pts").textContent = (data.points ?? "—") + " Pts"; //
+        
+        const chipCode = data.chip;
+        const chipLabel = chipCode && CHIP_LABELS[chipCode] ? CHIP_LABELS[chipCode] : "NO CHIP";
+        document.getElementById("modal-chip-badge").textContent = chipLabel;
+        
+        const hitCost = data.hitCost || 0;
+        document.getElementById("modal-hit-cost").textContent = "Hit Points နုတ်ယူမှု: -" + hitCost;
+      });
+    };
+
+    window.closeTeamPopup = () => {
+      if (unsubscribePopup) unsubscribePopup();
+      document.getElementById("team-popup-modal").style.display = "none";
+    };
+
+    // Tab & Sort functions
     window.switchTab = (tab) => {
       ["league1", "league2"].forEach(t => {
         const btn = document.getElementById("tab-" + t);
@@ -121,176 +249,73 @@
       renderTable("league1");
       renderTable("league2");
     };
-
-    // 💡 =================== POP-UP MODAL FIXED LOGIC ===================
-    let unsubscribeTeam = null;
-
-    window.openTeamPopup = (fplTeamId, teamName) => {
-      // ID မပါလာလျှင် သို့မဟုတ် အလွတ်ဖြစ်နေလျှင် အလုပ်မလုပ်စေရန် တားဆီးခြင်း
-      if(!fplTeamId || fplTeamId === "undefined" || fplTeamId === "") {
-        alert("FPL Team ID ဒေတာ မပြည့်စုံသေးပါဗျာ။");
-        return;
-      }
-      
-      document.getElementById("modal-team-title").textContent = teamName;
-      document.getElementById("team-popup-modal").style.display = "flex";
-      document.getElementById("popup-pitch-rows").innerHTML = `<div class="flex items-center justify-center py-24 w-full"><p class="text-xs text-white/50 animate-pulse">Pitch Data Loading...</p></div>`;
-      document.getElementById("popup-bench-row").innerHTML = "";
-
-      // 📡 စနစ်သစ်အမှန်: ဒေတာဘဏ်တိုက်ထဲက liveTeams မှ လှမ်းယူနားထောင်ခြင်း
-      unsubscribeTeam = onSnapshot(doc(db, "liveTeams", String(fplTeamId).trim()), (d) => {
-        if (d.exists()) {
-          renderPopupPitch(d.data());
-        } else {
-          document.getElementById("popup-pitch-rows").innerHTML = `<div class="flex items-center justify-center py-24 w-full"><p class="text-xs text-red-400">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</p></div>`;
-        }
-      }, (error) => {
-        console.error("Firebase Error:", error);
-      });
-    };
-
-    window.closeTeamPopup = () => {
-      document.getElementById("team-popup-modal").style.display = "none";
-      if(unsubscribeTeam) { unsubscribeTeam(); unsubscribeTeam = null; }
-    };
-
-    function jerseyPath(p) {
-      const folder = p.position === "GK" ? "gk" : "outfield";
-      return `/twfpl26-27/public/jerseys/${folder}/${p.teamCode || "unknown"}.png`;
-    }
-
-    function renderPopupPitch(data) {
-      const picks = data.picks || [];
-      if(picks.length === 0) {
-        document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">No players found</p>`;
-        return;
-      }
-
-      const starters = picks.filter(p => p.multiplier > 0);
-      const subs = picks.filter(p => p.multiplier === 0);
-      
-      const gk = starters.filter(p => p.position === "GK");
-      const def = starters.filter(p => p.position === "DEF");
-      const mid = starters.filter(p => p.position === "MID");
-      const fwd = starters.filter(p => p.position === "FWD");
-
-      const makeCard = (p) => {
-        const mult = p.multiplier || 1;
-        const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
-        const badge = mult === 3 ? '3x' : p.isCaptain ? 'C' : p.isVice ? 'V' : '';
-        const badgeHtml = badge ? `<span class="absolute -top-1.5 -right-1.5 text-[8px] font-black text-black px-1 py-0.5 rounded-full z-20 shadow" style="background:${badge==='V'?'#C0C0C0':'#F0D060'}">${badge}</span>` : '';
-
-        return `
-          <div class="w-[66px] sm:w-[74px] flex flex-col items-center relative">
-            <div class="w-11 h-11 rounded-xl flex items-center justify-center mb-1 overflow-hidden" style="background:#1F5C36; border:2px solid ${p.isCaptain?'#F0D060':p.isVice?'#C0C0C0':'#2A7A47'};">
-              <img src="${jerseyPath(p)}" onerror="this.outerHTML='<span class=\\'text-xl\\'>👕</span>'" class="w-8 h-8 object-contain" />
-              ${badgeHtml}
-            </div>
-            <div class="w-full bg-white px-0.5 py-0.5 rounded shadow text-center truncate"><p class="text-[#0D2B1A] font-bold text-[8px] tracking-tight truncate">${p.name || "?"}</p></div>
-            <div class="player-point-circle">${displayPoints}</div>
-          </div>`;
-      };
-
-      document.getElementById("popup-pitch-rows").innerHTML = `
-        <div class="flex flex-col justify-between h-full space-y-4">
-          <div class="flex justify-center gap-1.5">${gk.map(makeCard).join("")}</div>
-          <div class="flex justify-center gap-1.5">${def.map(makeCard).join("")}</div>
-          <div class="flex justify-center gap-1.5">${mid.map(makeCard).join("")}</div>
-          <div class="flex justify-center gap-1.5">${fwd.map(makeCard).join("")}</div>
-        </div>`;
-
-      document.getElementById("popup-bench-row").innerHTML = subs.map(makeCard).join("");
-    }
   </script>
-  <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
-    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
-    .nav-item.active { color:#C9A84C; }
-    .truncate { overflow:hidden; text-overflow:ellipsis; white-space:nowrap; }
-    .scrollbar-none::-webkit-scrollbar { display: none; }
-    
-    .player-point-circle {
-      background-color: #000000; color: #ffffff; font-weight: 900; font-size: 0.8rem;
-      min-width: 24px; height: 24px; border-radius: 9999px;
-      display: flex; align-items: center; justify-content: center;
-      box-shadow: 0 2px 4px rgba(0,0,0,0.4); margin-top: 3px;
-    }
-  </style>
 </head>
 <body class="scrollbar-none">
-  <!-- Top Bar -->
-  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;flex-shrink:0;">
-    <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;margin-right:8px;">←</a>
-    <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">LEAGUES</h1>
+
+  <div class="bg-[#0D2B1A] border-b border-[#1F5C36] px-4 py-3 flex items-center flex-shrink-0">
+    <a href="/twfpl26-27/pages/dashboard.html" class="text-[#3A9E5F] text-lg font-bold">←</a>
+    <h1 class="gold-text font-bold text-xl ml-2 tracking-wider font-['Bebas_Neue']">LEAGUES</h1>
   </div>
 
-  <!-- League Tabs -->
-  <div style="padding:10px 16px 4px;flex-shrink:0;display:flex;gap:8px;">
-    <button id="tab-league1" onclick="switchTab('league1')" style="flex:1;padding:10px;font-size:0.8rem;font-weight:700;border-radius:0.75rem;background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;border:none;cursor:pointer;">🗓 Weekly League</button>
-    <button id="tab-league2" onclick="switchTab('league2')" style="flex:1;padding:10px;font-size:0.8rem;font-weight:700;border-radius:0.75rem;background:transparent;color:#3A9E5F;border:1px solid #2A7A47;cursor:pointer;">👥 All Friends</button>
+  <div class="px-4 pt-3 flex gap-2">
+    <button id="tab-league1" onclick="switchTab('league1')" class="flex-1 py-2.5 rounded-xl font-bold bg-gradient-to-r from-[#C9A84C] to-[#F0D060] text-[#0D2B1A]">Weekly League</button>
+    <button id="tab-league2" onclick="switchTab('league2')" class="flex-1 py-2.5 rounded-xl font-bold border border-[#2A7A47] text-[#3A9E5F]">All Friends</button>
   </div>
 
-  <!-- Chip Legend Frame -->
-  <div style="padding:6px 16px 8px; flex-shrink:0;">
-    <div style="background:#124c2a; border:1px solid #1e6a3c; border-radius:0.85rem; padding:12px 14px; box-shadow:0 4px 10px rgba(0,0,0,0.25);" class="space-y-3.5">
-      <div style="display:flex; gap:8px; align-items:center;">
-        <span class="text-xs font-bold uppercase tracking-wider" style="color:#3A9E5F; font-size:0.68rem;">Chips:</span>
-        <div style="display:flex; gap:6px; flex-wrap:wrap;">
-          <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">TC</span>
-          <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">BB</span>
-          <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">WC</span>
-          <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">FH</span>
-        </div>
-      </div>
-      <div style="display:flex; align-items:center; justify-content:space-between; gap:8px;">
-        <span class="text-[11px] font-medium" style="color:#E8D5A3;"><span style="color:#f87171; font-weight:900;">(-4)</span> = ဒီ GW မှာ နုတ်ခံရသည့် Hit Points</span>
-        <div style="display:flex; background:#0D2B1A; border:1px solid #2A7A47; border-radius:9999px; padding:2px; flex-shrink:0;">
-          <button id="sort-total" onclick="switchSort('total')" style="padding:4px 12px; font-size:0.68rem; font-weight:800; border-radius:9999px; background:rgba(201,168,76,0.25); color:#C9A84C; border:none; cursor:pointer;">Total</button>
-          <button id="sort-gw" onclick="switchSort('gw')" style="padding:4px 12px; font-size:0.68rem; font-weight:800; border-radius:9999px; background:transparent; color:#3A9E5F; border:none; cursor:pointer;">This GW</button>
-        </div>
-      </div>
+  <div class="px-4 py-3 flex items-center justify-between gap-2 border-b border-[#1F5C36] mb-1">
+    <span class="text-xs font-medium text-[#3A9E5F]">Standings sorted by:</span>
+    <div class="flex gap-2">
+      <button id="sort-total" onclick="switchSort('total')" class="px-3.5 py-1.5 text-xs font-bold rounded-full border border-[#C9A84C] bg-yellow-500/25 text-[#C9A84C]">Total</button>
+      <button id="sort-gw" onclick="switchSort('gw')" class="px-3.5 py-1.5 text-xs font-bold rounded-full border border-[#2A7A47] text-[#3A9E5F]">This GW</button>
     </div>
   </div>
 
-  <!-- Table Content -->
-  <div style="flex:1;overflow-y:auto;" class="px-4 py-1 scrollbar-none">
+  <div class="flex-1 overflow-y-auto px-4 py-1 scrollbar-none">
     <div id="panel-league1"><div id="league1-table"></div></div>
     <div id="panel-league2" style="display:none;"><div id="league2-table"></div></div>
   </div>
 
-  <!-- Team View Pop-up Modal -->
-  <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:150; display:none; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)closeTeamPopup()">
-    <div class="w-full max-w-md rounded-2xl flex flex-col overflow-hidden" style="background:#0D2B1A; border:1px solid #C9A84C; max-height:90vh;">
-      <div class="px-4 py-3 border-b border-[#1F5C36] flex items-center justify-between bg-[#041e12]">
-        <span id="modal-team-title" class="text-sm font-black gold-text uppercase">TEAM VIEW</span>
-        <button onclick="closeTeamPopup()" class="w-6 h-6 rounded-full text-xs font-bold bg-[#1F5C36] text-white">✕</button>
+  <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.8); z-index:150; display:none; align-items:center; justify-content:center; padding:16px;" onclick="if(event.target===this)closeTeamPopup()">
+    <div class="w-full max-w-sm rounded-2xl p-5 border shadow-2xl space-y-4 animate-scale-up" style="background:#1B4D2E; border-color:#2A7A47;">
+      
+      <div class="flex items-center justify-between mb-1">
+        <h2 class="text-white font-extrabold text-sm tracking-tight truncate flex-1" id="modal-team-title">—</h2>
+        <button onclick="closeTeamPopup()" class="w-7 h-7 rounded-full text-xs font-bold bg-black/30 border border-gray-700 text-gray-300">✕</button>
       </div>
-      <div class="flex-1 overflow-y-auto p-3 space-y-3 scrollbar-none">
-        <div class="relative rounded-xl p-3 border border-white/10 overflow-hidden" style="background:linear-gradient(180deg,#1a5c30,#0f3d1e);">
-          <svg class="absolute inset-0 w-full h-full opacity-25 pointer-events-none" viewBox="0 0 200 420" preserveAspectRatio="none">
-            <rect x="5" y="5" width="190" height="410" fill="none" stroke="white" stroke-width="1.2"/>
-            <line x1="5" y1="210" x2="195" y2="210" stroke="white" stroke-width="1.2"/>
-            <circle cx="100" cy="210" r="30" fill="none" stroke="white" stroke-width="1.2"/>
-          </svg>
-          <div id="popup-pitch-rows" class="relative z-10"></div>
-        </div>
-        <div class="rounded-xl p-2.5 bg-[#113a21] border border-[#1F5C36]">
-          <p class="text-center font-black uppercase text-[9px] tracking-widest mb-2 text-[#C9A84C]">Bench</p>
-          <div id="popup-bench-row" class="flex justify-center gap-2"></div>
+
+      <div class="rounded-xl p-3 text-center border-2 border-[#C9A84C]" style="background:linear-gradient(135deg,#1F5C36,#162F20);">
+        <p class="text-[11px] font-medium text-[#C9A84C] uppercase tracking-wider mb-0.5">Total Points</p>
+        <div class="flex items-end justify-center gap-1">
+          <span id="modal-total-pts" class="font-bold tracking-tight text-white" style="font-family:'Bebas Neue';font-size:2.6rem;line-height:0.9;">——</span>
         </div>
       </div>
+
+      <div class="rounded-xl p-4 bg-black/20 border border-gray-800 space-y-2">
+        <p class="text-[11px] font-semibold text-gray-500 uppercase tracking-widest text-center">Real-time Team Info</p>
+        
+        <div class="flex items-center justify-between border-b border-gray-800 pb-2">
+          <span class="text-xs text-[#E8D5A3]">Active Chip:</span>
+          <span id="modal-chip-badge" class="text-xs font-black px-3 py-1 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 uppercase tracking-wider">——</span>
+        </div>
+        
+        <div class="text-center pt-1.5">
+          <p id="modal-hit-cost" class="text-xs font-bold text-red-400">Hit Points နုတ်ယူမှု: ——</p>
+        </div>
+      </div>
+
+      <p class="text-center text-[10px] text-gray-600 font-mono tracking-tight">FPL ID: <span id="modal-fpl-id">——</span></p>
     </div>
   </div>
 
-  <!-- Bottom Nav -->
-  <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
-    <div class="nav-item active"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  <div class="bg-[#0D2B1A] border-t border-[#1F5C36] flex justify-around items-center py-1 flex-shrink-0 z-20">
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'">🏠<span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'">⚡<span>Live</span></div>
+    <div class="nav-item active">🏆<span>League</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'">⚽<span>Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'">🔍<span>Scout</span></div>
   </div>
 </body>
 </html>
+
+
