@@ -17,19 +17,21 @@
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 💡 🎨 team.html စတိုင်အတိုင်း ကွက်တိတူညီသော Point Element Style */
+    /* 💡 🎨 team.html စတိုင်အတိုင်း ဂျာစီအောက်ခြေတွင် ကွက်တိပေါ်မည့် Point Element Format */
     .fpl-squad-pts {
       background-color: #000000;
       color: #ffffff;
-      font-weight: 700;
+      font-weight: 900;
       font-size: 8px;
       line-height: 1;
       padding: 3px 8px;
       border-radius: 9999px;
       margin-top: 4px;
+      display: inline-block;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.4);
     }
     @media (min-width: 640px) {
-      .fpl-squad-pts { font-size: 9px; }
+      .fpl-squad-pts { font-size: 9px; padding: 4px 9px; }
     }
   </style>
 
@@ -47,12 +49,14 @@
       const snap = await getDoc(doc(db, "users", user.uid));
       if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
 
+      // Subscribe League 1
       onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
         league1Data = [];
-        snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() }));
+        snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() })); // Document ID ကို id အဖြစ်သေချာသိမ်းသည်
         renderTable("league1");
       });
 
+      // Subscribe League 2
       onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
         league2Data = [];
         snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
@@ -67,12 +71,12 @@
       return `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.25);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
     }
 
-    // Hit Point Badge
     function hitBadge(hitCost) {
       if (!hitCost || hitCost === 0) return "";
       return `<span class="text-[9px] font-bold" style="color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
     }
 
+    // Render Main Standings Table
     function renderTable(firebaseId) {
       const data = firebaseId === "league1" ? league1Data : league2Data;
       const tableId = firebaseId === "league1" ? "league1-table" : "league2-table";
@@ -113,35 +117,42 @@
       `;
     }
 
-    // 💡 =================== POP-UP ENGINE LOGIC ===================
+    // 💡 =================== POP-UP CORE REAL-TIME ENGINE (FIXED PATH) ===================
     let unsubscribePopup = null;
 
     window.openTeamPopup = (leagueId, fplID, teamName) => {
       const modal = document.getElementById("team-popup-modal");
       modal.style.display = "flex";
+      
       document.getElementById("modal-team-title").textContent = teamName;
-      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">Team Loading...</p>`;
+      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50 animate-pulse">Team Loading...</p>`;
       document.getElementById("popup-bench-row").innerHTML = "";
 
-      // Real-time Standing Document ကို ချိတ်ဆက်ခြင်း
-      const docRef = doc(db, "leagues", leagueId, "standings", fplID);
+      // Document လှမ်းဖတ်ခြင်း
+      const docRef = doc(db, "leagues", leagueId, "standings", String(fplID).trim());
       unsubscribePopup = onSnapshot(docRef, (docSnap) => {
         if (!docSnap.exists()) return;
         const data = docSnap.data();
         
-        // 📊 Header ဒေတာများ ထည့်သွင်းခြင်း
+        // 📊 Top Header Score Displays
         document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
         document.getElementById("modal-total-pts").textContent = data.points ?? "0";
         document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
-        
-        const chipCode = data.chip;
-        document.getElementById("modal-chip-badge").textContent = chipCode && CHIP_LABELS[chipCode] ? CHIP_LABELS[chipCode] : "NO CHIP";
+        document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
-        // 🏟️ Player List (picks array) ဆွဲသားခြင်း
-        if (data.picks && Array.isArray(data.picks)) {
-          renderPopupPitch(data.picks);
+        // 💡 📡 ဒေတာလမ်းကြောင်းအမှန်ပြင်ဆင်ချက်: data[fplID].picks သို့မဟုတ် data.picks ဟု ပုံစံနှစ်မျိုးလုံးစစ်ထုတ်ခြင်း
+        let finalPicks = null;
+        if (data[fplID] && Array.isArray(data[fplID].picks)) {
+          finalPicks = data[fplID].picks; // Firebase Structure အမှန်အတိုင်း ဖတ်ယူခြင်း
+        } else if (data.picks && Array.isArray(data.picks)) {
+          finalPicks = data.picks;
+        }
+
+        // Render Pitch
+        if (finalPicks && finalPicks.length > 0) {
+          renderPopupPitch(finalPicks);
         } else {
-          document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-[#3A9E5F]">လူစာရင်း ဒေတာ မတွေ့ပါဗျာ</p>`;
+          document.getElementById("popup-pitch-rows").innerHTML = `<div class="w-full text-center py-20 text-xs text-red-400">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</div>`;
         }
       });
     };
@@ -157,7 +168,7 @@
       return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
     }
 
-    // 💡 🎨 team.html ကတ်ပြားဒီဇိုင်းနှင့် ၁၀၀% တူညီအောင် အချောသတ်ထားသော ဖွဲ့စည်းပုံ
+    // 💡 🎨 team.html ကတ်ပြားဒီဇိုင်းအတိုင်း တစ်ထပ်တည်း ပြန်လည်အချောသတ်ထားသော ဖွဲ့စည်းပုံ
     function buildPlayerCard(p) {
       const mult = p.multiplier || 1;
       const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
@@ -173,7 +184,7 @@
         <div class="w-[66px] sm:w-[76px] bg-[#0d5e34]/50 border border-emerald-500/10 rounded-xl flex flex-col items-center relative p-1 pb-1 shadow-md shadow-black/20">
           ${cornerBadge}
           <div class="w-full h-12 sm:h-14 flex items-center justify-center mb-1 relative z-10 pt-1">
-            <img src="${jerseyPath(p)}" onerror="this.outerHTML='<div class=\\'text-xl\\'>👕</div>'" class="h-full object-contain filter drop-shadow-[0_4px_4px_rgba(0,0,0,0.45)]" />
+            <img src="${jerseyPath(p)}" onerror="this.outerHTML='<div class=\\'text-xl\\'>👕</div>'" class="h-full object-contain" />
           </div>
           <div class="w-full bg-white px-0.5 py-0.5 rounded-t shadow-inner text-center relative z-10 flex items-center justify-center" style="min-height:22px;">
             <p class="text-[#0D2B1A] font-black text-[8px] sm:text-[9px] leading-[1.05] tracking-tight truncate w-full">${p.name || "?"}</p>
@@ -196,7 +207,7 @@
       const renderRow = (players) => `<div class="flex justify-center gap-x-1 sm:gap-x-1.5 w-full">${players.map(buildPlayerCard).join("")}</div>`;
 
       document.getElementById("popup-pitch-rows").innerHTML = `
-        <div class="flex flex-col justify-between h-full space-y-3">
+        <div class="flex flex-col justify-between h-full space-y-3.5">
           ${renderRow(gk)}
           ${renderRow(def)}
           ${renderRow(mid)}
@@ -206,7 +217,7 @@
       document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
     }
 
-    // Tab switcher
+    // Tabs Control
     window.switchTab = (tab) => {
       ["league1", "league2"].forEach(t => {
         const btn = document.getElementById("tab-" + t);
@@ -308,7 +319,7 @@
           <line x1="5" y1="210" x2="195" y2="210" stroke="white" stroke-width="1.2"/>
           <circle cx="100" cy="210" r="30" fill="none" stroke="white" stroke-width="1.2"/>
         </svg>
-        <div id="popup-pitch-rows" class="relative z-10 space-y-3"></div>
+        <div id="popup-pitch-rows" class="relative z-10 space-y-3.5"></div>
       </div>
 
       <div class="rounded-xl p-2 bg-[#113a21] border border-[#1F5C36]">
