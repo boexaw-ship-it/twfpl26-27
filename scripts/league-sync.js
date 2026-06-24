@@ -1,12 +1,19 @@
+// ============================================
+// TW Fantasy Official League
+// League Sync Script (Standalone Variant)
+// ============================================
+// FPL API မှ League Standings ကို ဆွဲယူပြီး 
+// leagues -> leagueX -> standings -> fplID Document ထဲသို့ 
+// Chip, Hit နှင့် ကစားသမား ၁၅ ယောက်စာရင်း (Picks) ကို တစ်ခါတည်း ပူးတွဲသိမ်းဆည်းပေးသည်
+// ============================================
+
 const admin = require("firebase-admin");
 
 // === Firebase Admin Init ===
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-
 const db = admin.firestore();
 
 // === FPL API ===
@@ -18,7 +25,7 @@ const LEAGUES = [
   { firebaseId: "league2", fplLeagueId: 184965 }, // All Friends
 ];
 
-// === Helper: FPL API fetch ===
+// === Helper: FPL API Fetch with retry logic ===
 async function fplFetch(url, retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -35,7 +42,7 @@ async function fplFetch(url, retries = 3) {
   }
 }
 
-// === Current Gameweek ===
+// === Get Current Gameweek ===
 async function getCurrentGameweek() {
   const bootstrap = await fplFetch(`${FPL_BASE}/bootstrap-static/`);
   const current = bootstrap.events.find((e) => e.is_current);
@@ -44,9 +51,9 @@ async function getCurrentGameweek() {
   return next ? Math.max(next.id - 1, 1) : 1;
 }
 
-// 💡 Player Element ID အလိုက် Player Details မာစတာဒေတာဆွဲယူခြင်း
+// 📊 ကစားသမား Element ID များမှ အမည်၊ ပိုဇီရှင်နှင့် အသင်းတံဆိပ်များကို Master Lookup ပုံဖော်ခြင်း
 async function getPlayerMasterMap() {
-  console.log("📊 Loading FPL Player Elements Map Data...");
+  console.log("📊 Fetching FPL Bootstrap-Static Master Data...");
   const bootstrap = await fplFetch(`${FPL_BASE}/bootstrap-static/`);
   
   const teamsMap = {};
@@ -69,7 +76,7 @@ async function getPlayerMasterMap() {
   return playersMap;
 }
 
-// === League Standings ဆွဲမယ် ===
+// === Pagination-supported Standing Fetcher ===
 async function fetchAllStandings(leagueId) {
   let allResults = [];
   let page = 1;
@@ -89,12 +96,12 @@ async function fetchAllStandings(leagueId) {
   return allResults;
 }
 
-// === Team တစ်ခုချင်းစီ၏ Chip, Hit နှင့် Player Picks ဒေတာများယူခြင်း ===
+// === Team Details + Players Array Extraction ===
 async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
   try {
     const data = await fplFetch(`${FPL_BASE}/entry/${fplTeamId}/event/${gw}/picks/`);
     
-    // ကစားသမားတစ်ယောက်ချင်းစီကို အမှတ်၊ နာမည်၊ ပိုဇီရှင်၊ ဂျာစီကုဒ်များနှင့် တွဲဖက်ပုံစံသွင်းခြင်း
+    // ကစားသမားတစ်ယောက်ချင်းစီကို Master Map အတိုင်း စနစ်တကျ ပုံဖော်ဆွဲသားခြင်း
     const squadPicks = (data.picks || []).map(p => {
       const masterInfo = playersMasterMap[p.element] || { name: "?", position: "MID", teamCode: "unknown", livePoints: 0 };
       return {
@@ -113,7 +120,7 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
       chip: data.active_chip || null,
       hitCost: data.entry_history?.event_transfers_cost || 0,
       gwPoints: data.entry_history?.points || 0,
-      picks: squadPicks // 💡 တိုးမြှင့်လိုက်သည့် အသင်းသား ၁၅ ယောက် စာရင်း
+      picks: squadPicks // 💡 Standings Document ထဲတွင် ပူးတွဲသိမ်းဆည်းမည့် လူစာရင်း Array
     };
   } catch (err) {
     console.log(`   ⚠️ Could not fetch detail for team ${fplTeamId}: ${err.message}`);
@@ -121,16 +128,16 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
   }
 }
 
-// === League Sync Function ===
+// === Synchronize Specific League ===
 async function syncLeague(leagueConfig, gw, playersMasterMap) {
   const { firebaseId, fplLeagueId } = leagueConfig;
-  console.log(`📥 Fetching League ${fplLeagueId} (${firebaseId})...`);
+  console.log(`📥 Syncing League ${fplLeagueId} (${firebaseId})...`);
 
   try {
     const standings = await fetchAllStandings(fplLeagueId);
-    console.log(`   Found ${standings.length} teams — fetching details...`);
+    console.log(`   Found ${standings.length} teams — packing standings and player picks together...`);
 
-    const batch = db.batch();
+    let batch = db.batch();
     let count = 0;
 
     for (const team of standings) {
@@ -142,7 +149,7 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
         .collection("standings")
         .doc(String(team.entry));
 
-      // 💡 အပြောင်းအလဲ: မူရင်း Standings နေရာမှာပဲ picks (Player Points) ကိုပါ ပူးတွဲသိမ်းဆည်းလိုက်ခြင်း
+      // 💡 အဓိကလုပ်ဆောင်ချက်: liveTeams နှင့် လုံးဝမရောဘဲ ဤနေရာတွင် Picks ကို တစ်ခါတည်း သွတ်သွင်းသိမ်းဆည်းပါသည်
       batch.set(docRef, {
         fplTeamId: team.entry,
         teamName: team.entry_name,
@@ -153,34 +160,46 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
         gwPoints: detail.gwPoints,    
         chip: detail.chip,            
         hitCost: detail.hitCost,      
-        picks: detail.picks, // 👈 ဤနေရာတွင် Player Points စာရင်း ရောက်ရှိသွားပါပြီ
+        picks: detail.picks, // 👈 Player list array is saved directly inside standings!
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
       count++;
-      await new Promise((r) => setTimeout(r, 200));
+      
+      // Real-time API configuration safeguard delay
+      await new Promise((r) => setTimeout(r, 100));
 
+      // Batch threshold safety limiter
       if (count % 400 === 0) {
         await batch.commit();
-        console.log(`   ...${count} teams written`);
+        batch = db.batch();
+        console.log(`   ...${count} entries recorded`);
       }
     }
 
     await batch.commit();
-    console.log(`✅ League ${fplLeagueId} (${firebaseId}) — ${standings.length} teams synced`);
+    console.log(`✅ League ${fplLeagueId} (${firebaseId}) — ${standings.length} records successfully unified.`);
   } catch (err) {
-    console.error(`❌ League ${fplLeagueId} failed: ${err.message}`);
+    console.error(`❌ League ${fplLeagueId} update omitted: ${err.message}`);
   }
 }
 
+// === Execution Process ===
 async function main() {
-  const gw = await getCurrentGameweek();
-  const playersMasterMap = await getPlayerMasterMap(); // မာစတာ Map အရင်ဆွဲမည်
-  
-  for (const league of LEAGUES) {
-    await syncLeague(league, gw, playersMasterMap);
+  console.log("🚀 Running Unified League Sync Engine...");
+  try {
+    const gw = await getCurrentGameweek();
+    const playersMasterMap = await getPlayerMasterMap();
+    
+    for (const league of LEAGUES) {
+      await syncLeague(league, gw, playersMasterMap);
+    }
+    console.log("🎉 All Standing tasks finished.");
+    process.exit(0);
+  } catch (err) {
+    console.error("Fatal exception:", err.message);
+    process.exit(1);
   }
-  process.exit(0);
 }
 
 main();
