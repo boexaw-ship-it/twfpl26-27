@@ -9,20 +9,18 @@ let unsubscribePopup = null;
 
 const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
-// 📡 Firebase Standings Listeners (ပင်မဇယားကွက်အတွက်)
+// 📡 Firebase Standings Listeners
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
   if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
 
-  // Subscribe League 1
   onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
     league1Data = [];
     snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() }));
     renderTable("league1");
   });
 
-  // Subscribe League 2 (စာလုံးပေါင်း သန့်ရှင်းစွာ ပြင်ဆင်ပြီး)
   onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
     league2Data = [];
     snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
@@ -80,7 +78,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 💡 =================== POP-UP ENGINE (STANDINGS DOCUMENT CONNECTOR ONLY) ===================
+// 🏟️ Pop-up Engine (Standings document reader only)
 window.openTeamPopup = (leagueId, fplID, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -91,21 +89,19 @@ window.openTeamPopup = (leagueId, fplID, teamName) => {
 
   const cleanID = String(fplID).trim();
 
-  // 💡 liveTeams ဆီ လုံးဝသွားမဖတ်တော့ဘဲ အန်ကယ်ကိုယ်တိုင် စီမံထားသည့် standings document ဆီမှ တိုက်ရိုက်ဆွဲပါသည်
   const docRef = doc(db, "leagues", leagueId, "standings", cleanID);
   unsubscribePopup = onSnapshot(docRef, (docSnap) => {
     if (!docSnap.exists()) return;
     const data = docSnap.data();
     
-    // Top Panel Displays
+    // Top Score Panel
     document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
     document.getElementById("modal-total-pts").textContent = data.points ?? "0";
     document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
     document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
-    // 📡 💡 အန်ကယ့်ရဲ့ Firebase Structure အစစ်အမှန်အတိုင်း data.picks အား တိုက်ရိုက်ဆွဲယူခြင်း
     if (data.picks && Array.isArray(data.picks)) {
-      renderPopupPitch(data.picks); // 👈 picks array အား တိုက်ရိုက် Render သို့ ပို့ပေးခြင်း
+      renderPopupPitch(data.picks);
     } else {
       document.getElementById("popup-pitch-rows").innerHTML = `<div class="w-full text-center py-20 text-xs text-red-400">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</div>`;
     }
@@ -117,20 +113,21 @@ window.closeTeamPopup = () => {
   document.getElementById("team-popup-modal").style.display = "none";
 };
 
-// 🎨 👕 team.html တထပ်တည်းကျသော ဂျာစီလမ်းကြောင်းပုံစံ
+// 💡 🎨 ဖြေရှင်းချက် (၁): .toLowerCase() စနစ်ထည့်သွင်း၍ စာလုံးအကြီးအသေး ဘယ်လိုလာလာ GitHub ပုံများ အမှန်ထွက်စေရန် ညှိနှိုင်းခြင်း
 function jerseyPath(p) {
   const folder = p.position === "GK" ? "gk" : "outfield"; //
-  const code = p.teamCode || "unknown"; //
+  const code = String(p.teamCode || "unknown").toLowerCase().trim(); // 👈 အကြီးအသေး Safeguard စနစ်
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
 }
 
-// 🎨 📛 team.html Player Card ကတ်ပြားပုံစံစစ်စစ် (isCaptain, isVice, multiplier စာလုံးအသေးဗားရှင်း)
+// Player Card Layout
 function buildPlayerCard(p) {
-  // 💡 Firebase ဒေတာထွက်ပုံစံအတိုင်း စာလုံးအသေး keys နာမည်များဖြင့် တိကျစွာ ပြောင်းလဲဖတ်ယူခြင်း
-  const mult = p.multiplier !== undefined ? Number(p.multiplier) : 1;
+  // 💡 ဖြေရှင်းချက် (၂): multiplier နှင့် multiplier နှစ်မျိုးလုံးအား ဘယ်ပုံစံဖြင့်လာပါစေ ဖတ်ယူနိုင်ရန် ချိန်ညှိခြင်း
+  const multRaw = p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
+  const mult = Number(multRaw);
+
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
   
-  // 💡 parent relative wrapper အတွင်း corner absolute badge များ နေရာမှန်ကန်အောင် ထိန်းညှိခြင်း
   const cornerBadge = mult === 3
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>' //
     : p.isCaptain || mult > 1
@@ -155,12 +152,14 @@ function buildPlayerCard(p) {
   `;
 }
 
-// 🪑 🏟️ team.html အတိုင်း ပွဲထွက် ၁၁ ယောက်နှင့် Bench ၄ ယောက် အမှန်ကန်ဆုံးခွဲထုတ်ခြင်း
+// 🪑 🏟️ Bench & Pitch Sorter
 function renderPopupPitch(picks) {
-  // 💡 multiplier ကို ဂဏန်းစစ်စစ်ပြောင်းပြီးမှ ပွဲထွက်နှင့် အရန်ခုံ စနစ်တကျ ခွဲခြားခြင်း
-  const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0);
-  const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0);
+  // 💡 ဖြေရှင်းချက် (၃): p.multiplier နှင့် p.multiplier နှစ်မျိုးလုံးအတွက် Type-Safe Safeguard စနစ်တပ်ဆင်ခြင်း
+  const checkMult = (p) => p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
   
+  const starters = picks.filter(p => Number(checkMult(p)) > 0); 
+  const subs = picks.filter(p => Number(checkMult(p)) === 0); 
+
   const gk = starters.filter(p => p.position === "GK"); //
   const def = starters.filter(p => p.position === "DEF"); //
   const mid = starters.filter(p => p.position === "MID"); //
@@ -183,7 +182,7 @@ function renderPopupPitch(picks) {
   document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
 }
 
-// 💡 Window Global Module Toggles Object Injection
+// Window Object Toggles
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
