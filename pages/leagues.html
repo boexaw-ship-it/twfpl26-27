@@ -49,12 +49,14 @@
       const snap = await getDoc(doc(db, "users", user.uid));
       if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
 
+      // Subscribe League 1
       onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
         league1Data = [];
         snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() }));
         renderTable("league1");
       });
 
+      // Subscribe League 2
       onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
         league2Data = [];
         snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
@@ -114,7 +116,7 @@
       `;
     }
 
-    // 💡 =================== POP-UP CORE REAL-TIME ENGINE (FIXED NESTED PATH) ===================
+    // 💡 =================== POP-UP CORE ENGINE ===================
     let unsubscribePopup = null;
 
     window.openTeamPopup = (leagueId, fplID, teamName) => {
@@ -130,16 +132,16 @@
         if (!docSnap.exists()) return;
         const data = docSnap.data();
         
-        // Header Display Records
+        // Header Display Panels
         document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
         document.getElementById("modal-total-pts").textContent = data.points ?? "0";
         document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
         document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
-        // 📡 💡 ကြီးမားသောပြင်ဆင်ချက်: nested object data[fplID].picks အား လုံးဝတိကျမှန်ကန်စွာ ဆွဲထုတ်ဖတ်ယူခြင်း
+        // 📡 Nested Firebase ID Object Mapping စစ်ဆေးချက်
         let finalPicks = null;
         if (data[fplID] && Array.isArray(data[fplID].picks)) {
-          finalPicks = data[fplID].picks; // Firebase Structure အမှန်
+          finalPicks = data[fplID].picks; 
         } else if (data.picks && Array.isArray(data.picks)) {
           finalPicks = data.picks;
         }
@@ -157,22 +159,24 @@
       document.getElementById("team-popup-modal").style.display = "none";
     };
 
-    // 💡 🎨 ပြင်ဆင်ချက်: Folder များမခံဘဲ ပုံများကို တိုက်ရိုက်ဆွဲယူသည့် ဂျာစီလမ်းကြောင်းစနစ်သစ်
+    // 💡 🎨 ဂျာစီလမ်းကြောင်းပြင်ဆင်ချက်: /twfpl26-27 အစပိုင်းလမ်းကြောင်း သေသေချာချာထည့်သွင်းပေးလိုက်သည်
     function jerseyPath(p) {
       const code = String(p.teamCode || "unknown").toLowerCase().trim();
-      return `/twfpl26-27/public/jerseys/${code}.png`; // boexaw-ship-it GitHub အတိုင်း တိုက်ရိုက်ဆွဲခြင်း
+      return `/twfpl26-27/public/jerseys/${code}.png`;
     }
 
-    // team.html ကတ်ပြားဒီဇိုင်းစစ်စစ်
+    // team.html ကတ်ပြားဒီဇိုင်းစစ်စစ်အတိုင်း ရေးဆွဲခြင်း
     function buildPlayerCard(p) {
-      const mult = p.multiplier ?? 1;
+      // 💡 Type Safety Safeguard: multiplier ကို ဂဏန်းအဖြစ် အတင်းပြောင်းလဲစစ်ဆေးခြင်း
+      const mult = Number(p.multiplier ?? 1);
       
-      // 💡 Captain နှင့် Vice Captain (V/C) Marking စနစ်အမှန်
+      // 💡 Type Safety Safeguard: Captain ရော Vice ပါ စာသားဝင်လာပါကလည်း မှန်ကန်စွာဖတ်နိုင်ရန် ဖြစ်သည်
       const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
       const isVc = p.isVice === true || p.isVice === "true";
       
-      const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
+      const displayPoints = (Number(p.livePoints) || 0) * (mult > 1 ? mult : 1);
       
+      // V/C အဝိုင်း တံဆိပ်အမှန်ပေါ်စေရန် စစ်ဆေးချက်
       const cornerBadge = mult === 3
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">3x</span>'
         : isCap
@@ -196,11 +200,11 @@
         </div>`;
     }
 
-    // 💡 🪑 Bench Player များကို သီးသန့်ခွဲထုတ်ပြသပေးသည့် စနစ်စစ်စစ်
+    // 💡 🪑 Bench Player စနစ်တကျ Type-Safe ခွဲထုတ်မှုစနစ်သစ်
     function renderPopupPitch(picks) {
-      // multiplier > 0 ပွဲထွက်၊ multiplier === 0 Bench ဟု ကွက်တိ ခွဲထုတ်ခြင်း
-      const starters = picks.filter(p => (p.multiplier ?? 1) > 0);
-      const subs = picks.filter(p => (p.multiplier ?? 1) === 0);
+      // 💡 p.multiplier ကို Number ပြောင်းပြီးမှ စစ်ထုတ်သောကြောင့် String "0" ဖြစ်နေပါစေ အရန်လူထဲသို့ အမှန်ကန်ဆုံးရောက်ရှိမည်
+      const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0);
+      const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0);
       
       const gk = starters.filter(p => p.position === "GK");
       const def = starters.filter(p => p.position === "DEF");
@@ -217,7 +221,7 @@
           ${renderRow(fwd)}
         </div>`;
 
-      // 🪑 Bench Area အောက်ခြေသို့ သီးသန့်တွန်းပို့ခြင်း
+      // အရန်လူစာရင်းအား အောက်ခြေအကွက်ထဲသို့ သီးသန့် ကွက်တိထည့်သွင်းပေးခြင်း
       document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
     }
 
@@ -257,19 +261,16 @@
 </head>
 <body class="scrollbar-none">
 
-  <!-- Top Bar -->
   <div class="bg-[#0D2B1A] border-b border-[#1F5C36] px-4 py-3 flex items-center flex-shrink-0">
     <a href="/twfpl26-27/pages/dashboard.html" class="text-[#3A9E5F] text-lg font-bold">←</a>
     <h1 class="gold-text font-bold text-xl ml-2 tracking-wider font-['Bebas_Neue']">LEAGUES</h1>
   </div>
 
-  <!-- League Tabs -->
   <div class="px-4 pt-3 flex gap-2">
     <button id="tab-league1" onclick="switchTab('league1')" class="flex-1 py-2.5 rounded-xl font-bold bg-gradient-to-r from-[#C9A84C] to-[#F0D060] text-[#0D2B1A]">Weekly League</button>
     <button id="tab-league2" onclick="switchTab('league2')" class="flex-1 py-2.5 rounded-xl font-bold border border-[#2A7A47] text-[#3A9E5F]">All Friends</button>
   </div>
 
-  <!-- Legend & Sort Frame -->
   <div class="px-4 py-3.5 flex flex-col gap-2.5 border-b border-[#1F5C36] mb-1">
     <div class="flex items-center gap-2">
       <span class="text-xs font-semibold uppercase tracking-wider text-[#3A9E5F]">Chips:</span>
@@ -289,23 +290,19 @@
     </div>
   </div>
 
-  <!-- Table Content -->
   <div class="flex-1 overflow-y-auto px-4 py-1 scrollbar-none">
     <div id="panel-league1"><div id="league1-table"></div></div>
     <div id="panel-league2" style="display:none;"><div id="league2-table"></div></div>
   </div>
 
-  <!-- 📱 TEAM SQUAD PITCH VIEW POP-UP MODAL (Authentic Framework Variant) -->
   <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:150; display:none; align-items:center; justify-content:center; padding:12px;" onclick="if(event.target===this)closeTeamPopup()">
     <div class="w-full max-w-sm rounded-2xl p-4 border border-[#2A7A47] flex flex-col overflow-hidden bg-[#1B4D2E] shadow-2xl space-y-3">
       
-      <!-- Close Header -->
       <div class="flex items-center justify-between">
         <h2 class="text-[#F0D060] font-black text-sm tracking-tight truncate flex-1 uppercase font-['Inter']" id="modal-team-title">—</h2>
         <button onclick="closeTeamPopup()" class="w-7 h-7 rounded-full text-xs font-bold bg-black/30 border border-gray-700 text-gray-300 flex items-center justify-center">✕</button>
       </div>
 
-      <!-- GW Points, Total, Hit, Chip Display Panel -->
       <div class="grid grid-cols-4 gap-1.5 bg-black/20 p-2 rounded-xl border border-emerald-500/10 text-center">
         <div>
           <p class="text-[8px] text-emerald-400 uppercase font-bold tracking-tight">GW Pts</p>
@@ -324,7 +321,6 @@
         </div>
       </div>
 
-      <!-- Pitch Area Container -->
       <div class="relative bg-gradient-to-b from-[#00874c] via-[#00a85a] to-[#005e34] rounded-xl p-3 border border-white/10 overflow-hidden shadow-inner flex-1 min-h-[300px]">
         <svg class="absolute inset-0 w-full h-full opacity-35 pointer-events-none" viewBox="0 0 200 420" preserveAspectRatio="none">
           <rect x="5" y="5" width="190" height="410" fill="none" stroke="white" stroke-width="1.2"/>
@@ -334,7 +330,6 @@
         <div id="popup-pitch-rows" class="relative z-10 space-y-3.5"></div>
       </div>
 
-      <!-- Bench Area Box -->
       <div class="rounded-xl p-2 bg-[#113a21] border border-[#1F5C36]">
         <p class="text-center font-black uppercase text-[8px] tracking-widest mb-1.5 text-[#C9A84C]/80">Bench (အရန်လူစာရင်း)</p>
         <div id="popup-bench-row" class="flex justify-center gap-1.5 flex-wrap"></div>
@@ -343,7 +338,6 @@
     </div>
   </div>
 
-  <!-- Bottom Nav -->
   <div class="bg-[#0D2B1A] border-t border-[#1F5C36] flex justify-around items-center py-1 flex-shrink-0 z-20">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'">🏠<span>Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'">⚡<span>Live</span></div>
