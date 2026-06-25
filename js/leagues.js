@@ -10,7 +10,7 @@ let unsubscribeLiveTeam = null;
 
 const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
-// 📡 Firebase Standings Listener (ဇယားကွက်အတွက်)
+// 📡 Firebase Standings Listeners (ဇယားကွက်အတွက်)
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
@@ -24,7 +24,7 @@ onAuthStateChanged(auth, async (user) => {
 
   onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
     league2Data = [];
-    snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
+    snapshot.forEach(d => league2Data.push({ id: id, ...d.data() }));
     renderTable("league2");
   });
 });
@@ -79,7 +79,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 💡 =================== POP-UP CORE ENGINE (FIXED DATA PATHS) ===================
+// 💡 =================== POP-UP REAL-TIME ENGINE (STANDALONE LOCATION) ===================
 window.openTeamPopup = (leagueId, fplID, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -90,7 +90,7 @@ window.openTeamPopup = (leagueId, fplID, teamName) => {
 
   const cleanID = String(fplID).trim();
 
-  // ဘာကြောင့်တိုင်ပတ်လဲ အဖြေရှင်းချက် (၁): Standing Document ကနေ Chip/Hit/Total ရမှတ်သီးသန့်ဖတ်မည်
+  // (၁) အမှတ်စာရင်း Panel ဒေတာများကို leagues/.../standings document ဆီမှ ဖတ်ရှုမည်
   const standingRef = doc(db, "leagues", leagueId, "standings", cleanID);
   unsubscribeStanding = onSnapshot(standingRef, (docSnap) => {
     if (!docSnap.exists()) return;
@@ -101,13 +101,13 @@ window.openTeamPopup = (leagueId, fplID, teamName) => {
     document.getElementById("modal-chip-badge").textContent = sData.chip && CHIP_LABELS[sData.chip] ? CHIP_LABELS[sData.chip] : "NO CHIP";
   });
 
-  // ဘာကြောင့်တိုင်ပတ်လဲ အဖြေရှင်းချက် (၂): 💡 picks လူစာရင်းဒေတာကို liveTeams Collection ဆီကနေပဲ တိုက်ရိုက်ဆွဲထုတ်ဖတ်ရှုမည်
+  // (၂) 💡 အန်ကယ် ညွှန်ကြားချက်အမှန်အတိုင်း: picks လူစာရင်းအား liveTeams collection ဆီမှ သီးသန့် Real-time လှမ်းဖတ်ပါမည်
   const liveTeamRef = doc(db, "liveTeams", cleanID);
   unsubscribeLiveTeam = onSnapshot(liveTeamRef, (liveSnap) => {
     if (liveSnap.exists()) {
       const ltData = liveSnap.data();
       if (ltData && Array.isArray(ltData.picks)) {
-        renderPopupPitch(ltData.picks); // 👈 picks array အား တိုက်ရိုက် Render ပို့ပေးခြင်း
+        renderPopupPitch(ltData.picks); // picks array အား တိုက်ရိုက်ပေးပို့ခြင်း
       } else {
         document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">လူစာရင်း ဒေတာ မတွေ့ပါဗျာ</p>`;
       }
@@ -132,11 +132,10 @@ function jerseyPath(p) {
 
 // 🎨 📛 team.html Player Card ကတ်ပြားပုံစံစစ်စစ်
 function buildPlayerCard(p) {
-  // 💡 liveTeams ထဲက p.multiplier တန်ဖိုးအရ ချိန်ညှိတွက်ချက်ခြင်း
-  const mult = p.multiplier !== undefined ? Number(p.multiplier) : 1;
+  const mult = p.multiplier !== undefined ? Number(p.multiplier) : 1; //
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
   
-  // ဘာကြောင့်တိုင်ပတ်လဲ အဖြေရှင်းချက် (၃): 💡 absolute နေရာမှန်ကန်စေရန် parent container ကို relative ပေါင်းထည့်ထားသည်
+  // အန်ကယ် ညွှန်ကြားချက်အမှန် (၂): 💡 Parent Wrapper Div တွင် relative ထည့်သွင်းပြီး absolute Badge များ နေရာမှန်ကန်အောင် ချိန်ညှိခြင်း
   const cornerBadge = mult === 3
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>' //
     : p.isCaptain || p.isCaptain === "true" || mult > 1
@@ -163,7 +162,7 @@ function buildPlayerCard(p) {
 
 // 🪑 🏟️ team.html အတိုင်း ပွဲထွက် ၁၁ ယောက်နှင့် Bench ၄ ယောက် ခွဲထုတ်ခြင်း
 function renderPopupPitch(picks) {
-  // multiplier ဂဏန်းကို အခြေခံ၍ သေချာစွာ စစ်ထုတ်သည်
+  // multiplier နံပါတ်ကို သေချာစွာ စစ်ထုတ်သည်
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
 
