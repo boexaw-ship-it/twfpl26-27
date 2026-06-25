@@ -114,7 +114,7 @@
       `;
     }
 
-    // 💡 =================== POP-UP ENGINE LOGIC ===================
+    // 💡 =================== POP-UP CORE REAL-TIME ENGINE (FIXED NESTED PATH) ===================
     let unsubscribePopup = null;
 
     window.openTeamPopup = (leagueId, fplID, teamName) => {
@@ -130,14 +130,16 @@
         if (!docSnap.exists()) return;
         const data = docSnap.data();
         
+        // Header Display Records
         document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
         document.getElementById("modal-total-pts").textContent = data.points ?? "0";
         document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
         document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
+        // 📡 💡 ကြီးမားသောပြင်ဆင်ချက်: nested object data[fplID].picks အား လုံးဝတိကျမှန်ကန်စွာ ဆွဲထုတ်ဖတ်ယူခြင်း
         let finalPicks = null;
         if (data[fplID] && Array.isArray(data[fplID].picks)) {
-          finalPicks = data[fplID].picks; 
+          finalPicks = data[fplID].picks; // Firebase Structure အမှန်
         } else if (data.picks && Array.isArray(data.picks)) {
           finalPicks = data.picks;
         }
@@ -155,17 +157,20 @@
       document.getElementById("team-popup-modal").style.display = "none";
     };
 
-    // 💡 🎨 ပြင်ဆင်ချက်: အန်ကယ့် GitHub တည်ဆောက်ပုံအတိုင်း Folder မခေါ်ဘဲ ပုံတိုက်ရိုက်ဆွဲထုတ်သည့် စနစ်
+    // 💡 🎨 ပြင်ဆင်ချက်: Folder များမခံဘဲ ပုံများကို တိုက်ရိုက်ဆွဲယူသည့် ဂျာစီလမ်းကြောင်းစနစ်သစ်
     function jerseyPath(p) {
       const code = String(p.teamCode || "unknown").toLowerCase().trim();
-      return `/twfpl26-27/public/jerseys/${code}.png`; // gk/outfield folder များ လုံးဝမခံဘဲ တိုက်ရိုက်ဆွဲခြင်း
+      return `/twfpl26-27/public/jerseys/${code}.png`; // boexaw-ship-it GitHub အတိုင်း တိုက်ရိုက်ဆွဲခြင်း
     }
 
     // team.html ကတ်ပြားဒီဇိုင်းစစ်စစ်
     function buildPlayerCard(p) {
       const mult = p.multiplier ?? 1;
+      
+      // 💡 Captain နှင့် Vice Captain (V/C) Marking စနစ်အမှန်
       const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
       const isVc = p.isVice === true || p.isVice === "true";
+      
       const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
       
       const cornerBadge = mult === 3
@@ -191,7 +196,9 @@
         </div>`;
     }
 
+    // 💡 🪑 Bench Player များကို သီးသန့်ခွဲထုတ်ပြသပေးသည့် စနစ်စစ်စစ်
     function renderPopupPitch(picks) {
+      // multiplier > 0 ပွဲထွက်၊ multiplier === 0 Bench ဟု ကွက်တိ ခွဲထုတ်ခြင်း
       const starters = picks.filter(p => (p.multiplier ?? 1) > 0);
       const subs = picks.filter(p => (p.multiplier ?? 1) === 0);
       
@@ -210,6 +217,7 @@
           ${renderRow(fwd)}
         </div>`;
 
+      // 🪑 Bench Area အောက်ခြေသို့ သီးသန့်တွန်းပို့ခြင်း
       document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
     }
 
@@ -287,7 +295,7 @@
     <div id="panel-league2" style="display:none;"><div id="league2-table"></div></div>
   </div>
 
-  <!-- TEAM SQUAD PITCH VIEW POP-UP MODAL -->
+  <!-- 📱 TEAM SQUAD PITCH VIEW POP-UP MODAL (Authentic Framework Variant) -->
   <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:150; display:none; align-items:center; justify-content:center; padding:12px;" onclick="if(event.target===this)closeTeamPopup()">
     <div class="w-full max-w-sm rounded-2xl p-4 border border-[#2A7A47] flex flex-col overflow-hidden bg-[#1B4D2E] shadow-2xl space-y-3">
       
