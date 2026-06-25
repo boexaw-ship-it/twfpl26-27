@@ -77,7 +77,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 🏟️ Pop-up Document Listener
+// 🏟️ Pop-up Real-time Snapshot
 window.openTeamPopup = (leagueId, fplID, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -96,9 +96,10 @@ window.openTeamPopup = (leagueId, fplID, teamName) => {
     document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
     document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
+    // 📡 Firebase nested Object data hierarchy extraction
     let finalPicks = [];
     if (data[fplID] && Array.isArray(data[fplID].picks)) {
-      finalPicks = data[fplID].picks; 
+      finalPicks = data[fplID].picks; //
     } else if (data.picks && Array.isArray(data.picks)) {
       finalPicks = data.picks;
     }
@@ -125,13 +126,13 @@ function jerseyPath(p) {
 
 // 🎨 📛 team.html Player Card ကတ်ပြားပုံစံစစ်စစ်
 function buildPlayerCard(p) {
-  // ဂဏန်း သို့မဟုတ် စာသား အမျိုးအစားလွဲနေပါကလည်း ကွက်တိကိုက်ညီစေရန် == ဖြင့်နှိုင်းယှဉ်သည်
-  const mult = p.multiplier || 1;
-  const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
+  // 💡 ပြင်ဆင်ချက်: Firebase ဒေတာထွက်ပုံအရ multiplier ၏ စာလုံးအကြီးအသေး i အား သေချာစွာ ချိန်ညှိဖတ်ယူခြင်း
+  const mult = p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
+  const displayPoints = (p.livePoints ?? 0) * (Number(mult) > 1 ? Number(mult) : 1); //
   
-  const cornerBadge = mult == 3
+  const cornerBadge = Number(mult) == 3
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>' //
-    : p.isCaptain || p.isCaptain === "true"
+    : p.isCaptain || p.isCaptain === "true" || Number(mult) > 1
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>' //
     : p.isVice || p.isVice === "true"
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>' //
@@ -139,7 +140,7 @@ function buildPlayerCard(p) {
 
   return `
     <div class="w-[72px] sm:w-[82px] flex flex-col items-center relative transition active:scale-95">
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-hidden" style="background:#1F5C36; border:2px solid ${p.isCaptain ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47'};">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-hidden" style="background:#1F5C36; border:2px solid ${p.isCaptain || Number(mult) > 1 ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47'};">
         <img src="${jerseyPath(p)}"
              onerror="this.outerHTML='<div class=\\'w-full h-10 flex items-center justify-center text-xl\\'>👕</div>'"
              class="w-9 h-9 object-contain" alt="${p.name}" />
@@ -155,9 +156,11 @@ function buildPlayerCard(p) {
 
 // 🪑 🏟️ team.html အတိုင်း ပွဲထွက် ၁၁ ယောက်နှင့် Bench ၄ ယောက် ခွဲထုတ်ခြင်း
 function renderPopupPitch(picks) {
-  // Data Type မတူညီမှုကို ကျော်လွှားရန် == ဖြင့် နှိုင်းယှဉ်ပြီး အရန်လူစာရင်းခွဲထုတ်သည်
-  const starters = picks.filter(p => p.multiplier != 0); 
-  const subs = picks.filter(p => p.multiplier == 0); 
+  // 💡 ပြင်ဆင်ချက်: multiplier ၏ စာလုံးအကြီးအသေးတန်ဖိုးအား နှစ်မျိုးလုံး Type-safe စစ်ထုတ်ခြင်း
+  const getMult = (p) => p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
+  
+  const starters = picks.filter(p => Number(getMult(p)) > 0); 
+  const subs = picks.filter(p => Number(getMult(p)) == 0); 
 
   const gk = starters.filter(p => p.position === "GK"); //
   const def = starters.filter(p => p.position === "DEF"); //
@@ -178,11 +181,9 @@ function renderPopupPitch(picks) {
       ${renderRow(fwd)}
     </div>`;
 
-  // Bench ၄ ယောက်အား အောက်ခြေအကွက်ထဲ သီးသန့်ထည့်သွင်းခြင်း
   document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
 }
 
-// Toggles Control window objects
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
