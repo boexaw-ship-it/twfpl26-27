@@ -17,7 +17,7 @@
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 💡 🎨 team.html စတိုင်အတိုင်း ဂျာစီအောက်ခြေတွင် ကွက်တိပေါ်မည့် Point Element Format */
+    /* 💡 🎨 team.html စတိုင်အတိုင်း ဂျာစီအောက်ခြေတွင် ကွက်တိပေါ်မည့် Point Element */
     .fpl-squad-pts {
       background-color: #000000;
       color: #ffffff;
@@ -49,14 +49,12 @@
       const snap = await getDoc(doc(db, "users", user.uid));
       if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
 
-      // Subscribe League 1
       onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
         league1Data = [];
-        snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() })); // Document ID ကို id အဖြစ်သေချာသိမ်းသည်
+        snapshot.forEach(d => league1Data.push({ id: d.id, ...d.data() }));
         renderTable("league1");
       });
 
-      // Subscribe League 2
       onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
         league2Data = [];
         snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
@@ -76,7 +74,6 @@
       return `<span class="text-[9px] font-bold" style="color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
     }
 
-    // Render Main Standings Table
     function renderTable(firebaseId) {
       const data = firebaseId === "league1" ? league1Data : league2Data;
       const tableId = firebaseId === "league1" ? "league1-table" : "league2-table";
@@ -106,7 +103,7 @@
           <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
           <div class="flex-1 min-w-0">
             <div class="flex items-center flex-wrap">
-              <span class="text-sm font-medium text-white truncate" style="max-width:140px;">${r.teamName || "—"}</span>
+              <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
               ${chipBadge(r.chip)}
               ${hitBadge(r.hitCost)}
             </div>
@@ -117,7 +114,7 @@
       `;
     }
 
-    // 💡 =================== POP-UP CORE REAL-TIME ENGINE (FIXED PATH) ===================
+    // 💡 =================== POP-UP ENGINE LOGIC ===================
     let unsubscribePopup = null;
 
     window.openTeamPopup = (leagueId, fplID, teamName) => {
@@ -128,27 +125,23 @@
       document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50 animate-pulse">Team Loading...</p>`;
       document.getElementById("popup-bench-row").innerHTML = "";
 
-      // Document လှမ်းဖတ်ခြင်း
       const docRef = doc(db, "leagues", leagueId, "standings", String(fplID).trim());
       unsubscribePopup = onSnapshot(docRef, (docSnap) => {
         if (!docSnap.exists()) return;
         const data = docSnap.data();
         
-        // 📊 Top Header Score Displays
         document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
         document.getElementById("modal-total-pts").textContent = data.points ?? "0";
         document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
         document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
-        // 💡 📡 ဒေတာလမ်းကြောင်းအမှန်ပြင်ဆင်ချက်: data[fplID].picks သို့မဟုတ် data.picks ဟု ပုံစံနှစ်မျိုးလုံးစစ်ထုတ်ခြင်း
         let finalPicks = null;
         if (data[fplID] && Array.isArray(data[fplID].picks)) {
-          finalPicks = data[fplID].picks; // Firebase Structure အမှန်အတိုင်း ဖတ်ယူခြင်း
+          finalPicks = data[fplID].picks; 
         } else if (data.picks && Array.isArray(data.picks)) {
           finalPicks = data.picks;
         }
 
-        // Render Pitch
         if (finalPicks && finalPicks.length > 0) {
           renderPopupPitch(finalPicks);
         } else {
@@ -162,21 +155,24 @@
       document.getElementById("team-popup-modal").style.display = "none";
     };
 
+    // 💡 🎨 ပြင်ဆင်ချက်: အန်ကယ့် GitHub တည်ဆောက်ပုံအတိုင်း Folder မခေါ်ဘဲ ပုံတိုက်ရိုက်ဆွဲထုတ်သည့် စနစ်
     function jerseyPath(p) {
-      const folder = p.position === "GK" ? "gk" : "outfield";
-      const code = p.teamCode || "unknown";
-      return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
+      const code = String(p.teamCode || "unknown").toLowerCase().trim();
+      return `/twfpl26-27/public/jerseys/${code}.png`; // gk/outfield folder များ လုံးဝမခံဘဲ တိုက်ရိုက်ဆွဲခြင်း
     }
 
-    // 💡 🎨 team.html ကတ်ပြားဒီဇိုင်းအတိုင်း တစ်ထပ်တည်း ပြန်လည်အချောသတ်ထားသော ဖွဲ့စည်းပုံ
+    // team.html ကတ်ပြားဒီဇိုင်းစစ်စစ်
     function buildPlayerCard(p) {
-      const mult = p.multiplier || 1;
+      const mult = p.multiplier ?? 1;
+      const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
+      const isVc = p.isVice === true || p.isVice === "true";
       const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
+      
       const cornerBadge = mult === 3
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">3x</span>'
-        : p.isCaptain
+        : isCap
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">C</span>'
-        : p.isVice
+        : isVc
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-20">V</span>'
         : '';
 
@@ -196,8 +192,8 @@
     }
 
     function renderPopupPitch(picks) {
-      const starters = picks.filter(p => p.multiplier > 0);
-      const subs = picks.filter(p => p.multiplier === 0);
+      const starters = picks.filter(p => (p.multiplier ?? 1) > 0);
+      const subs = picks.filter(p => (p.multiplier ?? 1) === 0);
       
       const gk = starters.filter(p => p.position === "GK");
       const def = starters.filter(p => p.position === "DEF");
@@ -253,16 +249,19 @@
 </head>
 <body class="scrollbar-none">
 
+  <!-- Top Bar -->
   <div class="bg-[#0D2B1A] border-b border-[#1F5C36] px-4 py-3 flex items-center flex-shrink-0">
     <a href="/twfpl26-27/pages/dashboard.html" class="text-[#3A9E5F] text-lg font-bold">←</a>
     <h1 class="gold-text font-bold text-xl ml-2 tracking-wider font-['Bebas_Neue']">LEAGUES</h1>
   </div>
 
+  <!-- League Tabs -->
   <div class="px-4 pt-3 flex gap-2">
     <button id="tab-league1" onclick="switchTab('league1')" class="flex-1 py-2.5 rounded-xl font-bold bg-gradient-to-r from-[#C9A84C] to-[#F0D060] text-[#0D2B1A]">Weekly League</button>
     <button id="tab-league2" onclick="switchTab('league2')" class="flex-1 py-2.5 rounded-xl font-bold border border-[#2A7A47] text-[#3A9E5F]">All Friends</button>
   </div>
 
+  <!-- Legend & Sort Frame -->
   <div class="px-4 py-3.5 flex flex-col gap-2.5 border-b border-[#1F5C36] mb-1">
     <div class="flex items-center gap-2">
       <span class="text-xs font-semibold uppercase tracking-wider text-[#3A9E5F]">Chips:</span>
@@ -282,19 +281,23 @@
     </div>
   </div>
 
+  <!-- Table Content -->
   <div class="flex-1 overflow-y-auto px-4 py-1 scrollbar-none">
     <div id="panel-league1"><div id="league1-table"></div></div>
     <div id="panel-league2" style="display:none;"><div id="league2-table"></div></div>
   </div>
 
+  <!-- TEAM SQUAD PITCH VIEW POP-UP MODAL -->
   <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:150; display:none; align-items:center; justify-content:center; padding:12px;" onclick="if(event.target===this)closeTeamPopup()">
     <div class="w-full max-w-sm rounded-2xl p-4 border border-[#2A7A47] flex flex-col overflow-hidden bg-[#1B4D2E] shadow-2xl space-y-3">
       
+      <!-- Close Header -->
       <div class="flex items-center justify-between">
         <h2 class="text-[#F0D060] font-black text-sm tracking-tight truncate flex-1 uppercase font-['Inter']" id="modal-team-title">—</h2>
         <button onclick="closeTeamPopup()" class="w-7 h-7 rounded-full text-xs font-bold bg-black/30 border border-gray-700 text-gray-300 flex items-center justify-center">✕</button>
       </div>
 
+      <!-- GW Points, Total, Hit, Chip Display Panel -->
       <div class="grid grid-cols-4 gap-1.5 bg-black/20 p-2 rounded-xl border border-emerald-500/10 text-center">
         <div>
           <p class="text-[8px] text-emerald-400 uppercase font-bold tracking-tight">GW Pts</p>
@@ -313,6 +316,7 @@
         </div>
       </div>
 
+      <!-- Pitch Area Container -->
       <div class="relative bg-gradient-to-b from-[#00874c] via-[#00a85a] to-[#005e34] rounded-xl p-3 border border-white/10 overflow-hidden shadow-inner flex-1 min-h-[300px]">
         <svg class="absolute inset-0 w-full h-full opacity-35 pointer-events-none" viewBox="0 0 200 420" preserveAspectRatio="none">
           <rect x="5" y="5" width="190" height="410" fill="none" stroke="white" stroke-width="1.2"/>
@@ -322,6 +326,7 @@
         <div id="popup-pitch-rows" class="relative z-10 space-y-3.5"></div>
       </div>
 
+      <!-- Bench Area Box -->
       <div class="rounded-xl p-2 bg-[#113a21] border border-[#1F5C36]">
         <p class="text-center font-black uppercase text-[8px] tracking-widest mb-1.5 text-[#C9A84C]/80">Bench (အရန်လူစာရင်း)</p>
         <div id="popup-bench-row" class="flex justify-center gap-1.5 flex-wrap"></div>
@@ -330,6 +335,7 @@
     </div>
   </div>
 
+  <!-- Bottom Nav -->
   <div class="bg-[#0D2B1A] border-t border-[#1F5C36] flex justify-around items-center py-1 flex-shrink-0 z-20">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'">🏠<span>Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'">⚡<span>Live</span></div>
