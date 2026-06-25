@@ -67,7 +67,7 @@ function renderTable(firebaseId) {
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
       <div class="flex-1 min-w-0">
         <div class="flex items-center flex-wrap">
-          <span class="text-sm font-medium text-white truncate" style="max-width:140px;">${r.teamName || "—"}</span>
+          <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
           ${chipBadge(r.chip)}
           ${hitBadge(r.hitCost)}
         </div>
@@ -78,7 +78,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 🏟️ Pop-up Engine (Standings document reader only)
+// 🏟️ Pop-up Engine (Standings document single reader)
 window.openTeamPopup = (leagueId, fplID, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -88,13 +88,12 @@ window.openTeamPopup = (leagueId, fplID, teamName) => {
   document.getElementById("popup-bench-row").innerHTML = "";
 
   const cleanID = String(fplID).trim();
-
   const docRef = doc(db, "leagues", leagueId, "standings", cleanID);
+
   unsubscribePopup = onSnapshot(docRef, (docSnap) => {
     if (!docSnap.exists()) return;
     const data = docSnap.data();
     
-    // Top Score Panel
     document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
     document.getElementById("modal-total-pts").textContent = data.points ?? "0";
     document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
@@ -113,32 +112,35 @@ window.closeTeamPopup = () => {
   document.getElementById("team-popup-modal").style.display = "none";
 };
 
-// 💡 🎨 ဖြေရှင်းချက် (၁): .toLowerCase() စနစ်ထည့်သွင်း၍ စာလုံးအကြီးအသေး ဘယ်လိုလာလာ GitHub ပုံများ အမှန်ထွက်စေရန် ညှိနှိုင်းခြင်း
 function jerseyPath(p) {
-  const folder = p.position === "GK" ? "gk" : "outfield"; //
-  const code = String(p.teamCode || "unknown").toLowerCase().trim(); // 👈 အကြီးအသေး Safeguard စနစ်
+  // 💡 Safeguard: Position စာလုံးအကြီးအသေး ဘယ်လိုလာလာ အော်တို အသေးပြောင်းလဲပြီး ဂျာစီ Folder လမ်းကြောင်းခွဲခြားခြင်း
+  const posClean = String(p.position || "").toUpperCase().trim(); //
+  const folder = posClean === "GK" ? "gk" : "outfield"; //
+  const code = String(p.teamCode || "unknown").toLowerCase().trim(); //
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
 }
 
-// Player Card Layout
 function buildPlayerCard(p) {
-  // 💡 ဖြေရှင်းချက် (၂): multiplier နှင့် multiplier နှစ်မျိုးလုံးအား ဘယ်ပုံစံဖြင့်လာပါစေ ဖတ်ယူနိုင်ရန် ချိန်ညှိခြင်း
+  // multiplier စစ်ဆေးချက်
   const multRaw = p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
   const mult = Number(multRaw);
-
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
+  
+  // 💡 Safeguard: isCaptain နှင့် isVice ဒေတာအမျိုးအစား (Boolean / String) နှစ်မျိုးလုံးအတွက် စိတ်ချရအောင် စစ်ဆေးခြင်း
+  const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
+  const isVc = p.isVice === true || p.isVice === "true";
   
   const cornerBadge = mult === 3
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>' //
-    : p.isCaptain || mult > 1
+    : isCap
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>' //
-    : p.isVice
+    : isVc
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>' //
     : '';
 
   return `
     <div class="w-[72px] sm:w-[82px] flex flex-col items-center relative transition active:scale-95">
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-visible relative" style="background:#1F5C36; border:2px solid ${p.isCaptain || mult > 1 ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47'};">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-visible relative" style="background:#1F5C36; border:2px solid ${isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'};">
         <img src="${jerseyPath(p)}"
              onerror="this.outerHTML='<div class=\\'w-full h-10 flex items-center justify-center text-xl\\'>👕</div>'"
              class="w-9 h-9 object-contain" alt="${p.name}" />
@@ -152,18 +154,17 @@ function buildPlayerCard(p) {
   `;
 }
 
-// 🪑 🏟️ Bench & Pitch Sorter
 function renderPopupPitch(picks) {
-  // 💡 ဖြေရှင်းချက် (၃): p.multiplier နှင့် p.multiplier နှစ်မျိုးလုံးအတွက် Type-Safe Safeguard စနစ်တပ်ဆင်ခြင်း
   const checkMult = (p) => p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
   
   const starters = picks.filter(p => Number(checkMult(p)) > 0); 
   const subs = picks.filter(p => Number(checkMult(p)) === 0); 
-
-  const gk = starters.filter(p => p.position === "GK"); //
-  const def = starters.filter(p => p.position === "DEF"); //
-  const mid = starters.filter(p => p.position === "MID"); //
-  const fwd = starters.filter(p => p.position === "FWD"); //
+  
+  // 💡 Safeguard: Position စာလုံးအကြီးအသေး နှစ်မျိုးလုံးဖြစ်နိုင်သဖြင့် .toUpperCase() ပြောင်းလဲ၍ တန်းစီစနစ်တကျ ခွဲထုတ်ခြင်း
+  const gk = starters.filter(p => String(p.position || "").toUpperCase().trim() === "GK"); //
+  const def = starters.filter(p => String(p.position || "").toUpperCase().trim() === "DEF"); //
+  const mid = starters.filter(p => String(p.position || "").toUpperCase().trim() === "MID"); //
+  const fwd = starters.filter(p => String(p.position || "").toUpperCase().trim() === "FWD"); //
 
   const renderRow = (players) => `
     <div class="flex justify-center items-center gap-x-2 w-full">
@@ -182,7 +183,6 @@ function renderPopupPitch(picks) {
   document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
 }
 
-// Window Object Toggles
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
