@@ -5,12 +5,11 @@ import { doc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.
 let league1Data = [];
 let league2Data = [];
 let sortMode = "total"; 
-let unsubscribeStanding = null;
-let unsubscribeLiveTeam = null;
+let unsubscribePopup = null;
 
 const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
-// 📡 Firebase Standings Listeners (ဇယားကွက်အတွက်)
+// 📡 Firebase Standings Listeners (ဇယားကွက်အတွက် Real-time ဖတ်ရှုခြင်း)
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
@@ -24,7 +23,7 @@ onAuthStateChanged(auth, async (user) => {
 
   onSnapshot(query(collection(db, "leagues", "league2", "standings")), (snapshot) => {
     league2Data = [];
-    snapshot.forEach(d => league2Data.push({ id: id, ...d.data() }));
+    snapshot.forEach(d => league2Data.push({ id: d.id, ...d.data() }));
     renderTable("league2");
   });
 });
@@ -68,7 +67,7 @@ function renderTable(firebaseId) {
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
       <div class="flex-1 min-w-0">
         <div class="flex items-center flex-wrap">
-          <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
+          <span class="text-sm font-medium text-white truncate" style="max-width:140px;">${r.teamName || "—"}</span>
           ${chipBadge(r.chip)}
           ${hitBadge(r.hitCost)}
         </div>
@@ -79,7 +78,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 💡 =================== POP-UP REAL-TIME ENGINE (STANDALONE LOCATION) ===================
+// 💡 =================== POP-UP ENGINE (STANDINGS DOCUMENT SINGLE CONNECTOR) ===================
 window.openTeamPopup = (leagueId, fplID, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -90,63 +89,67 @@ window.openTeamPopup = (leagueId, fplID, teamName) => {
 
   const cleanID = String(fplID).trim();
 
-  // (၁) အမှတ်စာရင်း Panel ဒေတာများကို leagues/.../standings document ဆီမှ ဖတ်ရှုမည်
-  const standingRef = doc(db, "leagues", leagueId, "standings", cleanID);
-  unsubscribeStanding = onSnapshot(standingRef, (docSnap) => {
+  // 💡 liveTeams ဆီ သွားဖတ်စရာမလိုဘဲ အန်ကယ်ကိုယ်တိုင် ထည့်သွင်းသိမ်းဆည်းပေးထားသည့် standings document ဆီမှ တိုက်ရိုက်ဆွဲပါသည်
+  const docRef = doc(db, "leagues", leagueId, "standings", cleanID);
+  unsubscribePopup = onSnapshot(docRef, (docSnap) => {
     if (!docSnap.exists()) return;
-    const sData = docSnap.data();
-    document.getElementById("modal-gw-pts").textContent = sData.gwPoints ?? "0";
-    document.getElementById("modal-total-pts").textContent = sData.points ?? "0";
-    document.getElementById("modal-hit-cost").textContent = "-" + (sData.hitCost || 0);
-    document.getElementById("modal-chip-badge").textContent = sData.chip && CHIP_LABELS[sData.chip] ? CHIP_LABELS[sData.chip] : "NO CHIP";
-  });
+    const data = docSnap.data();
+    
+    // Top Stats
+    document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
+    document.getElementById("modal-total-pts").textContent = data.points ?? "0";
+    document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
+    document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
 
-  // (၂) 💡 အန်ကယ် ညွှန်ကြားချက်အမှန်အတိုင်း: picks လူစာရင်းအား liveTeams collection ဆီမှ သီးသန့် Real-time လှမ်းဖတ်ပါမည်
-  const liveTeamRef = doc(db, "liveTeams", cleanID);
-  unsubscribeLiveTeam = onSnapshot(liveTeamRef, (liveSnap) => {
-    if (liveSnap.exists()) {
-      const ltData = liveSnap.data();
-      if (ltData && Array.isArray(ltData.picks)) {
-        renderPopupPitch(ltData.picks); // picks array အား တိုက်ရိုက်ပေးပို့ခြင်း
-      } else {
-        document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">လူစာရင်း ဒေတာ မတွေ့ပါဗျာ</p>`;
-      }
+    // 📡 💡 အန်ကယ့်ရဲ့ Firebase Structure အစစ်အမှန်အတိုင်း: data.picks ကို တိုက်ရိုက်ဆွဲထုတ်ခြင်း
+    let finalPicks = [];
+    if (data.picks && Array.isArray(data.picks)) {
+      finalPicks = data.picks; //
+    } else if (data[cleanID] && Array.isArray(data[cleanID].picks)) {
+      finalPicks = data[cleanID].picks;
+    }
+
+    if (finalPicks && finalPicks.length > 0) {
+      renderPopupPitch(finalPicks);
     } else {
-      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">လူစာရင်း ဒေတာ မတွေ့ပါဗျာ</p>`;
+      document.getElementById("popup-pitch-rows").innerHTML = `<div class="w-full text-center py-20 text-xs text-red-400">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</div>`;
     }
   });
 };
 
 window.closeTeamPopup = () => {
-  if (unsubscribeStanding) { unsubscribeStanding(); unsubscribeStanding = null; }
-  if (unsubscribeLiveTeam) { unsubscribeLiveTeam(); unsubscribeLiveTeam = null; }
+  if (unsubscribePopup) { unsubscribePopup(); unsubscribePopup = null; }
   document.getElementById("team-popup-modal").style.display = "none";
 };
 
 // 🎨 👕 team.html တထပ်တည်းကျသော ဂျာစီလမ်းကြောင်းပုံစံ
 function jerseyPath(p) {
   const folder = p.position === "GK" ? "gk" : "outfield"; //
-  const code = p.teamCode || "unknown"; //
+  const code = String(p.teamCode || "unknown").toLowerCase().trim(); //
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
 }
 
-// 🎨 📛 team.html Player Card ကတ်ပြားပုံစံစစ်စစ်
+// 🎨 📛 team.html Player Card ကတ်ပြားပုံစံစစ်စစ် (၁၀၀% စာလုံးအသေး သတ်မှတ်ချက်ဗားရှင်း)
 function buildPlayerCard(p) {
-  const mult = p.multiplier !== undefined ? Number(p.multiplier) : 1; //
+  // 💡 ပြင်ဆင်ချက်: Firebase ဒေတာထွက်ပုံစံအတိုင်း စာလုံးအသေး fields နာမည်များဖြင့် တိကျစွာပြောင်းလဲဖတ်ယူခြင်း
+  const mult = p.multiplier !== undefined ? Number(p.multiplier) : 1;
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
   
-  // အန်ကယ် ညွှန်ကြားချက်အမှန် (၂): 💡 Parent Wrapper Div တွင် relative ထည့်သွင်းပြီး absolute Badge များ နေရာမှန်ကန်အောင် ချိန်ညှိခြင်း
+  // 💡 isCaptain နှင့် isVice စာလုံးအသေးများဖြင့် စနစ်တကျပြန်လည်ထောက်လှမ်းခြင်း
+  const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
+  const isVc = p.isVice === true || p.isVice === "true";
+  
   const cornerBadge = mult === 3
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>' //
-    : p.isCaptain || p.isCaptain === "true" || mult > 1
+    : isCap
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>' //
-    : p.isVice || p.isVice === "true"
+    : isVc
     ? '<span class="absolute -top-1.5 -right-1.5 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>' //
     : '';
 
   return `
     <div class="w-[72px] sm:w-[82px] flex flex-col items-center relative transition active:scale-95">
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-visible relative" style="background:#1F5C36; border:2px solid ${p.isCaptain || mult > 1 ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47'};">
+      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-visible relative" style="background:#1F5C36; border:2px solid ${isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'};">
         <img src="${jerseyPath(p)}"
              onerror="this.outerHTML='<div class=\\'w-full h-10 flex items-center justify-center text-xl\\'>👕</div>'"
              class="w-9 h-9 object-contain" alt="${p.name}" />
@@ -162,10 +165,10 @@ function buildPlayerCard(p) {
 
 // 🪑 🏟️ team.html အတိုင်း ပွဲထွက် ၁၁ ယောက်နှင့် Bench ၄ ယောက် ခွဲထုတ်ခြင်း
 function renderPopupPitch(picks) {
-  // multiplier နံပါတ်ကို သေချာစွာ စစ်ထုတ်သည်
-  const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
-  const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
-
+  // 💡 multiplier ကို ဂဏန်းအဖြစ်ပြောင်းလဲပြီး Type-safe အမှန်ကန်ဆုံး ခွဲထုတ်ပေးလိုက်သည်
+  const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0);
+  const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0);
+  
   const gk = starters.filter(p => p.position === "GK"); //
   const def = starters.filter(p => p.position === "DEF"); //
   const mid = starters.filter(p => p.position === "MID"); //
