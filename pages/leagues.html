@@ -116,7 +116,7 @@
       `;
     }
 
-    // 💡 =================== POP-UP CORE ENGINE ===================
+    // 💡 =================== POP-UP CORE REAL-TIME ENGINE ===================
     let unsubscribePopup = null;
 
     window.openTeamPopup = (leagueId, fplID, teamName) => {
@@ -159,20 +159,19 @@
       document.getElementById("team-popup-modal").style.display = "none";
     };
 
-    // 💡 🎨 ဂျာစီလမ်းကြောင်းပြင်ဆင်ချက်: /twfpl26-27 အစပိုင်းလမ်းကြောင်း သေသေချာချာထည့်သွင်းပေးလိုက်သည်
+    // 💡 🎨 ဂျာစီလမ်းကြောင်းပြင်ဆင်ချက်: အန်ကယ့် Structure အတိုင်း gk နှင့် outfied ခွဲခြားဆွဲယူခြင်း
     function jerseyPath(p) {
+      const folder = String(p.position).toUpperCase().trim() === "GK" ? "gk" : "outfied"; // 💡 outfied (l မပါပါ)
       const code = String(p.teamCode || "unknown").toLowerCase().trim();
-      return `/twfpl26-27/public/jerseys/${code}.png`;
+      return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; // 100% တိကျသော ပုံရိပ်လမ်းကြောင်း
     }
 
-    // team.html ကတ်ပြားဒီဇိုင်းစစ်စစ်အတိုင်း ရေးဆွဲခြင်း
+    // team.html ကတ်ပြားဒီဇိုင်းစစ်စစ်
     function buildPlayerCard(p) {
-      // 💡 Type Safety Safeguard: multiplier ကို ဂဏန်းအဖြစ် အတင်းပြောင်းလဲစစ်ဆေးခြင်း
       const mult = Number(p.multiplier ?? 1);
       
-      // 💡 Type Safety Safeguard: Captain ရော Vice ပါ စာသားဝင်လာပါကလည်း မှန်ကန်စွာဖတ်နိုင်ရန် ဖြစ်သည်
       const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
-      const isVc = p.isVice === true || p.isVice === "true";
+      const isVice = p.isVice === true || p.isVice === "true";
       
       const displayPoints = (Number(p.livePoints) || 0) * (mult > 1 ? mult : 1);
       
@@ -181,7 +180,7 @@
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">3x</span>'
         : isCap
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-[#F0D060] text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-yellow-500/30 shadow-md z-20">C</span>'
-        : isVc
+        : isVice
         ? '<span class="absolute top-1 left-1 bg-[#1e1435] text-white text-[8px] font-black w-4 h-4 rounded-full flex items-center justify-center border border-white/30 shadow-md z-20">V</span>'
         : '';
 
@@ -200,9 +199,8 @@
         </div>`;
     }
 
-    // 💡 🪑 Bench Player စနစ်တကျ Type-Safe ခွဲထုတ်မှုစနစ်သစ်
+    // 💡 🪑 Bench Player စနစ်တကျ Type-Safe ခွဲထုတ်မှုစနစ်
     function renderPopupPitch(picks) {
-      // 💡 p.multiplier ကို Number ပြောင်းပြီးမှ စစ်ထုတ်သောကြောင့် String "0" ဖြစ်နေပါစေ အရန်လူထဲသို့ အမှန်ကန်ဆုံးရောက်ရှိမည်
       const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0);
       const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0);
       
@@ -221,7 +219,7 @@
           ${renderRow(fwd)}
         </div>`;
 
-      // အရန်လူစာရင်းအား အောက်ခြေအကွက်ထဲသို့ သီးသန့် ကွက်တိထည့်သွင်းပေးခြင်း
+      // အရန်လူစာရင်းအား အောက်ခြေအကွက်ထဲသို့ စနစ်တကျ သီးသန့်ထည့်သွင်းပေးခြင်း
       document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
     }
 
