@@ -17,7 +17,7 @@
     .scrollbar-none::-webkit-scrollbar { display: none; }
     .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
 
-    /* 💡 team.html အတိုင်း ပိုမိုကြီးမားကျယ်ပြန့်သော အမဲရောင်အမှတ်အဝိုင်းဒီဇိုင်းစစ်စစ် တပ်ဆင်ခြင်း */
+    /* team.html အမှတ်အဝိုင်းပုံစံဒီဇိုင်းစစ်စစ် တပ်ဆင်ခြင်း */
     .player-point-circle {
       background-color: #000000;
       color: #ffffff;
@@ -91,7 +91,7 @@
         <span id="modal-chip-badge" class="text-[9px] font-black px-2 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase py-0.5">NO CHIP</span>
       </div>
 
-      <div class="relative bg-gradient-to-b from-[#1a5c30] via-[#144d24] to-[#0f3d1e] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-hidden min-h-[420px]">
+      <div class="relative bg-gradient-to-b from-[#1a5c30] via-[#144d24] to-[#0f3d1e] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-visible min-h-[420px]">
         <svg class="absolute inset-0 w-full h-full opacity-35 pointer-events-none" viewBox="0 0 200 420" preserveAspectRatio="none">
           <rect x="6" y="6" width="188" height="408" fill="none" stroke="white" stroke-width="1.3"/>
           <line x1="6" y1="210" x2="194" y2="210" stroke="white" stroke-width="1.3"/>
@@ -100,7 +100,7 @@
           <rect x="40" y="6" width="120" height="45" fill="none" stroke="white" stroke-width="1.3"/>
           <rect x="40" y="369" width="120" height="45" fill="none" stroke="white" stroke-width="1.3"/>
         </svg>
-        <div id="popup-pitch-rows" class="relative z-10 h-full"></div>
+        <div id="popup-pitch-rows" class="relative z-10 h-full overflow-visible"></div>
       </div>
 
       <div class="rounded-xl p-3 bg-[#113a21] border border-[#1F5C36] shadow-lg">
@@ -112,12 +112,11 @@
   </div>
 
   <div class="bg-[#0D2B1A] border-t border-[#1F5C36] flex justify-around items-center py-1 flex-shrink-0 z-20">
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'">🏠<span>Home</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'">⚡<span>Live</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span class="text-lg">🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span class="text-lg">⚡</span><span>Live</span></div>
     <div class="nav-item active">🏆<span>League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'">⚽<span>Fixtures</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'">🔍<span>Scout</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span class="text-lg">⚽</span><span>Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span class="text-lg">🔍</span><span>Scout</span></div>
   </div>
 </body>
 </html>
-
