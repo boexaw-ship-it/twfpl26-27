@@ -4,27 +4,22 @@ import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/fireba
 
 let allPlayers = [];
 let currentFilter = "all";
-let currentSort = null; // null = default order, သို့မဟုတ် "price"/"ownership"/"points"/"form"
+let currentSort = null;
 
-// 📡 Firebase User Authentication Security Check
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
   if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
-  
-  // အောင်မြင်ပါက ကစားသမားဒေတာများအား စတင်ဆွဲယူမည်
   loadPlayers();
 });
 
-// 📥 Backend မှ မောင်းထည့်လိုက်သော scoutPlayers ဒေတာဘဏ်တိုက်အား ဆွဲယူခြင်း
 async function loadPlayers() {
   try {
-    // 💡 FIX 1: Backend Script နှင့် ကိုက်ညီစေရန် "scoutPlayers" Collection နာမည်သို့ ကွက်တိ ပြောင်းလဲထားပါသည်
     const snap = await getDocs(collection(db, "scoutPlayers"));
     allPlayers = [];
     snap.forEach(d => allPlayers.push(d.data()));
     
-    // Default အနေဖြင့် ရမှတ်အများဆုံးလူများကို အပေါ်ဆုံးကပြထားရန် Sort ထားပေးခြင်း
+    // Default အနေဖြင့် ရမှတ်အများဆုံးလူများကို အပေါ်ဆုံးကပြထားရန်
     allPlayers.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
     
     renderPlayers();
@@ -34,15 +29,22 @@ async function loadPlayers() {
   }
 }
 
-// 🎨 FDR (Fixture Difficulty Rating) အရောင် သတ်မှတ်ခြင်းစနစ်
 function fdrColor(fdr) {
   const colors = { 1: "#22c55e", 2: "#84cc16", 3: "#eab308", 4: "#f97316", 5: "#ef4444" };
   return colors[fdr] || "#3A9E5F";
 }
 
-// 🔍 Filter နှင့် Sort အခြေအနေအရ ဒေတာများကို စစ်ထုတ်ပေးခြင်း
+// 💡 အန်ကယ် ညွှန်ကြားထားသည့်အတိုင်း ကစားသမား ပိုဇီရှင်အလိုက် အရောင်သတ်မှတ်ချက်စနစ်သစ်
+function getPositionBadgeColor(position) {
+  const pos = String(position).toUpperCase();
+  if (pos === 'GK') return '#1d4ed8';   // 🔵 GK = အပြာ
+  if (pos === 'DEF') return '#dc2626';  // 🔴 DEF = အနီ
+  if (pos === 'MID') return '#eab308';  // 🟡 MID = အဝါ (စာလုံးအမဲဖြင့် ပေါ်လွင်စေမည်)
+  if (pos === 'FWD') return '#16a34a';  // 🟢 FWD = အစိမ်း
+  return '#37003c';
+}
+
 function getFiltered() {
-  // 💡 FIX 2: စာလုံးအသေးစနစ် (gk, def, mid, fwd) ဖြင့် တိကျစွာ ကိုက်ညီအောင် ညှိနှိုင်းစစ်ထုတ်ခြင်း
   let players = currentFilter === "all" ? allPlayers : allPlayers.filter(p => String(p.position).toLowerCase() === currentFilter);
   
   if (currentSort) {
@@ -57,7 +59,6 @@ function getFiltered() {
   return players;
 }
 
-// 📺 ကစားသမားစာရင်းများအား Dynamic ကတ်ပြားဒီဇိုင်းများဖြင့် ပုံဖော်ထုတ်ပြခြင်း
 function renderPlayers() {
   const players = getFiltered();
   const el = document.getElementById("player-list");
@@ -69,15 +70,14 @@ function renderPlayers() {
   
   el.innerHTML = players.map((p, i) => {
     const posUpper = String(p.position || "?").toUpperCase();
-    
-    // ပိုဇီရှင်အလိုက် တံဆိပ်နောက်ခံအရောင်ခွဲခြားခြင်း
-    const posBg = posUpper === 'GK' ? '#1d4ed8' : posUpper === 'DEF' ? '#15803d' : posUpper === 'MID' ? '#92400e' : '#9f1239';
+    const badgeColor = getPositionBadgeColor(posUpper);
+    const textColor = posUpper === 'MID' ? '#0D2B1A' : '#ffffff'; // MID အဝါကွက်ထဲတွင် စာလုံးအမဲဖြင့် ပိုမိုထင်ရှားစေရန်
     
     return `
       <div onclick="window.openPlayerModal(${i})" class="rounded-xl p-3 mb-2 cursor-pointer active:scale-[0.98] transition" style="background:#1F5C36;border:1px solid #2A7A47;">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <span class="text-[9px] px-2 py-0.5 rounded-full font-black text-white" style="background:${posBg};">${posUpper}</span>
+            <span class="text-[9px] px-2 py-0.5 rounded-full font-black" style="background:${badgeColor}; color:${textColor};">${posUpper}</span>
             <div>
               <p class="text-white text-sm font-bold tracking-wide">${p.name || "—"}</p>
               <p class="text-xs" style="color:#E8D5A3; opacity:0.8;">${p.team || ""}</p>
@@ -97,21 +97,28 @@ function renderPlayers() {
   }).join("");
 }
 
-// 🏆 Pop-up Detail Modal Box အား အချက်အလက်အပြည့်အစုံဖြင့် ဖွင့်လှစ်ခြင်း
 window.openPlayerModal = (index) => {
   const players = getFiltered();
   const p = players[index];
   if (!p) return;
 
+  const posUpper = String(p.position || "—").toUpperCase();
+  const badgeColor = getPositionBadgeColor(posUpper);
+  const textColor = posUpper === 'MID' ? '#0D2B1A' : '#ffffff';
+
   document.getElementById("modal-name").textContent = p.fullName || p.name || "—";
   document.getElementById("modal-team").textContent = p.team || "Unknown Team";
-  document.getElementById("modal-position").textContent = String(p.position || "—").toUpperCase();
+  
+  const posEl = document.getElementById("modal-position");
+  posEl.textContent = posUpper;
+  posEl.style.backgroundColor = badgeColor;
+  posEl.style.color = textColor;
+
   document.getElementById("modal-price").textContent = "£" + (p.price || 0) + "m";
   document.getElementById("modal-ownership").textContent = (p.ownership || 0) + "%";
   document.getElementById("modal-points").textContent = p.totalPoints || 0;
   document.getElementById("modal-form").textContent = p.form ?? 0;
 
-  // Next 3 Fixtures & FDR Mapping Logic
   const fixturesEl = document.getElementById("modal-fixtures");
   const matches = p.nextMatches || [];
   
@@ -133,25 +140,24 @@ window.openPlayerModal = (index) => {
   document.getElementById("player-modal").style.display = "flex";
 };
 
-// Modal Box ပြန်ပိတ်ခြင်း
 window.closeModal = () => {
   document.getElementById("player-modal").classList.add("hidden");
   document.getElementById("player-modal").style.display = "none";
 };
 
-// 💡 နေရာအလိုက် (Pos Filter) နှိပ်လျှင် အရောင်ပြောင်းလဲခြင်းနှင့် ဒေတာစစ်ထုတ်ခြင်း
 window.filterPos = (pos) => {
   currentFilter = pos.toLowerCase();
+  document.querySelectorAll(".filter-btn").forEach(b => {
+    b.style.background = "transparent";
+    b.style.borderColor = "rgba(201,168,76,0.3)";
+  });
   
-  // ခလုတ်အားလုံး၏ အရောင်ဟောင်းများအား ရှင်းထုတ်ခြင်း
-  document.querySelectorAll(".filter-btn").forEach(b => b.style.background = "transparent");
-  
-  // နှိပ်လိုက်သော ခလုတ်အား Gold Highlight ရောင်ပေးခြင်း
-  document.getElementById("filter-" + pos.toLowerCase()).style.background = "rgba(201,168,76,0.25)";
+  const btn = document.getElementById("filter-" + pos.toLowerCase());
+  btn.style.background = "rgba(201,168,76,0.25)";
+  btn.style.borderColor = "#C9A84C";
   renderPlayers();
 };
 
-// 💡 Sort Switch နှိပ်လျှင် Active ဖြစ်စေပြီး ပုံစံပြောင်းလဲခြင်း
 window.toggleSort = (sortKey) => {
   currentSort = currentSort === sortKey ? null : sortKey;
   
