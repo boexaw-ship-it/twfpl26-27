@@ -58,17 +58,19 @@ async function getPlayerMasterMap() {
   
   const teamsMap = {};
   bootstrap.teams.forEach(t => {
-    teamsMap[t.id] = t.short_name.toUpperCase(); // e.g., "ARS", "MCI"
+    // 💡 ပြင်ဆင်ချက်: အန်ကယ့် GitHub ဂျာစီပုံများနှင့် ကိုက်ညီစေရန် အသင်းအတိုကောက်အား စာလုံးအသေး (lowercase) သို့ ပြောင်းလဲသိမ်းဆည်းခြင်း
+    teamsMap[t.id] = t.short_name.toLowerCase(); // e.g., "ars", "mci"
   });
 
   const playersMap = {};
-  const positions = ["", "GK", "DEF", "MID", "FWD"];
+  // 💡 ပြင်ဆင်ချက်: team.html ၏ Formation နှင့် ကိုက်ညီစေရန် ပိုဇီရှင်များကို စာလုံးအသေး (lowercase) သို့ ညှိယူခြင်း
+  const positions = ["", "gk", "def", "mid", "fwd"];
 
   bootstrap.elements.forEach(p => {
     playersMap[p.id] = {
       name: p.web_name,
-      position: positions[p.element_type] || "MID",
-      teamCode: teamsMap[p.team] || "unknown",
+      position: positions[p.element_type] || "mid", // "gk", "def", "mid", "fwd" ဖြစ်သွားပါပြီ
+      teamCode: teamsMap[p.team] || "unknown",       // "ars", "mci" ဖြစ်သွားပါပြီ
       livePoints: p.event_points ?? 0
     };
   });
@@ -103,16 +105,19 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
     
     // ကစားသမားတစ်ယောက်ချင်းစီကို Master Map အတိုင်း စနစ်တကျ ပုံဖော်ဆွဲသားခြင်း
     const squadPicks = (data.picks || []).map(p => {
-      const masterInfo = playersMasterMap[p.element] || { name: "?", position: "MID", teamCode: "unknown", livePoints: 0 };
+      const masterInfo = playersMasterMap[p.element] || { name: "?", position: "mid", teamCode: "unknown", livePoints: 0 };
+      
+      // 💡 🏆 အဓိကပြင်ဆင်ချက်ကွက်တိ: team.html နှင့် ၁၀၀% ကိုက်ညီစေရန် picks ခေါင်းစဉ်အတွင်းပိုင်းအား စာလုံးအသေးစနစ်စစ်စစ်ဖြင့် Firestore ထဲသို့ သွင်းခြင်း
       return {
         playerId: p.element,
         name: masterInfo.name,
-        position: masterInfo.position,
-        teamCode: masterInfo.teamCode,
+        position: masterInfo.position, // ⬅️ "gk", "def", "mid", "fwd" (စာလုံးအသေးစစ်စစ်)
+        teamCode: masterInfo.teamCode, // ⬅️ "ars", "mci", "mun" (စာလုံးအသေးစစ်စစ်)
         livePoints: masterInfo.livePoints,
         multiplier: p.multiplier || 1,
-        isCaptain: p.is_captain || false,
-        isVice: p.is_vice || false
+        // 💡 Boolean Type-safe Safeguard: true/false စစ်စစ်များအဖြစ် တိကျစွာ ပြောင်းလဲပေးခြင်း
+        isCaptain: p.is_captain === true || p.is_captain === "true" || (p.multiplier || 1) > 1,
+        isVice: p.is_vice === true || p.is_vice === "true" // ⬅️ VCaptain ဒေတာအား ဤနေရာတွင် စနစ်တကျ လက်ခံသိမ်းဆည်းပေးလိုက်ပါပြီ
       };
     });
 
@@ -179,8 +184,7 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
 
     await batch.commit();
     console.log(`✅ League ${fplLeagueId} (${firebaseId}) — ${standings.length} records successfully unified.`);
-  } catch (err) {
-    console.error(`❌ League ${fplLeagueId} update omitted: ${err.message}`);
+  } catch (err) {\n    console.error(`❌ League ${fplLeagueId} update omitted: ${err.message}`);
   }
 }
 
