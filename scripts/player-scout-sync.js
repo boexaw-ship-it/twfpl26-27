@@ -1,26 +1,24 @@
 // ============================================
 // TW Fantasy Official League
-// Player Scout Sync Script
+// Player Scout Sync Script (Interval Delay Variant)
 // ============================================
-// ဒီ Script က Player 600+ ဦးရဲ့ —
+// ဒီ Script က Player 800+ ဦးရဲ့ —
 //   - Price, Ownership%, Total Points, Form (last GW points)
 //   - Position, Team, Jersey code
 //   - Next 3 Matches + FDR (Fixture Difficulty Rating)
 // ကို FPL API ကနေ ဆွဲပြီး Firebase ထဲ ရေးသွင်းပေးတယ်
 //
-// Frequency: 6 နာရီတစ်ခါ (Price/Ownership ဟာ daily လောက်ပဲ ပြောင်းတတ်လို့
-//            live-sync လောက် မကြာခဏ run စရာမလို)
+// 💡 အထူးပြင်ဆင်ချက်: ကစားသမား ၁၀၀ ရောက်တိုင်း ဆာဗာအား သက်သာစေရန် 
+//                   ၁ စက္ကန့် (1000ms) ခေတ္တနားပြီးမှ ဒေတာများကို သန့်ရှင်းစွာ ရေးသွင်းပါသည်
 // ============================================
 
 const admin = require("firebase-admin");
 
 // === Firebase Admin Init ===
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount),
 });
-
 const db = admin.firestore();
 
 // === FPL API ===
@@ -58,7 +56,7 @@ function buildTeamMaps(bootstrap) {
   const teamCodeMap = {};
   const teamNameMap = {};
   bootstrap.teams.forEach((t) => {
-    teamCodeMap[t.id] = t.short_name.toLowerCase();
+    teamCodeMap[t.id] = t.short_name.toLowerCase(); // e.g., "ars", "mci"
     teamNameMap[t.id] = t.name;
   });
   return { teamCodeMap, teamNameMap };
@@ -66,12 +64,10 @@ function buildTeamMaps(bootstrap) {
 
 // === Step 3: Team တစ်သင်းချင်းစီရဲ့ Next 3 Matches + FDR ရှာမယ် ===
 function buildNextFixturesMap(fixtures, currentGw, teamNameMap, teamCodeMap) {
-  // GW ပြီးသွားသေးတဲ့ ပွဲတွေ ဖယ်ပြီး၊ event (GW) number အတိုင်း sort
   const upcoming = fixtures
     .filter((f) => !f.finished && f.event && f.event >= currentGw)
     .sort((a, b) => a.event - b.event);
 
-  // Team id 1-20 အတွက် next 3 fixtures map ဆောက်မယ်
   const teamFixturesMap = {};
   for (let teamId = 1; teamId <= 20; teamId++) {
     const teamFixtures = upcoming.filter(
@@ -81,7 +77,7 @@ function buildNextFixturesMap(fixtures, currentGw, teamNameMap, teamCodeMap) {
     teamFixturesMap[teamId] = teamFixtures.slice(0, 3).map((f) => {
       const isHome = f.team_h === teamId;
       const opponentId = isHome ? f.team_a : f.team_h;
-      const fdr = isHome ? f.team_h_difficulty : f.team_a_difficulty; // 1 (easy) - 5 (hard)
+      const fdr = isHome ? f.team_h_difficulty : f.team_a_difficulty;
       return {
         gw: f.event,
         opponent: teamNameMap[opponentId] || "TBC",
@@ -112,56 +108,68 @@ async function main() {
     const fixtures = await fplFetch(FIXTURES_URL);
     const nextFixturesMap = buildNextFixturesMap(fixtures, currentGw, teamNameMap, teamCodeMap);
 
-    // Position map
+    // Position map (💡 Frontend ဇယားများနှင့် ကိုက်ညီစေရန် စာလုံးအသေး gk, def, mid, fwd သို့ တည့်မတ်ထားပါသည်)
     const posMap = {};
+    const positions = ["", "gk", "def", "mid", "fwd"];
     bootstrap.element_types.forEach((et) => {
-      posMap[et.id] = et.singular_name_short === "GKP" ? "GK" : et.singular_name_short;
+      posMap[et.id] = positions[et.id] || "mid";
     });
 
     console.log(`👥 Total Players: ${bootstrap.elements.length}`);
 
     // Firebase batch write
-    const batch = db.batch();
+    let batch = db.batch();
     let count = 0;
     let batchCount = 0;
 
     for (const el of bootstrap.elements) {
-      const docRef = db.collection("players").doc(String(el.id));
+      // 💡 မူရင်းအတိုင်း scoutPlayers Collection ထဲသို့ တိကျစွာ ရေးသွင်းခြင်း
+      const docRef = db.collection("scoutPlayers").doc(String(el.id));
 
+      // 💡 မူရင်း Logic တစ်ခုတည်းမှ ကျန်မခဲ့စေဘဲ စနစ်တကျ Mapping လုပ်သိမ်းဆည်းခြင်း
       batch.set(docRef, {
         playerId: el.id,
         name: el.web_name,
         fullName: `${el.first_name} ${el.second_name}`,
-        position: posMap[el.element_type] || "?",
+        position: posMap[el.element_type] || "mid",
         team: teamNameMap[el.team] || "Unknown",
         teamCode: teamCodeMap[el.team] || "unknown",
-        price: (el.now_cost / 10).toFixed(1), // FPL price is in tenths (e.g. 125 = £12.5m)
+        price: parseFloat((el.now_cost / 10).toFixed(1)), 
         ownership: parseFloat(el.selected_by_percent) || 0,
         totalPoints: el.total_points || 0,
-        form: parseFloat(el.form) || 0, // Average points over last few GWs
-        gwPoints: el.event_points || 0, // This/last GW points
+        form: parseFloat(el.form) || 0, 
+        gwPoints: el.event_points || 0, 
         nextMatches: nextFixturesMap[el.team] || [],
-        status: el.status, // "a"=available, "i"=injured, "d"=doubtful, "u"=unavailable
+        status: el.status, 
+        news: el.news || "",
         updatedAt: admin.firestore.FieldValue.serverTimestamp(),
       });
 
       count++;
       batchCount++;
 
-      // Firestore batch limit 500 — 400 ကျော်ရင် commit ပြီး batch အသစ်
-      if (batchCount >= 400) {
+      // 💡 🏆 အန်ကယ့် Logic ကွက်တိ: ကစားသမား ၁၀၀ ရောက်တိုင်း ဒေတာသွင်းပြီး ခေတ္တနားနားသွားမည့် စနစ်
+      if (batchCount >= 100) {
         await batch.commit();
-        console.log(`   ...${count} players written`);
+        console.log(`   ...[Interval Info] ${count} players recorded successfully.`);
+        
+        // 💡 CRITICAL BATCH FIX: ဒေတာ ၁၀၀ သွင်းပြီးတိုင်း Batch သေတ္တာအသစ် ပြန်ဖွင့်ပေးရန် တည့်မတ်ပြီးစီးမှု
+        batch = db.batch(); 
         batchCount = 0;
+
+        // 💡 API & Firestore Safeguard Rate-Limiter: ကစားသမား ၁၀၀ တိုင်းမှာ ၁ စက္ကန့် (1000ms) အတိအကျ နားသွားစေမည့် စနစ်
+        await new Promise((r) => setTimeout(r, 1000));
       }
     }
 
+    // ၄၀၀/၁၀၀ စီခွဲရင်း ကျန်ရှိနေသော ဒေတာအကြွင်းအကျန်များအား အပြီးသတ် သိမ်းဆည်းခြင်း
     if (batchCount > 0) {
       await batch.commit();
+      console.log(`   ...[Interval Info] Final chunk written. Total: ${count} players.`);
     }
 
     console.log("============================================");
-    console.log(`✅ Player Scout Sync Complete — ${count} players synced`);
+    console.log(`✅ Player Scout Sync Complete — ${count} players synced without errors.`);
     console.log("============================================");
 
     await db.collection("syncLogs").add({
@@ -170,6 +178,8 @@ async function main() {
       totalPlayers: count,
       runAt: admin.firestore.FieldValue.serverTimestamp(),
     });
+    
+    process.exit(0);
   } catch (err) {
     console.error("🔥 Fatal Error:", err.message);
     process.exit(1);
