@@ -1,0 +1,31 @@
+name: FPL Fixtures Master Sync
+
+on:
+  workflow_dispatch: # 💡 အန်ကယ့် အစီအစဉ်အတိုင်း: GitHub Actions ထဲမှ Manual 'Run workflow' ခလုတ်ဖြင့်သာ မောင်းရန်
+
+jobs:
+  build-and-sync:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout Repository Codes
+        uses: actions/checkout@v4
+
+      - name: Setup Node.js Environment
+        uses: actions/setup-node@v4
+        with:
+          node-style: true
+          node-version: 20
+
+      - name: Install Network Request Tool
+        run: |
+          npm init -y
+          npm install firebase-admin axios
+
+      - name: Execute Fixtures Sync Script
+        env:
+          # 💡 အန်ကယ့် Repository Secrets ထဲက Firebase Admin Key အား လှမ်းချိတ်ခြင်း
+          FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
+        # ဖိုင်တည်နေရာအလိုက် ပြောင်းလဲနိုင်ပါသည် (scripts/fixtures-sync.js သို့မဟုတ် fixtures-sync.js)
+        run: node fixtures-sync.js
+        
