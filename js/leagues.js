@@ -4,12 +4,11 @@ import { doc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.
 
 let league1Data = [];
 let league2Data = [];
-let sortMode = "total"; 
+let sortMode = "total";
 let unsubscribePopup = null;
 
 const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
-// 📡 Firebase Standings Listeners
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
@@ -30,12 +29,12 @@ onAuthStateChanged(auth, async (user) => {
 
 function chipBadge(chipCode) {
   if (!chipCode || !CHIP_LABELS[chipCode]) return "";
-  return `<span class="text-[9px] font-bold px-1.5 py-0.5 rounded" style="background:rgba(201,168,76,0.25);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
+  return `<span style="font-size:9px;font-weight:700;padding:2px 6px;border-radius:4px;background:rgba(201,168,76,0.25);color:#C9A84C;margin-left:4px;">${CHIP_LABELS[chipCode]}</span>`;
 }
 
 function hitBadge(hitCost) {
   if (!hitCost || hitCost === 0) return "";
-  return `<span class="text-[9px] font-bold" style="color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
+  return `<span style="font-size:9px;font-weight:700;color:#f87171;margin-left:4px;">(-${hitCost})</span>`;
 }
 
 function renderTable(firebaseId) {
@@ -63,7 +62,9 @@ function renderTable(firebaseId) {
       <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
     </div>
     ${rows.map(r => `
-    <div onclick="openTeamPopup('${firebaseId}', '${r.id}', '${r.teamName || '—'}')" class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition" style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
+    <div onclick="openTeamPopup('${r.fplTeamId}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
+         class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition"
+         style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
       <div class="flex-1 min-w-0">
         <div class="flex items-center flex-wrap">
@@ -78,33 +79,43 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 🏟️ Pop-up Engine (Standings document single reader)
-window.openTeamPopup = (leagueId, fplID, teamName) => {
+// ✅ FIX 1: Popup ကို liveTeams/{fplId} ကနေ ဆွဲ (league standings ကနေ မဟုတ်ဘူး)
+window.openTeamPopup = (fplTeamId, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
-  
+
   document.getElementById("modal-team-title").textContent = teamName;
-  document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50 font-medium tracking-wide">Team loading...</p>`;
+  document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50 font-medium">Team loading...</p>`;
   document.getElementById("popup-bench-row").innerHTML = "";
 
-  const cleanID = String(fplID).trim();
-  const docRef = doc(db, "leagues", leagueId, "standings", cleanID);
+  if (unsubscribePopup) { unsubscribePopup(); unsubscribePopup = null; }
 
-  unsubscribePopup = onSnapshot(docRef, (docSnap) => {
-    if (!docSnap.exists()) return;
-    const data = docSnap.data();
-    
-    document.getElementById("modal-gw-pts").textContent = data.gwPoints ?? "0";
-    document.getElementById("modal-total-pts").textContent = data.points ?? "0";
-    document.getElementById("modal-hit-cost").textContent = "-" + (data.hitCost || 0);
-    document.getElementById("modal-chip-badge").textContent = data.chip && CHIP_LABELS[data.chip] ? CHIP_LABELS[data.chip] : "NO CHIP";
+  // livePoints ← Hit/Chip/GW points ယူမယ်
+  const pointsRef = doc(db, "livePoints", String(fplTeamId));
+  const unsub1 = onSnapshot(pointsRef, (snap) => {
+    if (!snap.exists()) return;
+    const d = snap.data();
+    document.getElementById("modal-gw-pts").textContent = d.gwPoints ?? "0";
+    document.getElementById("modal-total-pts").textContent = d.totalPoints ?? "0";
+    document.getElementById("modal-hit-cost").textContent = "-" + (d.transferCost || 0);
+    document.getElementById("modal-chip-badge").textContent =
+      d.activeChip && CHIP_LABELS[d.activeChip] ? CHIP_LABELS[d.activeChip] : "NO CHIP";
+  });
 
-    if (data.picks && Array.isArray(data.picks)) {
-      renderPopupPitch(data.picks);
-    } else {
-      document.getElementById("popup-pitch-rows").innerHTML = `<div class="w-full text-center py-20 text-xs text-red-400">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</div>`;
+  // liveTeams ← 11+4 player picks ယူမယ်
+  const teamsRef = doc(db, "liveTeams", String(fplTeamId));
+  const unsub2 = onSnapshot(teamsRef, (snap) => {
+    if (!snap.exists()) {
+      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">Sync မရှိသေးပါ</p>`;
+      return;
+    }
+    const picks = snap.data().picks || [];
+    if (picks.length > 0) {
+      renderPopupPitch(picks);
     }
   });
+
+  unsubscribePopup = () => { unsub1(); unsub2(); };
 };
 
 window.closeTeamPopup = () => {
@@ -112,42 +123,39 @@ window.closeTeamPopup = () => {
   document.getElementById("team-popup-modal").style.display = "none";
 };
 
+// Jersey path
 function jerseyPath(p) {
-  // 💡 Safeguard: Position စာလုံးအကြီးအသေး ဘယ်လိုလာလာ အော်တို အသေးပြောင်းလဲပြီး ဂျာစီ Folder လမ်းကြောင်းခွဲခြားခြင်း
-  const posClean = String(p.position || "").toUpperCase().trim(); //
-  const folder = posClean === "GK" ? "gk" : "outfield"; //
-  const code = String(p.teamCode || "unknown").toLowerCase().trim(); //
-  return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
+  const folder = (p.position || "").toUpperCase() === "GK" ? "gk" : "outfield";
+  const code = (p.teamCode || "unknown").toLowerCase();
+  return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
 }
 
+// ✅ FIX 2: cornerBadge ကို parent div ပြင်ပမှာ ထား (absolute position အလုပ်လုပ်အောင်)
 function buildPlayerCard(p) {
-  // multiplier စစ်ဆေးချက်
-  const multRaw = p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
-  const mult = Number(multRaw);
-  const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
-  
-  // 💡 Safeguard: isCaptain နှင့် isVice ဒေတာအမျိုးအစား (Boolean / String) နှစ်မျိုးလုံးအတွက် စိတ်ချရအောင် စစ်ဆေးခြင်း
-  const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
-  const isVc = p.isVice === true || p.isVice === "true";
-  
-  const cornerBadge = mult === 3
-    ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>' //
-    : isCap
-    ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>' //
-    : isVc
-    ? '<span class="absolute -top-1.5 -right-1.5 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>' //
-    : '';
+  const mult = Number(p.multiplier) || 1;
+  const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
+
+  let cornerBadge = "";
+  if (mult === 3) {
+    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#F0D060;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">3x</span>`;
+  } else if (p.isCaptain || mult > 1) {
+    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#F0D060;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">C</span>`;
+  } else if (p.isVice) {
+    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#C0C0C0;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">V</span>`;
+  }
+
+  const borderColor = (p.isCaptain || mult > 1) ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
 
   return `
-    <div class="w-[72px] sm:w-[82px] flex flex-col items-center relative transition active:scale-95">
-      <div class="w-12 h-12 rounded-xl flex items-center justify-center mb-1 overflow-visible relative" style="background:#1F5C36; border:2px solid ${isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'};">
+    <div style="width:64px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;">
+      ${cornerBadge}
+      <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;border:2px solid ${borderColor};background:#1F5C36;display:flex;align-items:center;justify-content:center;margin-bottom:3px;">
         <img src="${jerseyPath(p)}"
-             onerror="this.outerHTML='<div class=\\'w-full h-10 flex items-center justify-center text-xl\\'>👕</div>'"
-             class="w-9 h-9 object-contain" alt="${p.name}" />
-        ${cornerBadge}
+             onerror="this.outerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;\\'>👕</div>'"
+             style="width:34px;height:34px;object-fit:contain;" alt="${p.name}" />
       </div>
-      <div class="w-full bg-white px-1 py-0.5 rounded shadow text-center flex items-center justify-center" style="min-height:20px; box-shadow: 0 2px 4px rgba(0,0,0,0.15);">
-        <p class="text-[#0D2B1A] font-bold text-[9px] leading-[1.1] tracking-tight truncate w-full">${p.name || "?"}</p>
+      <div style="width:100%;background:white;padding:2px 2px;border-radius:3px 3px 0 0;text-align:center;">
+        <p style="color:#0D2B1A;font-weight:900;font-size:7.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;">${p.name || "?"}</p>
       </div>
       <div class="player-point-circle">${displayPoints}</div>
     </div>
@@ -155,32 +163,29 @@ function buildPlayerCard(p) {
 }
 
 function renderPopupPitch(picks) {
-  const checkMult = (p) => p.multiplier !== undefined ? p.multiplier : (p.multiplier !== undefined ? p.multiplier : 1);
-  
-  const starters = picks.filter(p => Number(checkMult(p)) > 0); 
-  const subs = picks.filter(p => Number(checkMult(p)) === 0); 
-  
-  // 💡 Safeguard: Position စာလုံးအကြီးအသေး နှစ်မျိုးလုံးဖြစ်နိုင်သဖြင့် .toUpperCase() ပြောင်းလဲ၍ တန်းစီစနစ်တကျ ခွဲထုတ်ခြင်း
-  const gk = starters.filter(p => String(p.position || "").toUpperCase().trim() === "GK"); //
-  const def = starters.filter(p => String(p.position || "").toUpperCase().trim() === "DEF"); //
-  const mid = starters.filter(p => String(p.position || "").toUpperCase().trim() === "MID"); //
-  const fwd = starters.filter(p => String(p.position || "").toUpperCase().trim() === "FWD"); //
+  const starters = picks.filter(p => Number(p.multiplier) > 0);
+  const subs = picks.filter(p => Number(p.multiplier) === 0);
+
+  const gk  = starters.filter(p => (p.position || "").toUpperCase() === "GK");
+  const def = starters.filter(p => (p.position || "").toUpperCase() === "DEF");
+  const mid = starters.filter(p => (p.position || "").toUpperCase() === "MID");
+  const fwd = starters.filter(p => (p.position || "").toUpperCase() === "FWD");
 
   const renderRow = (players) => `
-    <div class="flex justify-center items-center gap-x-2 w-full">
+    <div style="display:flex;justify-content:center;align-items:center;gap:6px;width:100%;">
       ${players.map(buildPlayerCard).join("")}
-    </div>
-  `;
+    </div>`;
 
   document.getElementById("popup-pitch-rows").innerHTML = `
-    <div class="flex flex-col justify-between h-full py-1 space-y-4">
+    <div style="display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:8px 0;gap:12px;">
       ${renderRow(gk)}
       ${renderRow(def)}
       ${renderRow(mid)}
       ${renderRow(fwd)}
     </div>`;
 
-  document.getElementById("popup-bench-row").innerHTML = subs.map(buildPlayerCard).join("");
+  document.getElementById("popup-bench-row").innerHTML =
+    subs.map(buildPlayerCard).join("");
 }
 
 window.switchTab = (tab) => {
@@ -189,9 +194,11 @@ window.switchTab = (tab) => {
     if (t === tab) {
       btn.style.background = "linear-gradient(135deg,#C9A84C,#F0D060)";
       btn.style.color = "#0D2B1A";
+      btn.style.border = "none";
     } else {
       btn.style.background = "transparent";
       btn.style.color = "#3A9E5F";
+      btn.style.border = "1px solid #2A7A47";
     }
     document.getElementById("panel-" + t).style.display = t === tab ? "block" : "none";
   });
