@@ -62,7 +62,7 @@ function renderTable(firebaseId) {
       <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
     </div>
     ${rows.map(r => `
-    <div onclick="openTeamPopup('${firebaseId}', '${r.fplTeamId}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
+    <div onclick="openTeamPopup('${firebaseId}', '${r.id}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
          class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition"
          style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
@@ -79,7 +79,8 @@ function renderTable(firebaseId) {
   `;
 }
 
-// ✅ FIX: Popup ရမှတ်ပိုင်းဒေတာများကို အန်ကယ်ခိုင်းသည့်အတိုင်း league -> standings ဆီမှ ပြန်လည်ချိတ်ဆက်ထားပါသည်
+// 💡 =================== POP-UP ENGINE (STANDINGS DOCUMENT SINGLE CONNECTOR) ===================
+// ✅ FIX: liveTeams ဆီ လုံးဝသွားမဖတ်တော့ဘဲ အန်ကယ်ပြောသည့်အတိုင်း နှိပ်လိုက်သည့် League ရဲ့ Standings Doc တစ်ခုတည်းဆီကပဲ ရမှတ်ရော လူစာရင်း (picks) ပါ အကုန်ဆွဲပါသည်
 window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -90,32 +91,30 @@ window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
 
   if (unsubscribePopup) { unsubscribePopup(); unsubscribePopup = null; }
 
-  // 💡 အန်ကယ် ညွှန်ကြားချက်အတိုင်း: leagues -> standings collection ထဲက ရမှတ်တွေကို ပြန်ချိတ်ယူပါသည်
-  const leaguePointsRef = doc(db, "leagues", leagueId, "standings", String(fplTeamId));
-  const unsub1 = onSnapshot(leaguePointsRef, (snap) => {
-    if (!snap.exists()) return;
-    const d = snap.data();
-    document.getElementById("modal-gw-pts").textContent = d.gwPoints ?? "0";
-    document.getElementById("modal-total-pts").textContent = d.points ?? "0"; // standings ထဲက points ဖြစ်ပါသည်
-    document.getElementById("modal-hit-cost").textContent = "-" + (d.hitCost || 0); // standings ထဲက hitCost ဖြစ်ပါသည်
-    document.getElementById("modal-chip-badge").textContent =
-      d.chip && CHIP_LABELS[d.chip] ? CHIP_LABELS[d.chip] : "NO CHIP"; // standings ထဲက chip ဖြစ်ပါသည်
-  });
-
-  // liveTeams ← 11+4 player picks ကိုတော့ အန်ကယ့် ကုဒ်အတိုင်း ဆက်ထားပါသည်
-  const teamsRef = doc(db, "liveTeams", String(fplTeamId));
-  const unsub2 = onSnapshot(teamsRef, (snap) => {
+  // 📡 💡 အန်ကယ် ညွှန်ကြားချက်အစစ်အမှန်အတိုင်း: leagues -> standings ထဲက document တစ်ခုတည်းဆီသို့သာ ချိတ်ဆက်ခြင်း
+  const docRef = doc(db, "leagues", leagueId, "standings", String(fplTeamId));
+  unsubscribePopup = onSnapshot(docRef, (snap) => {
     if (!snap.exists()) {
-      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">Sync မရှိသေးပါ</p>`;
+      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">ဒေတာ မရှိသေးပါဗျာ</p>`;
       return;
     }
-    const picks = snap.data().picks || [];
+    const d = snap.data();
+    
+    // ၁။ ရမှတ်ပိုင်းဆိုင်ရာများကို Standings Document အောက်မှ တိုက်ရိုက်ဖတ်ယူခြင်း
+    document.getElementById("modal-gw-pts").textContent = d.gwPoints ?? "0";
+    document.getElementById("modal-total-pts").textContent = d.points ?? "0"; 
+    document.getElementById("modal-hit-cost").textContent = "-" + (d.hitCost || 0); 
+    document.getElementById("modal-chip-badge").textContent =
+      d.chip && CHIP_LABELS[d.chip] ? CHIP_LABELS[d.chip] : "NO CHIP";
+
+    // ၂။ 💡 Formation လူစာရင်း (picks) ကိုပါ ဤ Standings Document ထဲကနေပဲ တိုက်ရိုက်ဆွဲထုတ် Render လုပ်ခြင်း
+    const picks = d.picks || []; //
     if (picks.length > 0) {
       renderPopupPitch(picks);
+    } else {
+      document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</p>`;
     }
   });
-
-  unsubscribePopup = () => { unsub1(); unsub2(); };
 };
 
 window.closeTeamPopup = () => {
@@ -125,25 +124,26 @@ window.closeTeamPopup = () => {
 
 // Jersey path
 function jerseyPath(p) {
-  const folder = (p.position || "").toUpperCase() === "GK" ? "gk" : "outfield";
-  const code = (p.teamCode || "unknown").toLowerCase();
-  return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
+  const folder = (p.position || "").toUpperCase() === "GK" ? "gk" : "outfield"; //
+  const code = (p.teamCode || "unknown").toLowerCase(); //
+  return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
 }
 
+// Player Card Layout
 function buildPlayerCard(p) {
-  const mult = Number(p.multiplier) || 1;
-  const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
+  const mult = Number(p.multiplier) || 1; //
+  const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
 
-  let cornerBadge = "";
-  if (mult === 3) {
-    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#F0D060;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">3x</span>`;
-  } else if (p.isCaptain || mult > 1) {
-    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#F0D060;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">C</span>`;
-  } else if (p.isVice) {
-    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#C0C0C0;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">V</span>`;
+  let cornerBadge = ""; //
+  if (mult === 3) { //
+    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#F0D060;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">3x</span>`; //
+  } else if (p.isCaptain || mult > 1) { //
+    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#F0D060;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">C</span>`; //
+  } else if (p.isVice) { //
+    cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#C0C0C0;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">V</span>`; //
   }
 
-  const borderColor = (p.isCaptain || mult > 1) ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47';
+  const borderColor = (p.isCaptain || mult > 1) ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47'; //
 
   return `
     <div style="width:64px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;">
@@ -161,19 +161,20 @@ function buildPlayerCard(p) {
   `;
 }
 
+// Render Popup Pitch rows
 function renderPopupPitch(picks) {
-  const starters = picks.filter(p => Number(p.multiplier) > 0);
-  const subs = picks.filter(p => Number(p.multiplier) === 0);
+  const starters = picks.filter(p => Number(p.multiplier) > 0); //
+  const subs = picks.filter(p => Number(p.multiplier) === 0); //
 
-  const gk  = starters.filter(p => (p.position || "").toUpperCase() === "GK");
-  const def = starters.filter(p => (p.position || "").toUpperCase() === "DEF");
-  const mid = starters.filter(p => (p.position || "").toUpperCase() === "MID");
-  const fwd = starters.filter(p => (p.position || "").toUpperCase() === "FWD");
+  const gk  = starters.filter(p => (p.position || "").toUpperCase() === "GK"); //
+  const def = starters.filter(p => (p.position || "").toUpperCase() === "DEF"); //
+  const mid = starters.filter(p => (p.position || "").toUpperCase() === "MID"); //
+  const fwd = starters.filter(p => (p.position || "").toUpperCase() === "FWD"); //
 
   const renderRow = (players) => `
     <div style="display:flex;justify-content:center;align-items:center;gap:6px;width:100%;">
       ${players.map(buildPlayerCard).join("")}
-    </div>`;
+    </div>`; //
 
   document.getElementById("popup-pitch-rows").innerHTML = `
     <div style="display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:8px 0;gap:12px;">
@@ -181,12 +182,13 @@ function renderPopupPitch(picks) {
       ${renderRow(def)}
       ${renderRow(mid)}
       ${renderRow(fwd)}
-    </div>`;
+    </div>`; //
 
   document.getElementById("popup-bench-row").innerHTML =
-    subs.map(buildPlayerCard).join("");
+    subs.map(buildPlayerCard).join(""); //
 }
 
+// Window Toggles Modules
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
