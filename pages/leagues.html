@@ -16,7 +16,6 @@
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
     
-    /* 💡 အရန်ခုံ Point ဝိုင်းလေးများအတွက် CSS */
     .player-point-circle { width:22px; height:22px; background:black; color:white; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900; margin-top:-8px; z-index:10; border:1px solid rgba(255,255,255,0.2); box-shadow:0 2px 4px rgba(0,0,0,0.4); }
     
     #league-scroll-container::-webkit-scrollbar { width: 3px; }
@@ -40,7 +39,6 @@
   </div>
 
   <div style="padding:6px 16px 10px; flex-shrink:0; border-bottom:1px solid #1F5C36;" class="flex flex-col gap-2">
-    
     <div class="flex items-center gap-1.5 flex-wrap">
       <span class="text-[10px] font-black tracking-wider uppercase mr-1" style="color:#3A9E5F;">CHIPS:</span>
       <span class="text-[9px] font-black px-2 py-0.5 rounded border border-[#C9A84C]/40 bg-[#C9A84C]/10 text-[#F0D060] shadow-sm">TC</span>
@@ -53,13 +51,11 @@
       <p class="text-[10px] font-medium text-white/70">
         <span class="text-[#f87171] font-black font-mono">(-4)</span> = ဒီ GW တွင် ယူထားသည့် Hit Point
       </p>
-      
       <div class="flex gap-1.5">
         <button id="sort-total" onclick="window.switchSort('total')" class="text-[10px] font-bold px-2.5 py-1 rounded-full border transition" style="background:rgba(201,168,76,0.25); color:#C9A84C; border-color:#C9A84C;">Total</button>
         <button id="sort-gw" onclick="window.switchSort('gw')" class="text-[10px] font-bold px-2.5 py-1 rounded-full border transition" style="background:transparent; color:#3A9E5F; border-color:#2A7A47;">This GW</button>
       </div>
     </div>
-
   </div>
 
   <div id="league-scroll-container" style="flex:1; overflow-y:auto;" class="px-4 py-3">
@@ -106,11 +102,18 @@
         </div>
       </div>
 
-      <div style="background:#154726; border:2px solid #2A7A47; border-radius:12px; padding:10px 6px; position:relative; min-height:270px; background-image: radial-gradient(#1a5930 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 50%, transparent 50%); background-size: 20px 20px, 100% 40px;" class="shadow-inner">
-        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:70px; height:70px; border:1px solid rgba(255,255,255,0.08); border-radius:9999px; pointer-events:none;"></div>
-        <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(255,255,255,0.08); pointer-events:none;"></div>
+      <div style="background:#154726; border:2px solid rgba(255,255,255,0.4); border-radius:12px; padding:10px 6px; position:relative; min-height:278px; background-image: radial-gradient(rgba(255,255,255,0.15) 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 50%, transparent 50%); background-size: 20px 20px, 100% 40px;" class="shadow-inner overflow-hidden">
         
-        <div id="popup-pitch-rows" class="h-full"></div>
+        <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:160px; height:38px; border:1px solid rgba(255,255,255,0.3); border-top:none; pointer-events:none;"></div>
+        <div style="position:absolute; top:0; left:50%; transform:translateX(-50%); width:80px; height:14px; border:1px solid rgba(255,255,255,0.2); border-top:none; pointer-events:none;"></div>
+
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:68px; height:68px; border:1px solid rgba(255,255,255,0.3); border-radius:9999px; pointer-events:none;"></div>
+        <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(255,255,255,0.3); pointer-events:none;"></div>
+        
+        <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:160px; height:38px; border:1px solid rgba(255,255,255,0.3); border-bottom:none; pointer-events:none;"></div>
+        <div style="position:absolute; bottom:0; left:50%; transform:translateX(-50%); width:80px; height:14px; border:1px solid rgba(255,255,255,0.2); border-bottom:none; pointer-events:none;"></div>
+
+        <div id="popup-pitch-rows" class="h-full relative z-10"></div>
       </div>
 
       <div class="mt-3 p-2 rounded-xl bg-black/20 border border-white/5">
