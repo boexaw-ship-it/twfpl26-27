@@ -62,7 +62,7 @@ function renderTable(firebaseId) {
       <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
     </div>
     ${rows.map(r => `
-    <div onclick="openTeamPopup('${firebaseId}', '${r.id}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
+    <div onclick="openTeamPopup('${firebaseId}', '${r.fplTeamId}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
          class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition"
          style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
@@ -79,8 +79,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 💡 =================== POP-UP ENGINE (STANDINGS DOCUMENT SINGLE CONNECTOR) ===================
-// ✅ FIX: liveTeams ဆီ လုံးဝသွားမဖတ်တော့ဘဲ အန်ကယ်ပြောသည့်အတိုင်း နှိပ်လိုက်သည့် League ရဲ့ Standings Doc တစ်ခုတည်းဆီကပဲ ရမှတ်ရော လူစာရင်း (picks) ပါ အကုန်ဆွဲပါသည်
+// 💡 POP-UP ENGINE (STANDINGS SOURCE - WITH AUTOMATIC DATA SAFEGUARD)
 window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -91,8 +90,9 @@ window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
 
   if (unsubscribePopup) { unsubscribePopup(); unsubscribePopup = null; }
 
-  // 📡 💡 အန်ကယ် ညွှန်ကြားချက်အစစ်အမှန်အတိုင်း: leagues -> standings ထဲက document တစ်ခုတည်းဆီသို့သာ ချိတ်ဆက်ခြင်း
+  // leagues -> standings လမ်းကြောင်းတစ်ခုတည်းဆီမှ အကုန်ဖတ်ပါသည်
   const docRef = doc(db, "leagues", leagueId, "standings", String(fplTeamId));
+  
   unsubscribePopup = onSnapshot(docRef, (snap) => {
     if (!snap.exists()) {
       document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">ဒေတာ မရှိသေးပါဗျာ</p>`;
@@ -100,17 +100,27 @@ window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
     }
     const d = snap.data();
     
-    // ၁။ ရမှတ်ပိုင်းဆိုင်ရာများကို Standings Document အောက်မှ တိုက်ရိုက်ဖတ်ယူခြင်း
+    // ရမှတ်ပိုင်းဆိုင်ရာများကို ဇယားကွက်အောက်မှ တိုက်ရိုက်ပြသခြင်း
     document.getElementById("modal-gw-pts").textContent = d.gwPoints ?? "0";
-    document.getElementById("modal-total-pts").textContent = d.points ?? "0"; 
-    document.getElementById("modal-hit-cost").textContent = "-" + (d.hitCost || 0); 
-    document.getElementById("modal-chip-badge").textContent =
-      d.chip && CHIP_LABELS[d.chip] ? CHIP_LABELS[d.chip] : "NO CHIP";
+    document.getElementById("modal-total-pts").textContent = d.points ?? "0";
+    document.getElementById("modal-hit-cost").textContent = "-" + (d.hitCost || 0);
+    document.getElementById("modal-chip-badge").textContent = d.chip && CHIP_LABELS[d.chip] ? CHIP_LABELS[d.chip] : "NO CHIP";
 
-    // ၂။ 💡 Formation လူစာရင်း (picks) ကိုပါ ဤ Standings Document ထဲကနေပဲ တိုက်ရိုက်ဆွဲထုတ် Render လုပ်ခြင်း
-    const picks = d.picks || []; //
-    if (picks.length > 0) {
-      renderPopupPitch(picks);
+    // 💡 ကြားဖြတ်ဖြေရှင်းချက်: အန်ကယ့်ရဲ့ အောက်က logic တွေကို တစ်လုံးမှ မပြင်ဘဲ ဒေတာစီးဆင်းမှု စာလုံးအကြီးအသေးကို ဤနေရာတွင် ကြိုတင်ညှိနှိုင်းပေးခြင်း
+    let rawPicks = d.picks || [];
+    let normalizedPicks = rawPicks.map(p => {
+      return {
+        ...p,
+        // Standings ထဲက Position အကြီး (GK, DEF) များကို အန်ကယ့် မူရင်းကုဒ် ဖတ်နိုင်ရန် အကြီးအတိုင်း သေချာစေခြင်း
+        position: p.position ? String(p.position).toUpperCase().trim() : "",
+        // isVice သို့မဟုတ် isCaptain ဒေတာများ စာသားအဖြစ်လာပါက Boolean အစစ်အမှန်ပြောင်းလဲပေးခြင်း
+        isVice: p.isVice === true || p.isVice === "true",
+        isCaptain: p.isCaptain === true || p.isCaptain === "true"
+      };
+    });
+
+    if (normalizedPicks.length > 0) {
+      renderPopupPitch(normalizedPicks); // 👈 ပြုပြင်ထားသော ဒေတာများကို အောက်က မူရင်း Logic ဆီသို့ စီးဆင်းစေခြင်း
     } else {
       document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</p>`;
     }
@@ -122,14 +132,13 @@ window.closeTeamPopup = () => {
   document.getElementById("team-popup-modal").style.display = "none";
 };
 
-// Jersey path
+// ❌ အန်ကယ့်ရဲ့ အောက်က မူရင်း Logic များအား တစ်စက်ကလေးမှ မပြင်ပါ
 function jerseyPath(p) {
   const folder = (p.position || "").toUpperCase() === "GK" ? "gk" : "outfield"; //
   const code = (p.teamCode || "unknown").toLowerCase(); //
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
 }
 
-// Player Card Layout
 function buildPlayerCard(p) {
   const mult = Number(p.multiplier) || 1; //
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
@@ -161,7 +170,6 @@ function buildPlayerCard(p) {
   `;
 }
 
-// Render Popup Pitch rows
 function renderPopupPitch(picks) {
   const starters = picks.filter(p => Number(p.multiplier) > 0); //
   const subs = picks.filter(p => Number(p.multiplier) === 0); //
@@ -188,7 +196,6 @@ function renderPopupPitch(picks) {
     subs.map(buildPlayerCard).join(""); //
 }
 
-// Window Toggles Modules
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
