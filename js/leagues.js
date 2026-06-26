@@ -96,12 +96,11 @@ function generatePlayerCard(p) {
   `;
 }
 
-// ⚡ 💡 အဓိကပြုပြင်ချက်: ရွေးချယ်ထားသောအသင်းအား Starters ၁၁ ယောက်နှင့် Bench ၄ ယောက် တိကျစွာ ခွဲထုတ်ပြသခြင်း
+// ⚡ 💡 အဆင့်မြှင့်တင်မှု: ရွေးချယ်ထားသောအသင်းအား Starters ၁၁ ယောက်နှင့် Bench ၄ ယောက် တိကျစွာ ခွဲထုတ်ပြသခြင်း
 window.openTeamPopup = async function(teamId, teamName) {
   const modal = document.getElementById("team-modal");
   document.getElementById("modal-team-title").textContent = teamName.toUpperCase();
   
-  // ကွင်းပြင်အတွင်းပိုင်းအား Loading အဖြစ် ခေတ္တပြသထားခြင်း
   document.getElementById("modal-pitch-rows").innerHTML = `<p class="text-center text-xs py-12 text-white/60">Loading pitch alignment...</p>`;
   document.getElementById("modal-bench-row").innerHTML = "";
   
@@ -123,7 +122,6 @@ window.openTeamPopup = async function(teamId, teamName) {
     if (liveTeamSnap.exists()) {
       const picks = liveTeamSnap.data().picks || [];
 
-      // 💡 🏆 FIXED LOGIC: Multiplier > 0 ဆိုလျှင် ပွဲထွက် ၁၁ ယောက်၊ Multiplier === 0 ဆိုလျှင် အရန်ခုံ ၄ ယောက် သတ်သတ်စီ စစ်ထုတ်ခြင်း
       const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0);
       const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0);
 
@@ -132,7 +130,7 @@ window.openTeamPopup = async function(teamId, teamName) {
       const mid = starters.filter(p => String(p.position || "").toLowerCase().trim() === "mid");
       const fwd = starters.filter(p => String(p.position || "").toLowerCase().trim() === "fwd");
 
-      // ၅ ယောက်တန်းစီလာလျှင် ဘေးဘောင်မကျော်စေရန် အလိုအလျောက် ညှိပေးမည့် Safeguard Row စနစ်
+      // 💡 🏆 FIXED HIGH SAFEGUARD: ၅ ယောက်တန်းစီလာလျှင် ဘေးဘောင်မကျော်စေရန် အော်တို ညှိပေးမည့် Dynamic Master Row
       const renderPopupRow = (players) => {
         const gapClass = players.length >= 5 ? "gap-x-1" : "gap-x-2";
         return `
@@ -142,17 +140,17 @@ window.openTeamPopup = async function(teamId, teamName) {
         `;
       };
 
-      // ပွဲထွက် ၁၁ ယောက်အား နေရာအလိုက် ကွင်းပေါ်တွင် စနစ်တကျ ခွဲတင်ခြင်း
+      // 💡 ✅ Syntax Error ကို အပြီးတိုင်ဖြေရှင်းချက်: လေးတန်းစလုံးအား renderPopupRow ဖြင့် တစ်သမတ်တည်း နေရာချခြင်း
       document.getElementById("modal-pitch-rows").innerHTML = `
         <div class="flex flex-col justify-between h-full py-1.5 space-y-3.5">
           ${renderPopupRow(gk)}
           ${renderPopupRow(def)}
-          ${renderRow(mid)}
-          ${renderRow(fwd)}
+          ${renderPopupRow(mid)}
+          ${renderPopupRow(fwd)}
         </div>
       `;
 
-      // 💡 အရန်လူ ၄ ယောက်အား အောက်ခြေ BENCH Frame ထဲသို့ သီးသန့် အချိုးကျစွာ စီတန်းမောင်းထည့်ခြင်း
+      // အရန်လူ ၄ ယောက်အား အောက်ခြေ BENCH Frame ထဲသို့ သီးသန့် မောင်းထည့်ခြင်း
       document.getElementById("modal-bench-row").innerHTML = subs.map(p => {
         const posLabel = String(p.position || "").toUpperCase();
         return `
@@ -167,16 +165,6 @@ window.openTeamPopup = async function(teamId, teamName) {
     console.error("Error fetching team popup data:", error);
   }
 };
-
-// Helper သီးသန့် ဖန်ရှင်
-function renderRow(players) {
-  const gapClass = players.length >= 5 ? "gap-x-1" : "gap-x-2";
-  return `
-    <div class="flex justify-center items-center ${gapClass} w-full overflow-visible">
-      ${players.map(p => generatePlayerCard(p)).join("")}
-    </div>
-  `;
-}
 
 window.closeTeamPopup = function() {
   const modal = document.getElementById("team-modal");
