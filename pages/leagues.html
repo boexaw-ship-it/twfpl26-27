@@ -3,120 +3,123 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#0D2B1A" />
+  <meta name="theme-color" content="#1B4D2E" />
   <title>Leagues — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
+    #team-popup-modal.hidden { display: none !important; }
     * { -webkit-tap-highlight-color: transparent; }
     body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
-    .scrollbar-none::-webkit-scrollbar { display: none; }
-    .scrollbar-none { -ms-overflow-style: none; scrollbar-width: none; }
-
-    /* 🎨 team.html အတိုင်း ပိုမိုကြီးမားကျယ်ပြန့်သော အမဲရောင်အမှတ်အဝိုင်းဒီဇိုင်းစစ်စစ် တပ်ဆင်ခြင်း */
-    .player-point-circle {
-      background-color: #000000;
-      color: #ffffff;
-      font-weight: 900;
-      font-size: 0.85rem;
-      min-width: 26px;
-      height: 26px;
-      border-radius: 9999px;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      box-shadow: 0 2px 6px rgba(0,0,0,0.5);
-      margin-top: 4px;
-    }
+    
+    /* 💡 အရန်ခုံ Point ဝိုင်းလေးများအတွက် CSS */
+    .player-point-circle { width:22px; height:22px; background:black; color:white; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900; margin-top:-8px; z-index:10; border:1px solid rgba(255,255,255,0.2); box-shadow:0 2px 4px rgba(0,0,0,0.4); }
+    
+    #league-scroll-container::-webkit-scrollbar { width: 3px; }
+    #league-scroll-container::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
   </style>
 
   <script type="module" src="/twfpl26-27/js/leagues.js"></script>
 </head>
-<body class="scrollbar-none">
+<body>
 
-  <div class="bg-[#0D2B1A] border-b border-[#1F5C36] px-4 py-3 flex items-center flex-shrink-0">
-    <a href="/twfpl26-27/pages/dashboard.html" class="text-[#3A9E5F] text-lg font-bold">←</a>
-    <h1 class="gold-text font-bold text-xl ml-2 tracking-wider font-['Bebas_Neue']">LEAGUES</h1>
+  <div style="background:#0D2B1A; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
+    <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px; font-weight:bold;">←</a>
+    <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">LEAGUES</h1>
   </div>
 
-  <div class="px-4 pt-3 flex gap-2 flex-shrink-0">
-    <button id="tab-league1" onclick="switchTab('league1')" class="flex-1 py-2.5 rounded-xl font-bold bg-gradient-to-r from-[#C9A84C] to-[#F0D060] text-[#0D2B1A] border-none cursor-pointer">Weekly League</button>
-    <button id="tab-league2" onclick="switchTab('league2')" class="flex-1 py-2.5 rounded-xl font-bold border border-[#2A7A47] text-[#3A9E5F] bg-transparent cursor-pointer">All Friends</button>
-  </div>
-
-  <div class="px-4 py-3.5 flex flex-col gap-2.5 border-b border-[#1F5C36] mb-1 flex-shrink-0">
-    <div class="flex items-center gap-2">
-      <span class="text-xs font-semibold uppercase tracking-wider text-[#3A9E5F]">Chips:</span>
-      <div class="flex gap-1.5">
-        <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">TC</span>
-        <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">BB</span>
-        <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">WC</span>
-        <span class="text-[10px] font-black px-2.5 py-1 rounded bg-black/30 border border-yellow-500/20 text-yellow-500">FH</span>
-      </div>
-    </div>
-    <div class="flex items-center justify-between gap-2">
-      <p class="text-[11px] font-medium text-[#E8D5A3]"><span class="text-red-400 font-bold">(-4)</span> = ဒီ GW တွင် นုတ်ယူသည့် Hit Point</p>
-      <div class="flex bg-[#0D2B1A] border border-[#2A7A47] rounded-full p-0.5 flex-shrink-0">
-        <button id="sort-total" onclick="switchSort('total')" class="px-3.5 py-1.5 text-xs font-bold rounded-full border-none bg-transparent text-[#3A9E5F] cursor-pointer">Total</button>
-        <button id="sort-gw" onclick="switchSort('gw')" class="px-3.5 py-1.5 text-xs font-bold rounded-full border-none bg-transparent text-[#3A9E5F] cursor-pointer">This GW</button>
-      </div>
+  <div style="padding:12px 16px 6px; flex-shrink:0;">
+    <div class="grid grid-cols-2 gap-2 w-full">
+      <button id="tab-league1" onclick="window.switchTab('league1')" class="rounded-xl py-2.5 text-xs font-bold tracking-wide transition" style="background: linear-gradient(135deg,#C9A84C,#F0D060); color:#0D2B1A;">Weekly League</button>
+      <button id="tab-league2" onclick="window.switchTab('league2')" class="rounded-xl py-2.5 text-xs font-bold tracking-wide transition" style="border:1px solid #2A7A47; color:#3A9E5F; background:transparent;">All Friends</button>
     </div>
   </div>
 
-  <div class="flex-1 overflow-y-auto px-4 py-1 scrollbar-none">
-    <div id="panel-league1"><div id="league1-table"></div></div>
-    <div id="panel-league2" style="display:none;"><div id="league2-table"></div></div>
-  </div>
+  <div style="padding:6px 16px 10px; flex-shrink:0; border-bottom:1px solid #1F5C36;" class="flex flex-col gap-2">
+    
+    <div class="flex items-center gap-1.5 flex-wrap">
+      <span class="text-[10px] font-black tracking-wider uppercase mr-1" style="color:#3A9E5F;">CHIPS:</span>
+      <span class="text-[9px] font-black px-2 py-0.5 rounded border border-[#C9A84C]/40 bg-[#C9A84C]/10 text-[#F0D060] shadow-sm">TC</span>
+      <span class="text-[9px] font-black px-2 py-0.5 rounded border border-[#C9A84C]/40 bg-[#C9A84C]/10 text-[#F0D060] shadow-sm">BB</span>
+      <span class="text-[9px] font-black px-2 py-0.5 rounded border border-[#C9A84C]/40 bg-[#C9A84C]/10 text-[#F0D060] shadow-sm">WC</span>
+      <span class="text-[9px] font-black px-2 py-0.5 rounded border border-[#C9A84C]/40 bg-[#C9A84C]/10 text-[#F0D060] shadow-sm">FH</span>
+    </div>
 
-  <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:150; display:none; align-items:center; justify-content:center; padding:12px;" onclick="if(event.target===this)closeTeamPopup()">
-    <div class="w-full max-w-sm rounded-2xl p-4 border border-gray-800 flex flex-col overflow-hidden bg-[#0D2B1A] shadow-2xl space-y-3">
+    <div class="flex items-center justify-between w-full mt-0.5">
+      <p class="text-[10px] font-medium text-white/70">
+        <span class="text-[#f87171] font-black font-mono">(-4)</span> = ဒီ GW တွင် ယူထားသည့် Hit Point
+      </p>
       
-      <div class="flex items-center justify-between">
-        <h2 class="text-white font-extrabold text-sm tracking-tight truncate flex-1 uppercase font-['Inter']" id="modal-team-title">—</h2>
-        <button onclick="closeTeamPopup()" class="w-7 h-7 rounded-full text-xs font-bold bg-black/30 border border-gray-700 text-gray-300 flex items-center justify-center">✕</button>
+      <div class="flex gap-1.5">
+        <button id="sort-total" onclick="window.switchSort('total')" class="text-[10px] font-bold px-2.5 py-1 rounded-full border transition" style="background:rgba(201,168,76,0.25); color:#C9A84C; border-color:#C9A84C;">Total</button>
+        <button id="sort-gw" onclick="window.switchSort('gw')" class="text-[10px] font-bold px-2.5 py-1 rounded-full border transition" style="background:transparent; color:#3A9E5F; border-color:#2A7A47;">This GW</button>
+      </div>
+    </div>
+
+  </div>
+
+  <div id="league-scroll-container" style="flex:1; overflow-y:auto;" class="px-4 py-3">
+    <div id="panel-league1" style="display:block;">
+      <div id="league1-table"></div>
+    </div>
+    <div id="panel-league2" style="display:none;">
+      <div id="league2-table"></div>
+    </div>
+  </div>
+
+  <div style="background:#0D2B1A; border-top:1px solid #1F5C36; display:flex; justify-content:space-around; align-items:center; padding:4px 0; flex-shrink:0;">
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
+    <div class="nav-item active"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  </div>
+
+  <div id="team-popup-modal" style="position:fixed; inset:0; background:rgba(0,0,0,0.85); z-index:100; display:none; align-items:center; justify-content:center; padding:16px; backdrop-filter:blur(3px);" onclick="if(event.target===this)window.closeTeamPopup()">
+    <div style="background:linear-gradient(145deg,#1F5C36,#0D2B1A); border:1px solid rgba(201,168,76,0.4); border-radius:1.25rem; width:100%; max-width:350px; padding:14px; box-shadow:0 0 30px rgba(0,0,0,0.6);" class="flex flex-col relative">
+      
+      <div class="flex justify-between items-center mb-2 pb-1.5" style="border-bottom:1px solid rgba(42,122,71,0.5);">
+        <h3 id="modal-team-title" class="text-white font-black text-sm truncate tracking-wide" style="max-width:240px; font-family:'Bebas Neue'; font-size:1.25rem; color:#F0D060;">—</h3>
+        <button onclick="window.closeTeamPopup()" style="color:#E8D5A3; font-size:1rem; font-weight:bold; background:rgba(255,255,255,0.1); width:24px; height:24px; border-radius:9999px; display:flex; align-items:center; justify-content:center;">✕</button>
       </div>
 
-      <div class="bg-[#1B4D2E] border border-gray-800/50 px-3 py-2.5 flex items-center justify-between rounded-xl flex-shrink-0">
-        <div class="flex items-center gap-2.5 text-white">
-          <span class="text-xs font-bold text-red-400">Hit: <span id="modal-hit-cost">-0</span></span>
-          <span class="text-gray-600">|</span>
-          <span class="text-xs font-bold">GW Pts: <span id="modal-gw-pts" class="text-white font-black">—</span></span>
-          <span class="text-gray-600">|</span>
-          <span class="text-xs font-bold">Total: <span id="modal-total-pts" class="text-yellow-500 font-black">—</span></span>
+      <div class="grid grid-cols-4 gap-1.5 text-center mb-3">
+        <div class="rounded-lg p-1 bg-black/30 border border-[#2A7A47]">
+          <p class="text-[8px]" style="color:#3A9E5F;">Hit Cost</p>
+          <p id="modal-hit-cost" class="text-[11px] font-bold text-red-400 font-mono">0</p>
         </div>
-        <span id="modal-chip-badge" class="text-[9px] font-black px-2 rounded bg-yellow-500/10 border border-yellow-500/30 text-yellow-500 tracking-wider uppercase py-0.5">NO CHIP</span>
+        <div class="rounded-lg p-1 bg-black/30 border border-[#2A7A47]">
+          <p class="text-[8px]" style="color:#3A9E5F;">GW Points</p>
+          <p id="modal-gw-pts" class="text-[11px] font-black text-white">0</p>
+        </div>
+        <div class="rounded-lg p-1 bg-black/30 border border-[#2A7A47]">
+          <p class="text-[8px]" style="color:#3A9E5F;">Total Points</p>
+          <p id="modal-total-pts" class="text-[11px] font-black text-[#C9A84C]">0</p>
+        </div>
+        <div class="rounded-lg p-1 bg-black/30 border border-[#2A7A47]">
+          <p class="text-[8px]" style="color:#3A9E5F;">Active Chip</p>
+          <p id="modal-chip-badge" class="text-[9px] font-black text-[#F0D060]">NO CHIP</p>
+        </div>
       </div>
 
-      <div class="relative bg-gradient-to-b from-[#1a5c30] via-[#144d24] to-[#0f3d1e] rounded-2xl p-4 border border-white/10 shadow-2xl overflow-visible min-h-[420px]">
-        <svg class="absolute inset-0 w-full h-full opacity-35 pointer-events-none" viewBox="0 0 200 420" preserveAspectRatio="none">
-          <rect x="6" y="6" width="188" height="408" fill="none" stroke="white" stroke-width="1.3"/>
-          <line x1="6" y1="210" x2="194" y2="210" stroke="white" stroke-width="1.3"/>
-          <circle cx="100" cy="210" r="32" fill="none" stroke="white" stroke-width="1.3"/>
-          <circle cx="100" cy="210" r="1.5" fill="white"/>
-          <rect x="40" y="6" width="120" height="45" fill="none" stroke="white" stroke-width="1.3"/>
-          <rect x="40" y="369" width="120" height="45" fill="none" stroke="white" stroke-width="1.3"/>
-        </svg>
-        <div id="popup-pitch-rows" class="relative z-10 h-full overflow-visible"></div>
+      <div style="background:#154726; border:2px solid #2A7A47; border-radius:12px; padding:10px 6px; position:relative; min-height:270px; background-image: radial-gradient(#1a5930 1px, transparent 1px), linear-gradient(to bottom, rgba(255,255,255,0.03) 50%, transparent 50%); background-size: 20px 20px, 100% 40px;" class="shadow-inner">
+        <div style="position:absolute; top:50%; left:50%; transform:translate(-50%,-50%); width:70px; height:70px; border:1px solid rgba(255,255,255,0.08); border-radius:9999px; pointer-events:none;"></div>
+        <div style="position:absolute; top:50%; left:0; right:0; height:1px; background:rgba(255,255,255,0.08); pointer-events:none;"></div>
+        
+        <div id="popup-pitch-rows" class="h-full"></div>
       </div>
 
-      <div class="rounded-xl p-3 bg-[#113a21] border border-[#1F5C36] shadow-lg flex-shrink-0">
-        <p class="text-[10px] font-black text-[#C9A84C] tracking-widest uppercase text-center mb-2.5">Bench (အရန်လူစာရင်း)</p>
-        <div id="popup-bench-row" class="flex justify-center items-center gap-x-2 flex-wrap"></div>
+      <div class="mt-3 p-2 rounded-xl bg-black/20 border border-white/5">
+        <p class="text-[9px] font-black tracking-widest text-center uppercase mb-2" style="color:#C9A84C; font-size:0.6rem;">BENCH (အရန်လူစာရင်း)</p>
+        <div id="popup-bench-row" class="flex justify-around items-center gap-1 w-full"></div>
       </div>
 
     </div>
   </div>
 
-  <div class="bg-[#0D2B1A] border-t border-[#1F5C36] flex justify-around items-center py-1 flex-shrink-0 z-20">
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'">🏠<span>Home</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'">⚡<span>Live</span></div>
-    <div class="nav-item active">🏆<span>League</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/fixtures.html'">⚽<span>Fixtures</span></div>
-    <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/scout.html'">🔍<span>Scout</span></div>
-  </div>
 </body>
 </html>
