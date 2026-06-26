@@ -15,10 +15,11 @@
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
-    .filter-btn { border:1px solid rgba(201,168,76,0.3); color:#E8D5A3; border-radius:0.5rem; padding:4px 10px; font-size:0.7rem; font-weight:600; cursor:pointer; background:transparent; transition:all 0.2s; white-space:nowrap; }
-    .sort-btn { border:1px solid #2A7A47; color:#3A9E5F; border-radius:9999px; padding:6px 14px; font-size:0.72rem; font-weight:700; cursor:pointer; background:transparent; transition:all 0.2s; white-space:nowrap; }
     
-    /* Custom Scrollbar for Player List */
+    /* 💡 Filter ခလုတ်များကို မျက်နှာပြင်အပြည့် ကွက်တိသွားစေရန် Layout ပုံစံသစ် */
+    .filter-btn { border:1px solid rgba(201,168,76,0.3); color:#E8D5A3; border-radius:0.5rem; padding:6px 0; font-size:0.75rem; font-weight:700; cursor:pointer; background:transparent; transition:all 0.2s; text-align:center; width: 100%; }
+    .sort-btn { border:1px solid #2A7A47; color:#3A9E5F; border-radius:9999px; padding:6px 0; font-size:0.7rem; font-weight:700; cursor:pointer; background:transparent; transition:all 0.2s; text-align:center; width: 100%; }
+    
     #scout-scroll-container::-webkit-scrollbar { width: 3px; }
     #scout-scroll-container::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
   </style>
@@ -32,9 +33,9 @@
     <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.3rem;">PLAYER SCOUT</h1>
   </div>
 
-  <div style="padding:10px 16px 6px;flex-shrink:0;">
-    <div style="display:flex;gap:6px;overflow-x:auto;">
-      <button id="filter-all" class="filter-btn" onclick="window.filterPos('all')" style="background:rgba(201,168,76,0.2);">ALL</button>
+  <div style="padding:12px 16px 6px;flex-shrink:0;">
+    <div class="grid grid-cols-5 gap-1.5 w-full">
+      <button id="filter-all" class="filter-btn" onclick="window.filterPos('all')" style="background:rgba(201,168,76,0.25); border-color:#C9A84C;">ALL</button>
       <button id="filter-gk" class="filter-btn" onclick="window.filterPos('gk')">GK</button>
       <button id="filter-def" class="filter-btn" onclick="window.filterPos('def')">DEF</button>
       <button id="filter-mid" class="filter-btn" onclick="window.filterPos('mid')">MID</button>
@@ -42,11 +43,11 @@
     </div>
   </div>
 
-  <div style="padding:6px 16px 10px;flex-shrink:0;border-bottom:1px solid #1F5C36;">
-    <p class="text-xs mb-2" style="color:#3A9E5F;">Sort by (နှိပ်မှ active ဖြစ်ပါမည်):</p>
-    <div style="display:flex;gap:6px;overflow-x:auto;">
+  <div style="padding:6px 16px 12px;flex-shrink:0;border-bottom:1px solid #1F5C36;">
+    <p class="text-xs mb-1.5" style="color:#3A9E5F;">Sort by (နှိပ်မှ active ဖြစ်ပါမည်):</p>
+    <div class="grid grid-cols-4 gap-1.5 w-full">
       <button id="sort-price" class="sort-btn" onclick="window.toggleSort('price')">💰 Price</button>
-      <button id="sort-ownership" class="sort-btn" onclick="window.toggleSort('ownership')">👥 Ownership</button>
+      <button id="sort-ownership" class="sort-btn" onclick="window.toggleSort('ownership')">👥 Owner</button>
       <button id="sort-points" class="sort-btn" onclick="window.toggleSort('points')">⭐ Points</button>
       <button id="sort-form" class="sort-btn" onclick="window.toggleSort('form')">📈 Form</button>
     </div>
@@ -68,17 +69,14 @@
 
   <div id="player-modal" class="hidden" style="position:fixed;inset:0;background:rgba(0,0,0,0.8);z-index:100;display:none;align-items:center;justify-content:center;padding:20px;backdrop-filter:blur(3px);" onclick="if(event.target===this)window.closeModal()">
     <div style="background:linear-gradient(145deg,#1F5C36,#0D2B1A);border:1px solid rgba(201,168,76,0.4);border-radius:1.25rem;width:100%;max-width:360px;max-height:82vh;overflow-y:auto;box-shadow:0 0 40px rgba(0,0,0,0.7);">
-
       <div style="padding:16px;display:flex;justify-content:flex-end;">
         <button onclick="window.closeModal()" style="color:#E8D5A3;font-size:1.1rem;background:rgba(255,255,255,0.1);width:28px;height:28px;border-radius:9999px;display:flex;align-items:center;justify-content:center;font-weight:bold;">✕</button>
       </div>
-
       <div style="padding:8px 20px 16px;text-align:center;">
         <h2 id="modal-name" class="text-white font-bold text-xl mt-2" style="font-family:'Bebas Neue';letter-spacing:0.05em;">—</h2>
         <p id="modal-team" class="text-sm font-semibold" style="color:#C9A84C;"></p>
-        <span id="modal-position" class="inline-block mt-2 text-[10px] px-3 py-0.5 rounded-full font-black uppercase" style="background:rgba(201,168,76,0.2);color:#C9A84C;">—</span>
+        <span id="modal-position" class="inline-block mt-2 text-[10px] px-3 py-0.5 rounded-full font-black uppercase" style="color:white;">—</span>
       </div>
-
       <div class="grid grid-cols-4 gap-2 px-5 mb-5">
         <div class="rounded-xl p-2 text-center" style="background:#162F20;border:1px solid #2A7A47;">
           <p style="font-size:0.55rem;color:#3A9E5F;font-weight:600;">Price</p>
@@ -97,7 +95,6 @@
           <p id="modal-form" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;">—</p>
         </div>
       </div>
-
       <div style="padding:0 20px 24px;">
         <p class="text-xs uppercase tracking-widest mb-2.5 font-black text-center" style="color:#C9A84C;font-size:0.65rem;">Next 3 Matches</p>
         <div id="modal-fixtures"></div>
