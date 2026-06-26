@@ -9,7 +9,7 @@ let unsubscribePopup = null;
 
 const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
-// 📡 Firebase Standings Listeners (မူရင်းအတိုင်း ရာနှုန်းပြည့် ထိန်းသိမ်းထားပါသည်)
+// 📡 Firebase Standings Listeners
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
@@ -43,7 +43,7 @@ function renderTable(firebaseId) {
   const tableId = firebaseId === "league1" ? "league1-table" : "league2-table";
   const el = document.getElementById(tableId);
 
-  if (!el) return; // Safeguard
+  if (!el) return;
   if (data.length === 0) {
     el.innerHTML = `<p class="text-center text-xs py-6" style="color:#3A9E5F;">Data မရှိသေးပါ</p>`;
     return;
@@ -127,7 +127,7 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// Player Card Layout
+// 💡 🏆 FIXED DESIGN: နာမည်ပြားအား လုံးဝသွားမဖုံးစေမည့် Official Square Name Plate စနစ်သစ်
 function buildPlayerCard(p) {
   const mult = Number(p.multiplier) || 0; 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -141,25 +141,33 @@ function buildPlayerCard(p) {
     cornerBadge = `<span style="position:absolute;top:-5px;right:-3px;background:#C0C0C0;color:#0D2B1A;font-size:8px;font-weight:900;width:16px;height:16px;border-radius:9999px;display:flex;align-items:center;justify-content:center;z-index:20;box-shadow:0 1px 3px rgba(0,0,0,0.4);">V</span>`; 
   }
 
-  const borderColor = (p.isCaptain || mult > 1) ? '#F0D060' : p.isVice ? '#C0C0C0' : '#2A7A47'; 
+  // ဂျာစီအောက်ခြေ highlight border စနစ်
+  const borderHighlight = (p.isCaptain || mult > 1) ? 'border-b-2 border-b-[#F0D060]' : p.isVice ? 'border-b-2 border-b-[#C0C0C0]' : ''; 
 
   return `
-    <div style="width:64px;flex-shrink:0;display:flex;flex-direction:column;align-items:center;position:relative;">
+    <div style="width:64px; flex-shrink:0; display:flex; flex-direction:column; align-items:center; position:relative;">
       ${cornerBadge}
-      <div style="width:44px;height:44px;border-radius:10px;overflow:hidden;border:2px solid ${borderColor};background:#1F5C36;display:flex;align-items:center;justify-content:center;margin-bottom:3px;">
+      
+      <div class="${borderHighlight}" style="width:44px; height:44px; display:flex; align-items:center; justify-content:center; margin-bottom:2px;">
         <img src="${jerseyPath(p)}"
-             onerror="this.outerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.2rem;\\'>👕</div>'"
-             style="width:34px;height:34px;object-fit:contain;" alt="${p.name}" />
+             onerror="this.outerHTML='<div style=\\'width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-size:1.1rem;\\'>👕</div>'"
+             style="width:100%; height:100%; object-fit:contain; filter: drop-shadow(0px 2px 3px rgba(0,0,0,0.3));" alt="${p.name}" />
       </div>
-      <div style="width:100%;background:white;padding:2px 2px;border-radius:3px 3px 0 0;text-align:center;">
-        <p style="color:#0D2B1A;font-weight:900;font-size:7.5px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;line-height:1.1;">${p.name || "?"}</p>
+      
+      <div style="width:100%; display:flex; flex-direction:column; rounded-sm; overflow:hidden; box-shadow: 0 2px 4px rgba(0,0,0,0.3);">
+        <div style="width:100%; background:white; padding:1px 2px; text-align:center; height:15px; display:flex; align-items:center; justify-content:center;">
+          <p style="color:#0D2B1A; font-weight:900; font-size:7.5px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap; line-height:1.1; w-full">${p.name || "?"}</p>
+        </div>
+        <div style="width:100%; background:#000000; color:#ffffff; text-align:center; height:14px; display:flex; align-items:center; justify-content:center; font-weight:900; font-size:9px;">
+          ${displayPoints}
+        </div>
       </div>
-      <div class="player-point-circle">${displayPoints}</div>
+      
     </div>
   `;
 }
 
-// ⚡ 💡 🏆 FIXED PITCH ENGINE (၅ ယောက်တန်းနှင့် အရန်လူ အပြတ်ခွဲထုတ်မှုစနစ်)
+// FIXED PITCH ENGINE (၅ ယောက်တန်းနှင့် အရန်လူ အပြတ်ခွဲထုတ်မှုစနစ်)
 function renderPopupPitch(picks) {
   const starters = picks.filter(p => Number(p.multiplier ?? 0) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 0) === 0); 
@@ -169,37 +177,36 @@ function renderPopupPitch(picks) {
   const mid = starters.filter(p => (p.position || "").toLowerCase() === "mid"); 
   const fwd = starters.filter(p => (p.position || "").toLowerCase() === "fwd"); 
 
-  // 💡 ၅ ယောက်တန်းစီလာလျှင် ဘေးဘောင်နှင့် ငြိပြီး App ရပ်မသွားစေရန် Auto Flexible Gap စနစ်
   const renderRow = (players) => {
     const gapSize = players.length >= 5 ? "4px" : "6px";
     return `
-      <div style="display:flex;justify-content:center;align-items:center;gap:${gapSize};width:100%;overflow:visible;">
+      <div style="display:flex; justify-content:center; align-items:center; gap:${gapSize}; width:100%; overflow:visible;">
         ${players.map(buildPlayerCard).join("")}
       </div>
     `;
   };
 
   document.getElementById("popup-pitch-rows").innerHTML = `
-    <div style="display:flex;flex-direction:column;justify-content:space-between;height:100%;padding:4px 0;gap:12px;">
+    <div style="display:flex; flex-direction:column; justify-content:space-between; height:100%; padding:4px 0; gap:12px;">
       ${renderRow(gk)}
       ${renderRow(def)}
       ${renderRow(mid)}
       ${renderRow(fwd)}
     </div>`; 
 
-  // 💡 ✅ All Team Bench Fix: အရန်လူ ၄ ယောက်စလုံးအား ပိုဇီရှင်တံဆိပ်လေးများဖြင့် သီးသန့် အပြတ်ခွဲပြသခြင်း
+  // All Team Bench Fix: အရန်လူ ၄ ယောက်စလုံးအား ပိုဇီရှင်တံဆိပ်လေးများဖြင့် သီးသန့် အပြတ်ခွဲပြသခြင်း
   document.getElementById("popup-bench-row").innerHTML = subs.map(p => {
     const posLabel = String(p.position || "").toUpperCase();
     return `
-      <div style="display:flex;flex-direction:column;align-items:center;gap:2px;">
-        <span style="font-size:8px;font-weight:900;color:#E8D5A3;text-transform:uppercase;opacity:0.6;">${posLabel}</span>
+      <div style="display:flex; flex-direction:column; align-items:center; gap:2px;">
+        <span style="font-size:8px; font-weight:900; color:#E8D5A3; text-transform:uppercase; opacity:0.6;">${posLabel}</span>
         ${buildPlayerCard(p)}
       </div>
     `;
   }).join("");
 }
 
-// Window Toggles Modules (မူရင်းအတိုင်း ရာနှုန်းပြည့် ထိန်းသိမ်းထားပါသည်)
+// Window Toggles Modules
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
