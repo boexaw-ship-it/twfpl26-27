@@ -2,10 +2,6 @@
 // TW Fantasy Official League
 // League Sync Script (Standalone Variant)
 // ============================================
-// FPL API မှ League Standings ကို ဆွဲယူပြီး 
-// leagues -> leagueX -> standings -> fplID Document ထဲသို့ 
-// Chip, Hit နှင့် ကစားသမား ၁၅ ယောက်စာရင်း (Picks) ကို တစ်ခါတည်း ပူးတွဲသိမ်းဆည်းပေးသည်
-// ============================================
 
 const admin = require("firebase-admin");
 
@@ -25,7 +21,7 @@ const LEAGUES = [
   { firebaseId: "league2", fplLeagueId: 184965 }, // All Friends
 ];
 
-// === Helper: FPL API Fetch with retry logic ===
+// === Helper: FPL API Fetch ===
 async function fplFetch(url, retries = 3) {
   for (let i = 0; i < retries; i++) {
     try {
@@ -58,7 +54,7 @@ async function getPlayerMasterMap() {
   
   const teamsMap = {};
   bootstrap.teams.forEach(t => {
-    teamsMap[t.id] = t.short_name.toLowerCase(); // e.g., "ars", "mci"
+    teamsMap[t.id] = t.short_name.toLowerCase(); 
   });
 
   const playersMap = {};
@@ -104,14 +100,17 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
     const squadPicks = (data.picks || []).map(p => {
       const masterInfo = playersMasterMap[p.element] || { name: "?", position: "mid", teamCode: "unknown", livePoints: 0 };
       
+      // 💡 🏆 ✅ FIX MULTIPLIER: p.multiplier ၏ တန်ဖိုး 0 (Bench) ဖြစ်နေပါက 0 အတိုင်း တိကျစွာသိမ်းရန် ပြင်ဆင်ပြီးစီးမှု
+      const finalMultiplier = p.multiplier !== undefined && p.multiplier !== null ? Number(p.multiplier) : 1;
+
       return {
         playerId: p.element,
         name: masterInfo.name,
         position: masterInfo.position, 
         teamCode: masterInfo.teamCode, 
         livePoints: masterInfo.livePoints,
-        multiplier: p.multiplier || 1,
-        isCaptain: p.is_captain === true || p.is_captain === "true" || (p.multiplier || 1) > 1,
+        multiplier: finalMultiplier, // ⬅️ 0 အား 0 အတိုင်း (၁၀၀% Type-safe) သွင်းပေးလိုက်ပါပြီ
+        isCaptain: p.is_captain === true || p.is_captain === "true" || finalMultiplier > 1,
         isVice: p.is_vice_captain === true || p.is_vice === true 
       };
     });
@@ -177,7 +176,6 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
     await batch.commit();
     console.log(`✅ League ${fplLeagueId} (${firebaseId}) — ${standings.length} records successfully unified.`);
   } catch (err) {
-    // 💡 ✅ FIX: SyntaxError ဖြစ်စေသော Newline ကွဲအက္ခရာများနှင့် တိုကင်အဆန်းများကို သန့်ရှင်းစွာ ပြင်ဆင်ပြီးစီးမှု
     console.error("❌ League update omitted for league: " + firebaseId + " - Error: " + err.message);
   }
 }
