@@ -41,40 +41,35 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
 }
 
-// 🏆 💡 Official FPL Style: လေးထောင့် Card ပုံစံစစ်စစ် (Square Card Design)
+// 🏆 Official FPL Style Plate Design (Clean Shirt Variant)
 function playerCard(p, isCaptain = false, isVice = false) {
   const mult = p.multiplier || 1;
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
   
-  // 💡 Corner Badges (C / V / 3x) နေရာချစနစ်
+  // Corner Badges (C / V / 3x) နေရာချစနစ်
   const cornerBadge = mult === 3
-    ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>'
+    ? '<span class="absolute -top-1 -right-1 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">3x</span>'
     : p.isCaptain || isCaptain
-    ? '<span class="absolute -top-1.5 -right-1.5 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>'
+    ? '<span class="absolute -top-1 -right-1 bg-[#F0D060] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">C</span>'
     : p.isVice || isVice
-    ? '<span class="absolute -top-1.5 -right-1.5 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>'
+    ? '<span class="absolute -top-1 -right-1 bg-[#C0C0C0] text-[#0D2B1A] text-[9px] font-black w-4 h-4 rounded-full flex items-center justify-center shadow-md z-20">V</span>'
     : '';
-
-  // 💡 Official FPL တိုင်း ကပ္ပတိန်ဆိုလျှင် ဂျာစီဘောင်တစ်ခုလုံးကို ရွှေဝါရောင် လေးထောင့်ကတ်ပြားအဖြစ် ပြောင်းလဲခြင်း
-  const borderColor = (isCaptain || p.isCaptain) ? '#F0D060' : (isVice || p.isVice) ? '#C0C0C0' : 'transparent';
-  const bgColor = (isCaptain || p.isCaptain) ? 'rgba(240,208,96,0.15)' : (isVice || p.isVice) ? 'rgba(192,192,192,0.15)' : 'rgba(31,92,54,0.4)';
 
   return `
     <div class="w-[68px] sm:w-[78px] flex flex-col items-center relative transition active:scale-95">
       
-      <div class="w-full aspect-square rounded-md flex items-center justify-center mb-1.5 overflow-visible relative" 
-           style="background:${bgColor}; border:1.5px solid ${borderColor}; backdrop-filter: blur(2px);">
+      <div class="w-12 h-12 flex items-center justify-center mb-1.5 overflow-visible relative">
         <img src="${jerseyPath(p)}"
              onerror="this.outerHTML='<div class=\\'w-full h-10 flex items-center justify-center text-xl\\'>👕</div>'"
-             class="w-10 h-10 object-contain drop-shadow-md" alt="${p.name}" />
+             class="w-11 h-11 object-contain drop-shadow-md" alt="${p.name}" />
         ${cornerBadge}
       </div>
 
-      <div class="w-full flex flex-col rounded overflow-hidden shadow-md" style="box-shadow: 0 3px 6px rgba(0,0,0,0.2);">
+      <div class="w-full flex flex-col rounded overflow-hidden shadow-md" style="box-shadow: 0 3px 6px rgba(0,0,0,0.25);">
         <div class="w-full bg-white px-0.5 py-0.5 text-center flex items-center justify-center" style="height:17px;">
           <p class="text-[#0D2B1A] font-black text-[8.5px] leading-none tracking-tight truncate w-full">${p.name || "?"}</p>
         </div>
-        <div class="w-full bg-[#37003c] text-white text-center flex items-center justify-center font-black text-[10px]" style="height:16px;">
+        <div class="w-full bg-[#000000] text-white text-center flex items-center justify-center font-black text-[10px]" style="height:16px;">
           ${displayPoints}
         </div>
       </div>
@@ -110,8 +105,7 @@ function renderTeam(data) {
       ${renderRow(fwd)}
     </div>`;
 
-  // Bench အရန်ခုံ ၄ ယောက် (လေးထောင့်ကတ်ပြားဒီဇိုင်းအတိုင်း တန်းစီခြင်း)
-  // 💡 Official FPL အတိုင်း Bench ကတ်ပြားများ၏ အပေါ်ထိပ်တွင် နေရာအညွှန်း (GK, DEF, MID) စာသားလေးများ ထည့်သွင်းပေးထားပါသည်
+  // Bench Area
   document.getElementById("bench-row").innerHTML = subs.map(p => {
     const posLabel = String(p.position || "").toUpperCase();
     return `
