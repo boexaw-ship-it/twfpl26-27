@@ -19,7 +19,7 @@ async function loadPlayers() {
     allPlayers = [];
     snap.forEach(d => allPlayers.push(d.data()));
     
-    // Default အနေဖြင့် ရမှတ်အများဆုံးလူများကို အပေါ်ဆုံးကပြထားရန်
+    // Default: Total Points အများဆုံးလူများကို ထိပ်ဆုံးတင်ထားမည်
     allPlayers.sort((a, b) => (b.totalPoints || 0) - (a.totalPoints || 0));
     
     renderPlayers();
@@ -34,12 +34,12 @@ function fdrColor(fdr) {
   return colors[fdr] || "#3A9E5F";
 }
 
-// 💡 အန်ကယ် ညွှန်ကြားထားသည့်အတိုင်း ကစားသမား ပိုဇီရှင်အလိုက် အရောင်သတ်မှတ်ချက်စနစ်သစ်
+// 💡 အန်ကယ့် ပိုဇီရှင် အရောင်သစ်စနစ်
 function getPositionBadgeColor(position) {
   const pos = String(position).toUpperCase();
   if (pos === 'GK') return '#1d4ed8';   // 🔵 GK = အပြာ
   if (pos === 'DEF') return '#dc2626';  // 🔴 DEF = အနီ
-  if (pos === 'MID') return '#eab308';  // 🟡 MID = အဝါ (စာလုံးအမဲဖြင့် ပေါ်လွင်စေမည်)
+  if (pos === 'MID') return '#eab308';  // 🟡 MID = အဝါ
   if (pos === 'FWD') return '#16a34a';  // 🟢 FWD = အစိမ်း
   return '#37003c';
 }
@@ -64,33 +64,38 @@ function renderPlayers() {
   const el = document.getElementById("player-list");
   
   if (players.length === 0) {
-    el.innerHTML = `<p class="text-center text-xs py-8" style="color:#3A9E5F;">ကိုက်ညီသည့် Player data မရှိသေးပါ</p>`;
+    el.innerHTML = `<p class="text-center text-xs py-8" style="color:#E8D5A3;">ကိုက်ညီသည့် Player data မရှိသေးပါ</p>`;
     return;
   }
   
   el.innerHTML = players.map((p, i) => {
     const posUpper = String(p.position || "?").toUpperCase();
     const badgeColor = getPositionBadgeColor(posUpper);
-    const textColor = posUpper === 'MID' ? '#0D2B1A' : '#ffffff'; // MID အဝါကွက်ထဲတွင် စာလုံးအမဲဖြင့် ပိုမိုထင်ရှားစေရန်
+    const textColor = posUpper === 'MID' ? '#0D2B1A' : '#ffffff';
     
     return `
-      <div onclick="window.openPlayerModal(${i})" class="rounded-xl p-3 mb-2 cursor-pointer active:scale-[0.98] transition" style="background:#1F5C36;border:1px solid #2A7A47;">
+      <div onclick="window.openPlayerModal(${i})" class="rounded-xl p-3 mb-2 cursor-pointer active:scale-[0.98] transition" style="background:#1F5C36; border:1px solid #2A7A47;">
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-[9px] px-2 py-0.5 rounded-full font-black" style="background:${badgeColor}; color:${textColor};">${posUpper}</span>
             <div>
               <p class="text-white text-sm font-bold tracking-wide">${p.name || "—"}</p>
-              <p class="text-xs" style="color:#E8D5A3; opacity:0.8;">${p.team || ""}</p>
+              <p class="text-xs text-white/60">${p.team || ""}</p>
             </div>
           </div>
           <div class="text-right">
-            <p class="font-bold" style="color:#C9A84C;font-family:'Bebas Neue';font-size:1.15rem;line-height:1.1;">£${p.price || 0}m</p>
-            <p class="text-[10px]" style="color:#E8D5A3;opacity:0.8;">${p.ownership || 0}% owned</p>
+            <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.15rem; line-height:1.1;">£${p.price || 0}m</p>
+            <p class="text-[10px] text-white/70">${p.ownership || 0}% owned</p>
           </div>
         </div>
-        <div class="mt-2 pt-2 flex justify-between" style="border-top:1px solid rgba(42,122,71,0.5);">
-          <span class="text-xs" style="color:#3A9E5F;">Form: <span class="text-white font-bold">${p.form ?? 0}</span></span>
-          <span class="text-xs" style="color:#3A9E5F;">Total Pts: <span style="color:#C9A84C;font-weight:900;">${p.totalPoints || 0}</span></span>
+        
+        <!-- 💡 🏆 ⚡ HIGH-CONTRAST UPDATE: အစိမ်းပေါ်အစိမ်း ဖြစ်နေမှုများအား ဖတ်ရအလွန်လွယ်ကူသော အရောင်ဆန်းများဖြင့် စီမံထားမှုပုံစံသစ် -->
+        <div class="mt-2.5 pt-2 flex justify-between items-center" style="border-top:1px solid rgba(255,255,255,0.12); font-size:0.75rem;">
+          <div class="flex gap-3.5">
+            <span class="text-white/70">Form: <span class="text-white font-black">${p.form ?? 0}</span></span>
+            <span class="text-[#E8D5A3]/80">Week Pts: <span class="text-[#F0D060] font-black">${p.gwPoints ?? 0}</span></span>
+          </div>
+          <span class="text-[#C9A84C]/80">Total Pts: <span class="text-[#C9A84C] font-black" style="font-size:0.8rem;">${p.totalPoints || 0}</span></span>
         </div>
       </div>
     `;
@@ -117,16 +122,17 @@ window.openPlayerModal = (index) => {
   document.getElementById("modal-price").textContent = "£" + (p.price || 0) + "m";
   document.getElementById("modal-ownership").textContent = (p.ownership || 0) + "%";
   document.getElementById("modal-points").textContent = p.totalPoints || 0;
-  document.getElementById("modal-form").textContent = p.form ?? 0;
+  
+  document.getElementById("modal-form").textContent = `${p.form ?? 0} (GW: ${p.gwPoints ?? 0})`;
 
   const fixturesEl = document.getElementById("modal-fixtures");
   const matches = p.nextMatches || [];
   
   if (matches.length === 0) {
-    fixturesEl.innerHTML = `<p class="text-center text-xs py-4" style="color:#3A9E5F;">Fixture ဇယားများ မရှိသေးပါ</p>`;
+    fixturesEl.innerHTML = `<p class="text-center text-xs py-4" style="color:#E8D5A3;">Fixture ဇယားများ မရှိသေးပါ</p>`;
   } else {
     fixturesEl.innerHTML = matches.map(m => `
-      <div class="flex items-center justify-between py-2 px-3 rounded-lg mb-1.5" style="background:#162F20;border:1px solid #2A7A47;">
+      <div class="flex items-center justify-between py-2 px-3 rounded-lg mb-1.5" style="background:#162F20; border:1px solid #2A7A47;">
         <div class="flex items-center gap-2">
           <span class="text-[10px] font-black px-1.5 py-0.5 rounded bg-black/30" style="color:#C9A84C;">GW ${m.gw}</span>
           <span class="text-xs text-white font-semibold">${m.isHome ? "vs" : "@"} ${m.opponent}</span>
@@ -175,4 +181,3 @@ window.toggleSort = (sortKey) => {
   }
   renderPlayers();
 };
-
