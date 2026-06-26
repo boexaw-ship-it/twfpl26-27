@@ -9,6 +9,7 @@ let unsubscribePopup = null;
 
 const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": "FH", "manager": "AM" };
 
+// 📡 Firebase Standings Listeners
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
@@ -68,7 +69,7 @@ function renderTable(firebaseId) {
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
       <div class="flex-1 min-w-0">
         <div class="flex items-center flex-wrap">
-          <span class="text-sm font-medium text-white truncate" style="max-width:120px;">${r.teamName || "—"}</span>
+          <span class="text-sm font-medium text-white truncate" style="max-width:140px;">${r.teamName || "—"}</span>
           ${chipBadge(r.chip)}
           ${hitBadge(r.hitCost)}
         </div>
@@ -79,7 +80,7 @@ function renderTable(firebaseId) {
   `;
 }
 
-// 💡 POP-UP ENGINE (STANDINGS SOURCE - WITH AUTOMATIC DATA SAFEGUARD)
+// 💡 POP-UP ENGINE (STANDINGS COLLECTION DIRECT CONNECTOR)
 window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
@@ -90,7 +91,7 @@ window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
 
   if (unsubscribePopup) { unsubscribePopup(); unsubscribePopup = null; }
 
-  // leagues -> standings လမ်းကြောင်းတစ်ခုတည်းဆီမှ အကုန်ဖတ်ပါသည်
+  // 📡 အန်ကယ့် အိုင်ဒီယာအမှန်အတိုင်း: leagues -> standings ဒရိုက်ရိုက်လမ်းကြောင်း
   const docRef = doc(db, "leagues", leagueId, "standings", String(fplTeamId));
   
   unsubscribePopup = onSnapshot(docRef, (snap) => {
@@ -100,27 +101,16 @@ window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
     }
     const d = snap.data();
     
-    // ရမှတ်ပိုင်းဆိုင်ရာများကို ဇယားကွက်အောက်မှ တိုက်ရိုက်ပြသခြင်း
+    // (၁) ရမှတ်စာရင်းများကို ဖတ်ယူခြင်း
     document.getElementById("modal-gw-pts").textContent = d.gwPoints ?? "0";
     document.getElementById("modal-total-pts").textContent = d.points ?? "0";
     document.getElementById("modal-hit-cost").textContent = "-" + (d.hitCost || 0);
     document.getElementById("modal-chip-badge").textContent = d.chip && CHIP_LABELS[d.chip] ? CHIP_LABELS[d.chip] : "NO CHIP";
 
-    // 💡 ကြားဖြတ်ဖြေရှင်းချက်: အန်ကယ့်ရဲ့ အောက်က logic တွေကို တစ်လုံးမှ မပြင်ဘဲ ဒေတာစီးဆင်းမှု စာလုံးအကြီးအသေးကို ဤနေရာတွင် ကြိုတင်ညှိနှိုင်းပေးခြင်း
-    let rawPicks = d.picks || [];
-    let normalizedPicks = rawPicks.map(p => {
-      return {
-        ...p,
-        // Standings ထဲက Position အကြီး (GK, DEF) များကို အန်ကယ့် မူရင်းကုဒ် ဖတ်နိုင်ရန် အကြီးအတိုင်း သေချာစေခြင်း
-        position: p.position ? String(p.position).toUpperCase().trim() : "",
-        // isVice သို့မဟုတ် isCaptain ဒေတာများ စာသားအဖြစ်လာပါက Boolean အစစ်အမှန်ပြောင်းလဲပေးခြင်း
-        isVice: p.isVice === true || p.isVice === "true",
-        isCaptain: p.isCaptain === true || p.isCaptain === "true"
-      };
-    });
-
-    if (normalizedPicks.length > 0) {
-      renderPopupPitch(normalizedPicks); // 👈 ပြုပြင်ထားသော ဒေတာများကို အောက်က မူရင်း Logic ဆီသို့ စီးဆင်းစေခြင်း
+    // (၂) လူစာရင်းကိုပါ ဤနေရာတစ်ခုတည်းကနေ တိုက်ရိုက်ဆွဲထုတ်ပြသခြင်း
+    const picks = d.picks || [];
+    if (picks.length > 0) {
+      renderPopupPitch(picks);
     } else {
       document.getElementById("popup-pitch-rows").innerHTML = `<p class="text-center text-xs py-24 text-white/50">လူစာရင်း ဒေတာ မတွေ့ရှိပါဗျာ</p>`;
     }
@@ -132,13 +122,14 @@ window.closeTeamPopup = () => {
   document.getElementById("team-popup-modal").style.display = "none";
 };
 
-// ❌ အန်ကယ့်ရဲ့ အောက်က မူရင်း Logic များအား တစ်စက်ကလေးမှ မပြင်ပါ
+// Jersey path
 function jerseyPath(p) {
-  const folder = (p.position || "").toUpperCase() === "GK" ? "gk" : "outfield"; //
+  const folder = (p.position || "").toLowerCase() === "gk" ? "gk" : "outfield"; // 💡 အန်ကယ့် Database အသစ်အတိုင်း စာလုံးအသေး "gk" သို့ ချိန်ညှိပြီး
   const code = (p.teamCode || "unknown").toLowerCase(); //
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; //
 }
 
+// Player Card Layout
 function buildPlayerCard(p) {
   const mult = Number(p.multiplier) || 1; //
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); //
@@ -170,14 +161,16 @@ function buildPlayerCard(p) {
   `;
 }
 
+// Render Popup Pitch rows
 function renderPopupPitch(picks) {
   const starters = picks.filter(p => Number(p.multiplier) > 0); //
   const subs = picks.filter(p => Number(p.multiplier) === 0); //
 
-  const gk  = starters.filter(p => (p.position || "").toUpperCase() === "GK"); //
-  const def = starters.filter(p => (p.position || "").toUpperCase() === "DEF"); //
-  const mid = starters.filter(p => (p.position || "").toUpperCase() === "MID"); //
-  const fwd = starters.filter(p => (p.position || "").toUpperCase() === "FWD"); //
+  // 💡 အန်ကယ့် Database အသစ်အတိုင်း စာလုံးအသေးလေးတွေ ("gk", "def", "mid", "fwd") ဖြင့် စနစ်တကျ ပြန်လည်စစ်ထုတ်ခြင်း
+  const gk  = starters.filter(p => (p.position || "").toLowerCase() === "gk"); //
+  const def = starters.filter(p => (p.position || "").toLowerCase() === "def"); //
+  const mid = starters.filter(p => (p.position || "").toLowerCase() === "mid"); //
+  const fwd = starters.filter(p => (p.position || "").toLowerCase() === "fwd"); //
 
   const renderRow = (players) => `
     <div style="display:flex;justify-content:center;align-items:center;gap:6px;width:100%;">
@@ -196,6 +189,7 @@ function renderPopupPitch(picks) {
     subs.map(buildPlayerCard).join(""); //
 }
 
+// Window Toggles Modules
 window.switchTab = (tab) => {
   ["league1", "league2"].forEach(t => {
     const btn = document.getElementById("tab-" + t);
