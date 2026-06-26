@@ -62,7 +62,7 @@ function renderTable(firebaseId) {
       <span class="w-14 text-center font-bold" style="color:#C9A84C;">Total</span>
     </div>
     ${rows.map(r => `
-    <div onclick="openTeamPopup('${r.fplTeamId}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
+    <div onclick="openTeamPopup('${firebaseId}', '${r.fplTeamId}', '${(r.teamName || '—').replace(/'/g, "\\'")}')"
          class="flex items-center py-2.5 px-3 rounded-xl mb-1 cursor-pointer active:scale-[0.99] transition"
          style="background:${r.rank <= 3 ? 'rgba(201,168,76,0.1)' : '#1F5C36'};border:1px solid ${r.rank <= 3 ? 'rgba(201,168,76,0.3)' : '#2A7A47'};">
       <span class="text-sm font-bold w-6 text-center" style="color:${r.rank === 1 ? '#F0D060' : r.rank === 2 ? '#C0C0C0' : r.rank === 3 ? '#CD7F32' : '#3A9E5F'};">${r.rank}</span>
@@ -79,8 +79,8 @@ function renderTable(firebaseId) {
   `;
 }
 
-// ✅ FIX 1: Popup ကို liveTeams/{fplId} ကနေ ဆွဲ (league standings ကနေ မဟုတ်ဘူး)
-window.openTeamPopup = (fplTeamId, teamName) => {
+// ✅ FIX: Popup ရမှတ်ပိုင်းဒေတာများကို အန်ကယ်ခိုင်းသည့်အတိုင်း league -> standings ဆီမှ ပြန်လည်ချိတ်ဆက်ထားပါသည်
+window.openTeamPopup = (leagueId, fplTeamId, teamName) => {
   const modal = document.getElementById("team-popup-modal");
   modal.style.display = "flex";
 
@@ -90,19 +90,19 @@ window.openTeamPopup = (fplTeamId, teamName) => {
 
   if (unsubscribePopup) { unsubscribePopup(); unsubscribePopup = null; }
 
-  // livePoints ← Hit/Chip/GW points ယူမယ်
-  const pointsRef = doc(db, "livePoints", String(fplTeamId));
-  const unsub1 = onSnapshot(pointsRef, (snap) => {
+  // 💡 အန်ကယ် ညွှန်ကြားချက်အတိုင်း: leagues -> standings collection ထဲက ရမှတ်တွေကို ပြန်ချိတ်ယူပါသည်
+  const leaguePointsRef = doc(db, "leagues", leagueId, "standings", String(fplTeamId));
+  const unsub1 = onSnapshot(leaguePointsRef, (snap) => {
     if (!snap.exists()) return;
     const d = snap.data();
     document.getElementById("modal-gw-pts").textContent = d.gwPoints ?? "0";
-    document.getElementById("modal-total-pts").textContent = d.totalPoints ?? "0";
-    document.getElementById("modal-hit-cost").textContent = "-" + (d.transferCost || 0);
+    document.getElementById("modal-total-pts").textContent = d.points ?? "0"; // standings ထဲက points ဖြစ်ပါသည်
+    document.getElementById("modal-hit-cost").textContent = "-" + (d.hitCost || 0); // standings ထဲက hitCost ဖြစ်ပါသည်
     document.getElementById("modal-chip-badge").textContent =
-      d.activeChip && CHIP_LABELS[d.activeChip] ? CHIP_LABELS[d.activeChip] : "NO CHIP";
+      d.chip && CHIP_LABELS[d.chip] ? CHIP_LABELS[d.chip] : "NO CHIP"; // standings ထဲက chip ဖြစ်ပါသည်
   });
 
-  // liveTeams ← 11+4 player picks ယူမယ်
+  // liveTeams ← 11+4 player picks ကိုတော့ အန်ကယ့် ကုဒ်အတိုင်း ဆက်ထားပါသည်
   const teamsRef = doc(db, "liveTeams", String(fplTeamId));
   const unsub2 = onSnapshot(teamsRef, (snap) => {
     if (!snap.exists()) {
@@ -130,7 +130,6 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`;
 }
 
-// ✅ FIX 2: cornerBadge ကို parent div ပြင်ပမှာ ထား (absolute position အလုပ်လုပ်အောင်)
 function buildPlayerCard(p) {
   const mult = Number(p.multiplier) || 1;
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1);
