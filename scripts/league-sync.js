@@ -1,9 +1,16 @@
 // ============================================
 // TW Fantasy Official League
-// League Sync Script (Standalone Variant - Week Guard Fixed)
+// League Sync Script (Standalone Variant - Manual Control Fixed)
 // ============================================
 
 const admin = require("firebase-admin");
+
+// ============================================
+// 🎯 💡 🏆 UNCLE'S MANUAL CONTROL PANEL
+// အန်ကယ် အပတ်စဉ် စိတ်ကြိုက်ပြောင်းလဲလိုသည့် Week နံပါတ် (1, 2, 3) ကို ဤနေရာတွင်သာ ပြောင်းပေးရုံပါပဲဗျာ။
+// ၎င်းနံပါတ်အတိုင်းသာ ဒေတာများကို အမြဲတမ်း Overwrite Live ဆွဲယူပေးသွားမည်ဖြစ်ပါသည်။
+const MANUAL_WEEK_NUMBER = 1; 
+// ============================================
 
 // === Firebase Admin Init ===
 if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
@@ -45,16 +52,7 @@ async function fplFetch(url, retries = 3) {
   }
 }
 
-// === Get Current Gameweek ===
-async function getCurrentGameweek() {
-  const bootstrap = await fplFetch(`${FPL_BASE}/bootstrap-static/`);
-  const current = bootstrap.events.find((e) => e.is_current);
-  if (current) return current.id;
-  const next = bootstrap.events.find((e) => e.is_next);
-  return next ? Math.max(next.id - 1, 1) : 1;
-}
-
-// 📊 ကစားသမား Master Lookup ပုံဖော်ခြင်း
+// 📊 ကစားသမား Master Lookup ပုံဖော်ခြင်း (မူရင်းအတိုင်း စာကြောင်းရေအပြည့်)
 async function getPlayerMasterMap() {
   console.log("📊 Fetching FPL Bootstrap-Static Master Data...");
   const bootstrap = await fplFetch(`${FPL_BASE}/bootstrap-static/`);
@@ -135,7 +133,7 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
 // === Synchronize Specific League ===
 async function syncLeague(leagueConfig, gw, playersMasterMap) {
   const { firebaseId, fplLeagueId } = leagueConfig;
-  console.log(`📥 Syncing League ${fplLeagueId} (${firebaseId})...`);
+  console.log(`📥 Syncing League ${fplLeagueId} (${firebaseId}) — Gameweek ${gw} Mode...`);
 
   try {
     const standings = await fetchAllStandings(fplLeagueId);
@@ -153,6 +151,7 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
         .collection("standings")
         .doc(String(team.entry));
 
+      // 💡 ✅ PURE LIVE OVERWRITE: အဟောင်းမှတ်တမ်းများ လုံးဝမချန်ဘဲ အန်ကယ် ညွှန်ကြားသည့် Week ၏ Live ရမှတ်များကိုသာ အစားထိုးသိမ်းဆည်းခြင်း
       batch.set(docRef, {
         fplTeamId: team.entry,
         teamName: team.entry_name,
@@ -169,7 +168,7 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
 
       count++;
       
-      await new Promise((r) => setTimeout(r, 100));
+      await new Promise((r) => setTimeout(r, 50));
 
       if (count % 400 === 0) {
         await batch.commit();
@@ -187,43 +186,20 @@ async function syncLeague(leagueConfig, gw, playersMasterMap) {
 
 // === Execution Process ===
 async function main() {
+  // 💡 စနစ်၏ အလိုအလျောက်ဖတ်ခြင်းအား ကျော်ဖြတ်ပြီး အန်ကယ် သတ်မှတ်လိုက်သော Manual Week အား အတည်ပြုခြင်း
+  const targetWeek = Number(MANUAL_WEEK_NUMBER);
   console.log("🚀 Running Unified League Sync Engine...");
+  console.log(`🔥 [UNCLE'S CONTROL MODE]: Forcing execution for Gameweek ${targetWeek} Only!`);
+
   try {
-    const gw = await getCurrentGameweek();
-    console.log(`📡 FPL API Current Gameweek: Week ${gw}`);
-
-    // 🎯 💡 ၁။ SAFE GUARD CHECK: Firebase ထံမှ စနစ်၏ နောက်ဆုံးမောင်းထားသော Week အခြေအနေအား ဖတ်ယူခြင်း
-    const systemRef = db.collection("systemState").doc("leagueStatus");
-    const systemSnap = await systemRef.get();
-    
-    let lastProcessedGw = 0;
-    if (systemSnap.exists()) {
-      lastProcessedGw = systemSnap.data().lastProcessedGw || 0;
-    }
-    console.log(`📦 Firebase Last Processed Gameweek: Week ${lastProcessedGw}`);
-
-    // 🎯 💡 ၂။ CRITICAL WEEK GUARD LOGIC: API ရဲ့ Week နံပါတ်က Firebase ထဲကထက် ပိုကြီးမလာသေးရင် ဒေတာထပ်မသိမ်းဘဲ ကျော်သွားမည်
-    if (gw <= lastProcessedGw) {
-      console.log(`⚠️ Warning: Gameweek ${gw} အတွက် Standings ဒေတာများ သိမ်းဆည်းပြီးသား ဖြစ်ပါသည်။ Next Week သို့ မပြောင်းသေး၍ အလိုအလျောက် ကျော်သွားပါသည်ဗျာ။`);
-      process.exit(0);
-    }
-
-    console.log(`🔥 [NEW WEEK DETECTED]: Week ${lastProcessedGw} မှ Week ${gw} သို့ ပြောင်းလဲသွားသဖြင့် စတင်မောင်းနှင်နေပါပြီ...`);
-
     const playersMasterMap = await getPlayerMasterMap();
     
-    // ပင်မ League ပတ်မောင်းခြင်း Loop စနစ်
+    // 💡 Lock များနှင့် Guard များအားလုံးကို ဖယ်ထုတ်လိုက်သဖြင့် အခေါက်တိုင်း Live ဒေတာများ တရစပ် အော်တို ဝင်ရောက်ပါမည်
     for (const league of LEAGUES) {
-      await syncLeague(league, gw, playersMasterMap);
+      await syncLeague(league, targetWeek, playersMasterMap);
     }
 
-    // 🎯 💡 ၃။ NEXT WEEK SUCCESS RECORD: သမိုင်းမှတ်တမ်း အားလုံးသိမ်းပြီးပါက စနစ်၏ ပတ်မောင်းပြီးမြောက်မှုအား Week အသစ်အတိုင်း ပြောင်းလဲသတ်မှတ်ခြင်း
-    await systemRef.set({
-      lastProcessedGw: Number(gw),
-      updatedAt: admin.firestore.FieldValue.serverTimestamp()
-    }, { merge: true });
-
-    console.log("🎉 All Standing tasks finished and Next Week status updated successfully.");
+    console.log(`🎉 [SUCCESS] Gameweek ${targetWeek} အတွက် Leaderboard ရမှတ်များနှင့် လူစာရင်းများအားလုံး အော်တို Live မောင်းနှင်ပြီးစီးပါပြီ အန်ကယ်ဗျာ။`);
     process.exit(0);
   } catch (err) {
     console.error("Fatal exception: " + err.message);
