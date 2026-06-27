@@ -22,19 +22,16 @@
     /* Stat Cards Flexible non-scroll system */
     .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:6px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    /* 💡 🏟️ UNCLE'S FIXED ISOLATED FIELD ROW SYSTEM */
-    /* အောက်ခံစည်းများနှင့် လူများ လုံးဝမရောထွေးစေရန် သီးသန့်အသေစည်းခံပေးသော Division Style */
+    /* 💡 🏟️ UNCLE'S ISOLATED DISCIPLINED FIELD ROW SYSTEM */
+    /* စည်းများနှင့် လူများ လုံးဝမရောထွေးစေရန် Player တန်းတစ်ခုစီ၏ အောက်ခြေတွင် စည်းအသေခံပေးသော စနစ် */
     .field-section {
       display: flex;
       justify-content: center;
       align-items: center;
       width: 100%;
-      flex: 1; /* တန်းတစ်ခုစီအား ကွင်းပြင်အမြင့်အလိုက် မျှတစွာ နေရာခွဲဝေပေးခြင်း */
       border-bottom: 1px dashed rgba(255, 255, 255, 0.15); /* ⬅️ Player များအောက်တွင် စည်းအသေခံပေးခြင်း */
-      padding: 4px 0;
-    }
-    .field-section:last-child {
-      border-bottom: none; /* ရှေ့တန်းတန်းအတွက် စည်းအောက်ခံပိတ်ခြင်း */
+      padding: 12px 0;
+      flex-shrink: 0;
     }
   </style>
 
@@ -63,12 +60,12 @@
     <span id="chip-badge" class="text-xs font-bold px-3 py-0.5 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
   </div>
 
-  <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-2.5">
+  <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-2">
     <div class="flex gap-2.5" style="width:100%;height:100%;min-width:0;">
       
       <div style="flex:1;position:relative;border-radius:1rem;overflow:hidden;border:1.5px solid rgba(255,255,255,0.2);min-width:0;height:100%;background:linear-gradient(180deg,#144622,#09230e);">
         
-        <div id="pitch" style="position:relative;z-index:1;padding:4px 2px;height:100%;display:flex;flex-direction:column;justify-content:between;">
+        <div id="pitch" style="position:relative;z-index:1;padding:4px;height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;display:flex;flex-direction:column;justify-content:start;">
           <p class="text-center text-xs py-8" style="color:#3A9E5F;">Team loading...</p>
         </div>
         
