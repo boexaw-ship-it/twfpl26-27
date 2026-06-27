@@ -1,6 +1,6 @@
 // ============================================
 // TW Fantasy Official League
-// Live Engine Script (League Popup Structure Integration)
+// Live Engine Script (Key Conflict Fixed Version)
 // ============================================
 
 import { auth, db } from "/twfpl26-27/js/firebase-config.js";
@@ -9,7 +9,7 @@ import { doc, getDoc, onSnapshot, collection, addDoc, orderBy, query, serverTime
 
 let currentUser = null; 
 let currentTeamName = ""; 
-let isApproved = false; 
+let isApprovedUser = false; // 💡 variable အမည်အား ပိုမိုရှင်းလင်းအောင် ပြောင်းလဲခြင်း
 
 // 📡 Firebase User Auth & Real-time Live Point/Team Listener
 onAuthStateChanged(auth, async (user) => {
@@ -21,12 +21,18 @@ onAuthStateChanged(auth, async (user) => {
     const data = snap.data(); 
     currentTeamName = data.teamName || ""; 
     document.getElementById("user-team").textContent = currentTeamName; 
-    isApproved = data.status === "approved"; 
+
+    // 🎯 💡 🏆 CRITICAL FIX 1:
+    // အန်ကယ် Database ထဲတွင် သိမ်းဆည်းထားသည့်အတိုင်း isApproved သို့မဟုတ် status နှစ်မျိုးလုံးကို ကိုက်ညီအောင် ညှိနှိုင်းစစ်ဆေးခြင်း
+    isApprovedUser = (data.isApproved === true || data.isApproved === "true" || data.status === "approved"); 
+    
     updateChatLock(); 
 
+    // 🎯 💡 🏆 CRITICAL FIX 2:
+    // အဝါရောင်စာသား သတိပေးချက်ကို အန်ကယ် Approve ဖြစ်ဖြစ်၊ မဖြစ်ဖြစ် ၎င်း၏ FPL ID ရှိရုံဖြင့် ကွင်းပြင်နှင့် အမှတ်ဇယားကို ချက်ချင်း တန်းပြသခွင့် ပေးလိုက်ပါမည်။
     if (data.fplTeamId) {
       // 1. livePoints Collection Watcher (အမှတ်နှင့် Summary ဒေတာများ ရယူခြင်း)
-      onSnapshot(doc(db, "livePoints", data.fplTeamId), (d) => {
+      onSnapshot(doc(db, "livePoints", String(data.fplTeamId)), (d) => {
         if (d.exists()) {
           document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—"; 
           document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—"; 
@@ -41,9 +47,12 @@ onAuthStateChanged(auth, async (user) => {
       });
       
       // 2. liveTeams Collection Watcher (ကွင်းပြင်လူစာရင်း ရယူခြင်း)
-      onSnapshot(doc(db, "liveTeams", data.fplTeamId), (d) => {
+      onSnapshot(doc(db, "liveTeams", String(data.fplTeamId)), (d) => {
         if (d.exists()) renderPitch(d.data()); 
       });
+    } else {
+      // FPL ID လုံးဝမချိတ်ရသေးမှသာ သတိပေးစာပြပါမည်
+      document.getElementById("pitch").innerHTML = `<p class="text-center text-xs py-12 text-yellow-500 font-bold">⚠️ Dashboard တွင် FPL ID အား အရင်ချိတ်ဆက်ပေးပါဦးဗျာ။</p>`;
     }
   });
 
@@ -58,8 +67,7 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 💡 LEAGUE POPUP MATCH-DAY SPECIFICATION CARD DESIGN
-// အန်ကယ့်ပုံစံအတိုင်း အကွက်ဖြူ/အကွက်မည်း Box ဒီဇိုင်းဖြင့် Player Card ဆွဲထုတ်ခြင်း
+// 📛 Player Card ကတ်ပြားဒီဇိုင်းပုံစံစစ်စစ် (နာမည်အကွက်ဖြူ + ရမှတ်အကွက်မည်း)
 function playerCard(p) {
   const mult = p.multiplier || 1; 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -67,7 +75,6 @@ function playerCard(p) {
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
 
-  // Captain / Vice Captain Badge ဖွဲ့စည်းမှု
   let badgeHtml = "";
   if (isCap) {
     badgeHtml = `<span class="absolute -top-1 -right-1 bg-[#C9A84C] text-black font-black rounded-full text-[9px] w-4 h-4 flex items-center justify-center border border-black z-10">C</span>`;
@@ -81,22 +88,19 @@ function playerCard(p) {
       <img src="${jerseyPath(p)}" 
            onerror="this.src='/twfpl26-27/public/jerseys/outfield/unknown.png'" 
            class="w-11 h-11 object-contain" alt="${p.name}" />
-      
       <div class="player-box-title mt-1 shadow-md rounded-t-sm">${p.name || "?"}</div>
       <div class="player-box-points shadow-md rounded-b-sm">${displayPoints}</div>
     </div>
   `;
 }
 
-// 🏟️ 💡 Starters နှင့် Subs တိကျစွာခွဲထုတ်၍ League Popup Field အတိုင်း ပုံဖော်ခြင်း
+// 🏟️ Starters နှင့် Subs ခွဲထုတ်၍ Live Pitch ကွင်းပြင်ပုံဖော်ခြင်း
 function renderPitch(data) {
   const picks = data.picks || []; 
   
-  // multiplier > 0 ဆိုလျှင် ပွဲထွက် (Starters) ၊ multiplier === 0 ဆိုလျှင် အရံ (Bench) ဖြစ်သည်
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
   
-  // ပွဲထွက်ကစားသမားများအား နေရာအလိုက် (Row-by-Row) စနစ်တကျခွဲထုတ်ခြင်း
   const gk = starters.filter(p => String(p.position || "").toLowerCase().trim() === "gk"); 
   const def = starters.filter(p => String(p.position || "").toLowerCase().trim() === "def"); 
   const mid = starters.filter(p => String(p.position || "").toLowerCase().trim() === "mid"); 
@@ -104,21 +108,11 @@ function renderPitch(data) {
 
   let htmlContent = "";
 
-  // 🏟️ Row 1 — Goalkeeper Row (.pitch-row ကွင်းစည်းခံစနစ်သုံးထားပါသည်)
   htmlContent += `<div class="pitch-row"> ${gk.map(playerCard).join("")} </div>`;
-
-  // 🏟️ Row 2 — Defenders Row
   htmlContent += `<div class="pitch-row"> ${def.map(playerCard).join("")} </div>`;
-
-  // 🏟️ Row 3 — Midfielders Row
   htmlContent += `<div class="pitch-row"> ${mid.map(playerCard).join("")} </div>`;
-
-  // 🏟️ Row 4 — Forwards Row
   htmlContent += `<div class="pitch-row"> ${fwd.map(playerCard).join("")} </div>`;
 
-  // ============================================
-  // ⚙️ 📥 BENCH (အရံလူစာရင်း) SEPARATED CONTAINER PANEL
-  // အန်ကယ် ပေးပို့ထားသည့် ပုံစံအတိုင်း အောက်ခြေတွင် အရံသေတ္တာသီးသန့် ဖွဲ့စည်းခြင်း
   if (subs.length > 0) {
     htmlContent += `
       <div class="mt-2 w-full px-2 py-1.5 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.25);">
@@ -140,13 +134,9 @@ function renderPitch(data) {
       `;
     });
 
-    htmlContent += `
-        </div>
-      </div>
-    `;
+    htmlContent += `</div></div>`;
   }
 
-  // Master Pitch HTML Injection
   document.getElementById("pitch").innerHTML = htmlContent;
 }
 
@@ -155,7 +145,7 @@ function updateChatLock() {
   const input = document.getElementById("chat-input"); 
   const sendBtn = document.getElementById("send-btn"); 
   const lockBanner = document.getElementById("chat-lock-banner"); 
-  if (isApproved) {
+  if (isApprovedUser) {
     input.disabled = false; 
     input.placeholder = "Message ရိုက်ပါ..."; 
     sendBtn.disabled = false; 
@@ -202,7 +192,7 @@ function loadChat() {
 
 // 📤 Message Sending Trigger
 window.sendMessage = async () => {
-  if (!isApproved) return; 
+  if (!isApprovedUser) return; 
   const input = document.getElementById("chat-input"); 
   const text = input.value.trim(); 
   if (!text || !currentUser) return; 
@@ -212,5 +202,5 @@ window.sendMessage = async () => {
 
 // ⌨️ Keyboard Enter Handler
 window.handleKeydown = (e) => { 
-  if (e.key === "Enter" && isApproved) window.sendMessage(); 
+  if (e.key === "Enter" && isApprovedUser) window.sendMessage(); 
 };
