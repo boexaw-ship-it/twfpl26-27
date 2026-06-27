@@ -39,9 +39,11 @@ onAuthStateChanged(auth, async (user) => {
 async function buildMatchCenterSystem() {
   const listEl = document.getElementById("fixtures-list");
   try {
-    populateGwSelectorOptions();
+    // 💡 စာသားမလှသော Default Dropdown အစား Custom UI Dropdown အား ပြင်ဆင်ခြင်း
+    setupCustomDropdown();
 
-    console.log("🔥 [TWFPL Database] Loading fixtures from Firebase Firestore...");
+    // 💡 အန်ကယ်မိန့်ဆိုသကဲ့သို့ Console တွင် Loading စာသားသန့်သန့်သာ ပြသရန် ညှိနှိုင်းခြင်း
+    console.log("Loading...");
     const querySnapshot = await getDocs(collection(db, "fixtures"));
     
     firebaseFixturesList = [];
@@ -51,24 +53,80 @@ async function buildMatchCenterSystem() {
 
     renderFixturesTimeline();
   } catch (err) {
-    listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Firebase Load Error</p>`;
+    listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Loading Error</p>`;
     console.error(err);
   }
 }
 
-function populateGwSelectorOptions() {
-  const selector = document.getElementById("gw-selector");
-  if (!selector) return;
+// 💡 ✅ FIXED PHONE DROPDOWN UI: ဖုန်းနှင့်သုံးလျှင် စနစ်တကျ လှပစေရန် HTML Custom UI ဖြင့် Week Selector အား ပြန်လည်တည်ဆောက်ခြင်း
+function setupCustomDropdown() {
+  const container = document.getElementById("gw-selector-container");
+  if (!container) return;
 
-  let optionsHtml = "";
-  for (let w = 1; w <= 38; w++) {
-    const isSelected = w === selectedGameweek ? "selected" : "";
-    optionsHtml += `<option value="${w}" ${isSelected}>Gameweek ${w}</option>`;
-  }
-  selector.innerHTML = optionsHtml;
+  // အန်ကယ့် UI Theme အရောင်အတိုင်း ကွက်တိကျစေရန် ညှိနှိုင်းမှု
+  container.innerHTML = `
+    <div class="relative inline-block text-left w-full max-w-[160px]">
+      <button id="gw-dropdown-btn" onclick="toggleGwDropdown()" class="w-full flex items-center justify-between px-3 py-1.5 rounded-lg text-xs font-black text-white bg-[#1F5C36] border border-[#2A7A47] focus:outline-none transition-all shadow-md">
+        <span>Gameweek ${selectedGameweek}</span>
+        <svg class="w-3 h-3 ml-1 text-[#F0D060] transition-transform duration-200" id="gw-arrow" fill="none" stroke="currentColor" viewBox="0 0 24 24"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M19 9l-7 7-7-7"></path></svg>
+      </button>
+      
+      <div id="gw-dropdown-menu" class="hidden absolute right-0 mt-1 w-full max-w-[160px] max-h-[240px] overflow-y-auto rounded-lg shadow-2xl bg-[#154226] border border-[#2A7A47] z-50 transition-all">
+        <div class="py-1">
+          ${Array.from({ length: 38 }, (_, i) => i + 1).map(w => `
+            <button onclick="selectCustomGw(${w})" class="w-full text-left px-3 py-2 text-xs font-bold transition-all flex items-center justify-between ${w === selectedGameweek ? 'text-[#F0D060] bg-[#1F5C36]' : 'text-white/80 hover:bg-[#1F5C36] hover:text-white'}">
+              <span>Gameweek ${w}</span>
+              ${w === selectedGameweek ? `<span class="w-1.5 h-1.5 rounded-full bg-[#F0D060]"></span>` : ''}
+            </button>
+          `).join("")}
+        </div>
+      </div>
+    </div>
+  `;
 }
 
-// 💡 ✅ CLEAN LOGO FALLBACK: ပုံမရှိပါက (Error တက်ပါက) အခြားအသင်းတံဆိပ် မှားမဝင်စေဘဲ ပုံအား ဖျောက်၍ စာသားသန့်သန့်သာ ပြသရန် ပြင်ဆင်ခြင်း
+// Custom Dropdown ဖွင့်/ပိတ် Logic
+window.toggleGwDropdown = () => {
+  const menu = document.getElementById("gw-dropdown-menu");
+  const arrow = document.getElementById("gw-arrow");
+  if (!menu) return;
+
+  if (menu.classList.contains("hidden")) {
+    menu.classList.remove("hidden");
+    if (arrow) arrow.style.transform = "rotate(180deg)";
+  } else {
+    menu.classList.add("hidden");
+    if (arrow) arrow.style.transform = "rotate(0deg)";
+  }
+};
+
+// အပတ်စဉ် ရွေးချယ်လိုက်သည့်စနစ်
+window.selectCustomGw = (gwNumber) => {
+  selectedGameweek = Number(gwNumber);
+  
+  // Button စာသားအား ပြောင်းလဲခြင်း
+  const btn = document.getElementById("gw-dropdown-btn");
+  if (btn) btn.querySelector("span").innerText = `Gameweek ${gwNumber}`;
+
+  // Dropdown ပိတ်ခြင်း
+  window.toggleGwDropdown();
+  
+  // Custom UI အား Refresh လုပ်ပြီး ပွဲစဉ်များအား စစ်ထုတ်ဖတ်ခြင်း
+  setupCustomDropdown();
+  renderFixturesTimeline();
+};
+
+// 💡 ကလစ်နှိပ်သည့်အခါ နေရာလွတ်ဖြစ်ပါက Dropdown အလိုအလျောက် ပိတ်စေရန်
+document.addEventListener("click", (e) => {
+  const menu = document.getElementById("gw-dropdown-menu");
+  const btn = document.getElementById("gw-dropdown-btn");
+  if (menu && btn && !btn.contains(e.target) && !menu.contains(e.target)) {
+    menu.classList.add("hidden");
+    const arrow = document.getElementById("gw-arrow");
+    if (arrow) arrow.style.transform = "rotate(0deg)";
+  }
+});
+
 function teamBadgeHtml(teamId) {
   const t = teamDetailsMap[teamId];
   if (!t) return `<span class="text-white text-sm">—</span>`;
@@ -81,13 +139,10 @@ function teamBadgeHtml(teamId) {
   `;
 }
 
-// 💡 ✅ PERFECT TIMEZONE FIXED: ISO Parsing ကြောင့် (၁) နာရီ ပိုထွက်နေမှုကို မိနစ် ၆၀ အသေနှုတ်၍ အန်ကယ့်ပုံစံအတိုင်း ကွက်တိ ညှိနှိုင်းတည့်မတ်ခြင်း
 function translateToMyanmarTime(kickoffUtcString) {
   if (!kickoffUtcString) return { date: "TBC", time: "ညှိနှိုင်းဆဲ" };
   
   const utcDate = new Date(kickoffUtcString);
-  
-  // 🎯 ဗြိတိန် Daylight Saving (BST) Offset အား အလိုအလျောက် ပြန်လည်နှုတ်ယူတည့်မတ်ပေးခြင်း
   utcDate.setMinutes(utcDate.getMinutes() - 60);
   
   const dateOptions = { timeZone: "Asia/Yangon", weekday: "short", day: "numeric", month: "short" };
@@ -150,12 +205,6 @@ function renderFixturesTimeline() {
   `;
 }
 
-window.handleGwChange = (gwValue) => {
-  if (!gwValue) return;
-  selectedGameweek = Number(gwValue);
-  renderFixturesTimeline();
-};
-
 window.filterFixtures = (filter) => {
   currentFilterMode = filter;
   document.querySelectorAll(".tab-btn").forEach(b => {
@@ -166,3 +215,4 @@ window.filterFixtures = (filter) => {
   if (activeBtn) { activeBtn.style.borderColor = "#C9A84C"; activeBtn.style.color = "#C9A84C"; }
   renderFixturesTimeline();
 };
+
