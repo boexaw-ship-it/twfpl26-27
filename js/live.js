@@ -6,7 +6,6 @@ let currentUser = null;
 let currentTeamName = ""; 
 let isApproved = false; 
 
-// 📡 Firebase User Auth & Real-time Live Point/Team Listener
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; } 
   currentUser = user; 
@@ -20,7 +19,6 @@ onAuthStateChanged(auth, async (user) => {
     updateChatLock(); 
 
     if (data.fplTeamId) {
-      // 1. livePoints Watcher (ရမှတ်များနှင့် Summary ဒေတာများ)
       onSnapshot(doc(db, "livePoints", data.fplTeamId), (d) => {
         if (d.exists()) {
           document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—"; 
@@ -35,7 +33,6 @@ onAuthStateChanged(auth, async (user) => {
         }
       });
       
-      // 2. liveTeams Watcher (လူစာရင်း Rendering)
       onSnapshot(doc(db, "liveTeams", data.fplTeamId), (d) => {
         if (d.exists()) renderPitch(d.data()); 
       });
@@ -45,24 +42,21 @@ onAuthStateChanged(auth, async (user) => {
   loadChat(); 
 });
 
-// 👕 🎨 ဂျာစီပုံရိပ်လမ်းကြောင်း (GK နှင့် Outfield တိကျစွာ ခွဲခြားမှု)
 function jerseyPath(p) {
-  const posClean = String(p.position || "").toLowerCase().trim();
-  const folder = posClean === "gk" ? "gk" : "outfield"; 
+  const pos = String(p.position || "").toUpperCase().trim();
+  const folder = (pos.startsWith("GK")) ? "gk" : "outfield"; 
   const code = String(p.teamCode || "unknown").toLowerCase().trim(); 
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 💡 🏆 UNCLE'S CIRCULAR HIGH-CONTRAST CARD
-// အန်ကယ်အလိုရှိသည့် မူရင်းအဝိုင်းဒီဇိုင်းနှင့် ပြတ်သားသော Point ပြသမှုစနစ်
+// 📛 💡 Circular Player Card Maker
 function playerCard(p) {
-  const mult = p.multiplier || 1; 
+  const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
   
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
 
-  // ကွင်းဘောင်အဝိုင်း အရောင်သတ်မှတ်ချက် (Captain = ရွှေရောင်၊ Vice = ငွေရောင်၊ ရိုးရိုး = အစိမ်းရောင်)
   const ringColor = isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
   const badge = mult === 3
@@ -75,75 +69,73 @@ function playerCard(p) {
 
   return `
     <div class="flex flex-col items-center mx-1" style="flex-shrink:0; min-w-[54px];">
-      <div class="w-10 h-10 rounded-full flex items-center justify-center mb-0.5 overflow-hidden shadow-lg" style="background:#1F5C36; border:2px solid ${ringColor};">
+      <div class="w-9 h-9 rounded-full flex items-center justify-center mb-0.5 overflow-hidden shadow-md" style="background:#1F5C36; border:2px solid ${ringColor};">
         <img src="${jerseyPath(p)}" 
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-             class="w-7.5 h-7.5 object-contain" alt="${p.name}" />
-        <span style="display:none;align-items:center;justify-content:center;font-size:0.9rem;">👕</span>
+             class="w-7 h-7 object-contain" alt="${p.name}" />
+        <span style="display:none;align-items:center;justify-content:center;font-size:0.85rem;">👕</span>
       </div>
       <p class="text-white text-center font-semibold" style="font-size:0.55rem; max-w:52px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name || "?"}</p>
       <div class="flex items-center gap-0.5 mt-0.5">
-        <span style="font-size:0.65rem; color:#F0D060; font-weight:900; background:rgba(0,0,0,0.4); padding:0px 4px; border-radius:3px;">${displayPoints}</span>
+        <span style="font-size:0.65rem; color:#F0D060; font-weight:900; background:rgba(0,0,0,0.45); padding:0px 4px; border-radius:3px;">${displayPoints}</span>
         ${badge}
       </div>
     </div>
   `;
 }
 
-// 🏟️ Fixed Rows Injection Engine
+// 🏟️ Realtime Tactical Pitch Rendering Engine
 function renderPitch(data) {
   const picks = data.picks || []; 
-  
-  // Starters နှင့် Subs တိကျစွာ ခွဲထုတ်ခြင်း (Fail-safe Number Casting)
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
   
-  const gk = starters.filter(p => String(p.position || "").toLowerCase().trim() === "gk"); 
-  const def = starters.filter(p => String(p.position || "").toLowerCase().trim() === "def"); 
-  const mid = starters.filter(p => String(p.position || "").toLowerCase().trim() === "mid"); 
-  const fwd = starters.filter(p => String(p.position || "").toLowerCase().trim() === "fwd"); 
+  const gk = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("GK"); });
+  const def = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("DE"); });
+  const mid = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("MI"); });
+  const fwd = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("FW") || pos.startsWith("FO"); });
 
-  const makeRow = (players) => `<div class="flex justify-center flex-nowrap gap-1 w-full">${players.map(playerCard).join("")}</div>`; 
+  const makeRow = (players) => `<div class="field-row"> ${players.map(playerCard).join("")} </div>`; 
 
-  // HTML Structure Construction
-  let htmlContent = "";
+  // ၁။ ပွဲထွက်ကွင်းပြင်ကြီးအား SVG စည်းများနှင့် ကွက်တိကိုက်ညီအောင် ဖွဲ့စည်းခြင်း
+  let htmlContent = `
+    <div class="pitch-inner-field">
+      ${makeRow(gk)}
+      ${makeRow(def)}
+      ${makeRow(mid)}
+      ${makeRow(fwd)}
+    </div>
+  `;
+  document.getElementById("pitch").innerHTML = htmlContent;
 
-  // ပွဲထွက်ကစားသမားများအား HTML ဘက်က .field-section ဖြင့် စည်းအသေခံ၍ မောင်းထုတ်ပေးခြင်း
-  htmlContent += `<div class="field-section"> ${makeRow(gk)} </div>`;
-  htmlContent += `<div class="field-section"> ${makeRow(def)} </div>`;
-  htmlContent += `<div class="field-section"> ${makeRow(mid)} </div>`;
-  htmlContent += `<div class="field-section"> ${makeRow(fwd)} </div>`;
-
-  // 📥 ⚙️ BENCH (အရံလူစာရင်း) DISTINCT CONTAINER
+  // ၂။ BENCH (အရံလူစာရင်း) Panel အား အောက်ခြေတွင် ခွဲထုတ်ပြီး သိသာစွာ မှိန်ချပေးခြင်း (Dimmed Bench Control)
+  let benchContent = "";
   if (subs.length > 0) {
-    htmlContent += `
-      <div class="mt-2 w-full px-2 py-1 rounded-xl border border-[#C9A84C]/20" style="background: rgba(0,0,0,0.45); flex-shrink:0;">
-        <p class="text-center font-black tracking-wide text-[#C9A84C]/60 uppercase mb-1" style="font-size: 0.52rem;">
+    benchContent += `
+      <div class="mt-3 w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/20" style="background: rgba(0,0,0,0.4); flex-shrink:0;">
+        <p class="text-center font-black tracking-wide text-[#C9A84C]/50 uppercase mb-1" style="font-size: 0.52rem;">
           📋 BENCH (အရံလူစာရင်း)
         </p>
         <div class="flex justify-around items-center w-full">
     `;
     
     subs.forEach(p => {
-      htmlContent += `
-        <div class="flex flex-col items-center mx-0.5 relative min-w-[50px]">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-hidden opacity-75" style="background:#164225; border:1px solid rgba(255,255,255,0.2);">
+      benchContent += `
+        <div class="flex flex-col items-center mx-0.5 relative min-w-[50px] opacity-60">
+          <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-hidden" style="background:#164225; border:1px solid rgba(255,255,255,0.2);">
             <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-6 h-6 object-contain" />
             <span style="display:none;font-size:0.7rem;">👕</span>
           </div>
-          <p class="text-white/70 text-center font-medium truncate" style="font-size:0.5rem; max-w:48px;">${p.name || "?"}</p>
-          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.3); padding:0 3px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
+          <p class="text-white text-center font-medium truncate" style="font-size:0.5rem; max-w:48px;">${p.name || "?"}</p>
+          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.4); padding:0 3px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
         </div>
       `;
     });
-
-    htmlContent += `</div></div>`;
+    benchContent += `</div></div>`;
   }
-
-  document.getElementById("pitch").innerHTML = htmlContent;
+  document.getElementById("bench-container").innerHTML = benchContent;
 }
 
-// 🔒 Chat Message Lock Control Engine
 function updateChatLock() {
   const input = document.getElementById("chat-input"); 
   const sendBtn = document.getElementById("send-btn"); 
@@ -163,7 +155,6 @@ function updateChatLock() {
   }
 }
 
-// 💬 Live Chat Real-time Snapshot Watcher
 function loadChat() {
   const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(50)); 
   onSnapshot(q, (snapshot) => {
@@ -193,7 +184,6 @@ function loadChat() {
   });
 }
 
-// 📤 Message Sending Trigger
 window.sendMessage = async () => {
   if (!isApproved) return; 
   const input = document.getElementById("chat-input"); 
@@ -203,7 +193,6 @@ window.sendMessage = async () => {
   await addDoc(collection(db, "chat"), { text, teamName: currentTeamName, uid: currentUser.uid, createdAt: serverTimestamp() }); 
 };
 
-// ⌨️ Keyboard Enter Handler
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
