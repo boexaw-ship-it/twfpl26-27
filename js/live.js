@@ -49,7 +49,7 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 💡 Circular Player Card Maker
+// 📛 Circular Player Card Component
 function playerCard(p) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -60,31 +60,31 @@ function playerCard(p) {
   const ringColor = isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
   const badge = mult === 3
-    ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 4px;font-weight:900;">3x</span>' 
+    ? '<span style="font-size:0.52rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">3x</span>' 
     : isCap
-    ? '<span style="font-size:0.55rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">C</span>' 
+    ? '<span style="font-size:0.52rem;background:#F0D060;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">C</span>' 
     : isVc
-    ? '<span style="font-size:0.55rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">V</span>' 
+    ? '<span style="font-size:0.52rem;background:#C0C0C0;color:#0D2B1A;border-radius:9999px;padding:0 3px;font-weight:900;">V</span>' 
     : '';
 
   return `
-    <div class="flex flex-col items-center mx-1" style="flex-shrink:0; min-w-[54px];">
-      <div class="w-9 h-9 rounded-full flex items-center justify-center mb-0.5 overflow-hidden shadow-md" style="background:#1F5C36; border:2px solid ${ringColor};">
+    <div class="flex flex-col items-center mx-0.5" style="flex-shrink:0; min-w-[50px];">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-hidden shadow-md" style="background:#1F5C36; border:2px solid ${ringColor};">
         <img src="${jerseyPath(p)}" 
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-             class="w-7 h-7 object-contain" alt="${p.name}" />
-        <span style="display:none;align-items:center;justify-content:center;font-size:0.85rem;">👕</span>
+             class="w-6.5 h-6.5 object-contain" alt="${p.name}" />
+        <span style="display:none;align-items:center;justify-content:center;font-size:0.8rem;">👕</span>
       </div>
-      <p class="text-white text-center font-semibold" style="font-size:0.55rem; max-w:52px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name || "?"}</p>
+      <p class="text-white text-center font-bold" style="font-size:0.52rem; max-w:48px; overflow:hidden; text-overflow:ellipsis; white-space:nowrap;">${p.name || "?"}</p>
       <div class="flex items-center gap-0.5 mt-0.5">
-        <span style="font-size:0.65rem; color:#F0D060; font-weight:900; background:rgba(0,0,0,0.45); padding:0px 4px; border-radius:3px;">${displayPoints}</span>
+        <span style="font-size:0.65rem; color:#F0D060; font-weight:900; background:rgba(0,0,0,0.5); padding:0px 3.5px; border-radius:2px; line-height:1.1;">${displayPoints}</span>
         ${badge}
       </div>
     </div>
   `;
 }
 
-// 🏟️ Realtime Tactical Pitch Rendering Engine
+// 🏟️ Tactical Pitch Separation Engine
 function renderPitch(data) {
   const picks = data.picks || []; 
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
@@ -97,9 +97,9 @@ function renderPitch(data) {
 
   const makeRow = (players) => `<div class="field-row"> ${players.map(playerCard).join("")} </div>`; 
 
-  // ၁။ ပွဲထွက်ကွင်းပြင်ကြီးအား SVG စည်းများနှင့် ကွက်တိကိုက်ညီအောင် ဖွဲ့စည်းခြင်း
+  // ၁။ ပွဲထွက် ၁၁ ယောက်အား Fixed ကွင်းစည်းများနှင့် လုံးဝကိုက်ညီအောင် အမြင့်အသေ Grid ဖြင့် ဆွဲထုတ်ခြင်း
   let htmlContent = `
-    <div class="pitch-inner-field">
+    <div class="pitch-fixed-field">
       ${makeRow(gk)}
       ${makeRow(def)}
       ${makeRow(mid)}
@@ -108,12 +108,12 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
-  // ၂။ BENCH (အရံလူစာရင်း) Panel အား အောက်ခြေတွင် ခွဲထုတ်ပြီး သိသာစွာ မှိန်ချပေးခြင်း (Dimmed Bench Control)
+  // ၂။ BENCH (အရံလူစာရင်း) အား အောက်ခြေတွင် ခွဲထုတ်ပြီး သိသာစွာ Deep Dimmed မှိန်ချပေးခြင်း (40% Opacity Target)
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
-      <div class="mt-3 w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/20" style="background: rgba(0,0,0,0.4); flex-shrink:0;">
-        <p class="text-center font-black tracking-wide text-[#C9A84C]/50 uppercase mb-1" style="font-size: 0.52rem;">
+      <div class="w-full px-2 py-1 rounded-xl border border-[#C9A84C]/20" style="background: rgba(0,0,0,0.55);">
+        <p class="text-center font-black tracking-wide text-[#C9A84C]/50 uppercase mb-0.5" style="font-size: 0.5rem;">
           📋 BENCH (အရံလူစာရင်း)
         </p>
         <div class="flex justify-around items-center w-full">
@@ -121,13 +121,13 @@ function renderPitch(data) {
     
     subs.forEach(p => {
       benchContent += `
-        <div class="flex flex-col items-center mx-0.5 relative min-w-[50px] opacity-60">
-          <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-hidden" style="background:#164225; border:1px solid rgba(255,255,255,0.2);">
-            <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-6 h-6 object-contain" />
-            <span style="display:none;font-size:0.7rem;">👕</span>
+        <div class="flex flex-col items-center mx-0.5 relative min-w-[48px] opacity-40">
+          <div class="w-7.5 h-7.5 rounded-full flex items-center justify-center mb-0.5 overflow-hidden" style="background:#164225; border:1px solid rgba(255,255,255,0.15);">
+            <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-5.5 h-5.5 object-contain" />
+            <span style="display:none;font-size:0.65rem;">👕</span>
           </div>
-          <p class="text-white text-center font-medium truncate" style="font-size:0.5rem; max-w:48px;">${p.name || "?"}</p>
-          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.4); padding:0 3px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
+          <p class="text-white text-center font-medium truncate" style="font-size:0.48rem; max-w:44px;">${p.name || "?"}</p>
+          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.4); padding:0 2.5px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
         </div>
       `;
     });
@@ -196,3 +196,4 @@ window.sendMessage = async () => {
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
+
