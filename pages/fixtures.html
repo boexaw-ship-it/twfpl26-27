@@ -16,11 +16,13 @@
     .nav-item.active { color:#C9A84C; }
     .tab-btn { flex:1; padding:12px 0; font-size:0.8rem; font-weight:700; border-bottom:2px solid transparent; background:transparent; cursor:pointer; transition: all 0.2s; }
     
-    /* Dropdown Switch Custom Styling */
-    .gw-select { background: #1F5C36; color: #F0D060; border: 1px solid #2A7A47; font-weight: 900; font-size: 0.85rem; border-radius: 8px; padding: 6px 12px; outline: none; cursor: pointer; }
-    
+    /* 💡 Custom Scrollbar Styling */
     #fixtures-scroll-container::-webkit-scrollbar { width: 3px; }
     #fixtures-scroll-container::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
+    
+    /* 💡 Stats Box Dropdown Animation */
+    .stats-expand-box { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
+    .stats-expand-box.open { max-height: 500px; transition: max-height 0.4s ease-in; }
   </style>
 
   <script type="module" src="/twfpl26-27/js/weekfixtures.js"></script>
@@ -33,9 +35,7 @@
       <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">MATCH CENTER</h1>
     </div>
     
-    <select id="gw-selector" class="gw-select" onchange="window.handleGwChange(this.value)">
-      <option value="">Loading...</option>
-    </select>
+    <div id="gw-selector-container"></div>
   </div>
 
   <div style="display:flex; border-bottom:1px solid #1F5C36; flex-shrink:0; background:#0B2315;">
@@ -46,9 +46,9 @@
 
   <div id="fixtures-scroll-container" style="flex:1; overflow-y:auto;" class="px-4 py-4">
     <div id="fixtures-list">
-      <div class="flex flex-col items-center justify-center py-16 gap-2">
+      <div class="flex flex-col items-center justify-center py-24 gap-2">
         <span class="text-xl animate-spin">⚽</span>
-        <span class="text-xs font-medium" style="color:#3A9E5F;">Firebase Cloud Database မှ ပွဲစဉ်များ ဆွဲယူနေပါသည်...</span>
+        <span class="text-xs font-medium" style="color:#3A9E5F;">Loading...</span>
       </div>
     </div>
   </div>
