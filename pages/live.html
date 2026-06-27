@@ -22,17 +22,16 @@
     /* Stat Cards Flexible non-scroll system */
     .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:6px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    /* 🏟️ UNCLE'S GLOBAL SCROLLING FIELD BOX */
+    /* 🏟️ UNCLE'S GLOBAL SCROLLING FIELD CANVAS */
+    /* 💡 ကစားသမားများ ကွင်းစည်းပေါ်သို့ ညီညာစွာ ကွက်တိကျစေရန် ပင်မအမြင့်အား 390px သို့ ညှိနှိုင်းခြင်း */
     .main-scroll-pitch-canvas {
       position: relative;
       width: 100%;
-      height: 380px; /* ပွဲထွက်ကွင်းပြင်ကြီး၏ အမြင့်အား အချိုးကျ အသေသတ်မှတ်၍ ကွင်းစည်းပေါ် လူကွက်တိချခြင်း */
-      background: rgba(0,0,0,0.05);
-      border-radius: 0.75rem;
+      height: 390px; 
       display: flex;
       flex-direction: column;
       justify-content: space-between;
-      padding: 10px 0;
+      padding: 12px 0;
       flex-shrink: 0;
     }
     .field-row {
@@ -74,18 +73,18 @@
       
       <div style="flex:1; position:relative; border-radius:1rem; overflow:hidden; border:1.5px solid rgba(255,255,255,0.2); min-width:0; height:100%; background:linear-gradient(180deg,#144622,#09230e);">
         
-        <div id="pitch-scroll-wrapper" style="width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px; display:flex; flex-direction:column; gap:8px;">
+        <div id="pitch-scroll-wrapper" style="width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px; display:flex; flex-direction:column; gap:4px;">
           
           <div class="main-scroll-pitch-canvas">
             
-            <svg style="position:absolute;top:0;left:0;width:100%;height:380px;opacity:0.26;pointer-events:none;z-index:0;" viewBox="0 0 200 380" preserveAspectRatio="none">
-              <rect x="6" y="6" width="188" height="368" fill="none" stroke="white" stroke-width="1.2"/>
-              <line x1="6" y1="190" x2="194" y2="190" stroke="white" stroke-width="1.2"/>
-              <circle cx="100" cy="190" r="24" fill="none" stroke="white" stroke-width="1.2"/>
+            <svg style="position:absolute;top:0;left:0;width:100%;height:390px;opacity:0.25;pointer-events:none;z-index:0;" viewBox="0 0 200 390" preserveAspectRatio="none">
+              <rect x="6" y="6" width="188" height="378" fill="none" stroke="white" stroke-width="1.2"/>
+              <line x1="6" y1="195" x2="194" y2="195" stroke="white" stroke-width="1.2"/>
+              <circle cx="100" cy="195" r="24" fill="none" stroke="white" stroke-width="1.2"/>
               <rect x="36" y="6" width="128" height="42" fill="none" stroke="white" stroke-width="1.2"/>
-              <rect x="36" y="332" width="128" height="42" fill="none" stroke="white" stroke-width="1.2"/>
+              <rect x="36" y="342" width="128" height="42" fill="none" stroke="white" stroke-width="1.2"/>
               <rect x="66" y="6" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
-              <rect x="66" y="360" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
+              <rect x="66" y="370" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
             </svg>
 
             <div id="pitch" style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
@@ -94,7 +93,7 @@
 
           </div>
 
-          <div id="bench-container" style="width:100%; flex-shrink:0; padding-bottom:4px;"></div>
+          <div id="bench-container" style="width:100%; flex-shrink:0; padding-top:2px; padding-bottom:4px;"></div>
 
         </div>
         
