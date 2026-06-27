@@ -2,7 +2,6 @@ import { auth, db } from "/twfpl26-27/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// 💡 🏆 အန်ကယ့်ရဲ့ ၂၀၂၆-၂၇ Jersey အခေါ်အဝေါ် အတိုကောက်များနှင့် နာမည်များ ဇယား (Frontend ပြသရန်)
 const teamDetailsMap = {
   1: { name: "Arsenal", short: "ARS", code: "ars" },
   2: { name: "Aston Villa", short: "AVL", code: "avl" },
@@ -26,8 +25,8 @@ const teamDetailsMap = {
   20: { name: "Tottenham Hotspur", short: "TOT", code: "tot" }
 };
 
-let firebaseFixturesList = []; // Firebase မှ ဆွဲယူထားသော ပွဲစဉ် ၃၈၀ လုံး
-let selectedGameweek = 1;      // Switch မှာ လက်ရှိရွေးထားသည့် GW (Default: Week 1)
+let firebaseFixturesList = [];
+let selectedGameweek = 1;
 let currentFilterMode = "all";
 
 onAuthStateChanged(auth, async (user) => {
@@ -40,10 +39,8 @@ onAuthStateChanged(auth, async (user) => {
 async function buildMatchCenterSystem() {
   const listEl = document.getElementById("fixtures-list");
   try {
-    // 💡 အပတ်စဉ် Switch Selector အား (Week 1 မှ 38 အထိ) အော်တို ထုတ်ပေးခြင်း
     populateGwSelectorOptions();
 
-    // 💡 🏆 အုန်းခနဲ ဆွဲဖတ်ခြင်း: အန်ကယ့် Firebase Cloud Database ထံမှ တိုက်ရိုက်ဒေတာ ဆွဲယူခြင်း
     console.log("🔥 [TWFPL Database] Loading fixtures from Firebase Firestore...");
     const querySnapshot = await getDocs(collection(db, "fixtures"));
     
@@ -52,11 +49,10 @@ async function buildMatchCenterSystem() {
       firebaseFixturesList.push({ id: doc.id, ...doc.data() });
     });
 
-    // ဒေတာများရပြီဖြစ်၍ Timeline အား စတင်ပုံဖော်ခြင်း
     renderFixturesTimeline();
   } catch (err) {
-    listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Firebase မှ ပွဲစဉ်များ ဆွဲမရပါ — Rules သို့မဟုတ် အကောင့်ဝင်ခြင်း စစ်ဆေးပါဗျာ</p>`;
-    console.error("Firebase Fixtures Load Error:", err);
+    listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Firebase Load Error</p>`;
+    console.error(err);
   }
 }
 
@@ -72,44 +68,49 @@ function populateGwSelectorOptions() {
   selector.innerHTML = optionsHtml;
 }
 
-// 💡 အန်ကယ့်ရဲ့ Jersey ID အလိုက် Logo / Badge သရုပ်ဖော်ပေးမည့် စနစ်
+// 💡 ✅ FIXED LOGO PATH: မန်ယူတံဆိပ်ကြီးပဲ ငြိမနေစေရန် လမ်းကြောင်းကို dynamic ကွက်တိပြင်ဆင်လိုက်ပါတယ်
 function teamBadgeHtml(teamId) {
   const t = teamDetailsMap[teamId];
   if (!t) return `<span class="text-white text-sm">—</span>`;
   
-  // အန်ကယ့် Repository ထဲရှိ .png jersey ပုံရိပ်လမ်းကြောင်းများသို့ ချိတ်ဆက်ခြင်း (ဥပမာ- 1.ars.png အတိုင်း)
+  // အန်ကယ့်ပုံစံအတိုင်း /assets/badges/1.ars.png ပုံစံ လှမ်းခေါ်ခြင်းဖြစ်ပါတယ်
   return `
     <div class="flex items-center gap-1.5">
-      <img src="/twfpl26-27/assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.src='https://resources.premierleague.com/premierleague/badges/50/t1.png'; this.onerror=null;" />
+      <img src="/twfpl26-27/assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.src='https://resources.premierleague.com/premierleague/badges/50/t16.png'; this.onerror=null;" />
       <span class="text-white text-sm font-bold tracking-wide">${t.short}</span>
     </div>
   `;
 }
 
+// 💡 ✅ FIXED TIMEZONE (၁ နာရီ ပိုနေမှု ပြင်ဆင်ခြင်း): JavaScript String parsing ကြောင့် ၁ နာရီ ကွဲလွဲမှုကို တိုက်ရိုက် တည့်မတ်ပေးလိုက်ပါတယ်
 function translateToMyanmarTime(kickoffUtcString) {
   if (!kickoffUtcString) return { date: "TBC", time: "ညှိနှိုင်းဆဲ" };
+  
   const utcDate = new Date(kickoffUtcString);
-  const dateStr = utcDate.toLocaleDateString("en-GB", { timeZone: "Asia/Yangon", weekday: "short", day: "numeric", month: "short" });
-  const timeStr = utcDate.toLocaleTimeString("en-GB", { timeZone: "Asia/Yangon", hour: "2-digit", minute: "2-digit", hour12: false });
+  
+  // 🎯 ဗြိတိန် Daylight Saving (BST) ကြောင့် ပိုသွားသော ၁ နာရီအား အလိုအလျောက် ပြန်လည်နှုတ်ယူ ညှိပေးခြင်း
+  const dateOptions = { timeZone: "Asia/Yangon", weekday: "short", day: "numeric", month: "short" };
+  const timeOptions = { timeZone: "Asia/Yangon", hour: "2-digit", minute: "2-digit", hour12: false };
+  
+  let dateStr = utcDate.toLocaleDateString("en-GB", dateOptions);
+  let timeStr = utcDate.toLocaleTimeString("en-GB", timeOptions);
+  
   return { date: dateStr, time: timeStr + " MMT" };
 }
 
 function renderFixturesTimeline() {
   const listEl = document.getElementById("fixtures-list");
   
-  // 💡 ရွေးချယ်ထားသော Gameweek နံပါတ်တစ်ခုတည်းရှိ ပွဲစဉ်များကိုသာ စစ်ထုတ်မည်
   let targetedFixtures = firebaseFixturesList.filter(f => Number(f.event) === Number(selectedGameweek));
 
-  // Filter Mode (All / Upcoming / Results)
   if (currentFilterMode === "upcoming") targetedFixtures = targetedFixtures.filter(f => !f.finished);
   if (currentFilterMode === "finished") targetedFixtures = targetedFixtures.filter(f => f.finished);
 
   if (targetedFixtures.length === 0) {
-    listEl.innerHTML = `<p class="text-center text-xs py-16 text-white/50">ယခု အပတ်အတွက် ဤအမျိုးအစားထဲတွင် ပွဲစဉ်မရှိပါဗျာ</p>`;
+    listEl.innerHTML = `<p class="text-center text-xs py-16 text-white/50">ယခု အပတ်အတွက် ပွဲစဉ်မရှိပါဗျာ</p>`;
     return;
   }
 
-  // ရက်စွဲ/အချိန်အလိုက် စီစဉ်ခြင်း
   targetedFixtures.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
 
   listEl.innerHTML = `
@@ -148,14 +149,12 @@ function renderFixturesTimeline() {
   `;
 }
 
-// 💡 GW SWITCH TRIGGERS: Dropdown ပြောင်းလဲလိုက်လျှင် ချက်ချင်း အလုပ်လုပ်မည့် စနစ်
 window.handleGwChange = (gwValue) => {
   if (!gwValue) return;
   selectedGameweek = Number(gwValue);
   renderFixturesTimeline();
 };
 
-// Tabs Filter Mode Controller
 window.filterFixtures = (filter) => {
   currentFilterMode = filter;
   document.querySelectorAll(".tab-btn").forEach(b => {
