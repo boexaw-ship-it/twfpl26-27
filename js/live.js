@@ -49,7 +49,7 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 🎯 💡 🏆 MICRO DESIGN OPTIMIZATION
+// 🎯 💡 Player Card Content Builder (အချိုးအစားကျစ်လျစ်ပြီး စာသားထင်ရှားစေရမည်)
 function playerCard(p) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -59,27 +59,31 @@ function playerCard(p) {
 
   let badgeHtml = "";
   if (mult === 3) {
-    badgeHtml = `<span class="absolute -top-1 -right-2 bg-[#F0D060] text-black font-black rounded-full text-[8px] w-3.5 h-3.5 flex items-center justify-center border border-black z-10">3x</span>`;
+    badgeHtml = `<span class="absolute -top-1 -right-1.5 bg-[#F0D060] text-black font-black rounded-full text-[8px] w-3.5 h-3.5 flex items-center justify-center border border-black z-10">3x</span>`;
   } else if (isCap) {
-    badgeHtml = `<span class="absolute -top-1 -right-2 bg-[#F0D060] text-black font-black rounded-full text-[8px] w-3.5 h-3.5 flex items-center justify-center border border-black z-10">C</span>`;
+    badgeHtml = `<span class="absolute -top-1 -right-1.5 bg-[#F0D060] text-black font-black rounded-full text-[8px] w-3.5 h-3.5 flex items-center justify-center border border-black z-10">C</span>`;
   } else if (isVc) {
-    badgeHtml = `<span class="absolute -top-1 -right-2 bg-white text-black font-black rounded-full text-[8px] w-3.5 h-3.5 flex items-center justify-center border border-black z-10">V</span>`;
+    badgeHtml = `<span class="absolute -top-1 -right-1.5 bg-white text-black font-black rounded-full text-[8px] w-3.5 h-3.5 flex items-center justify-center border border-black z-10">V</span>`;
   }
 
   return `
-    <div class="flex flex-col items-center mx-0.5 my-0.5 relative min-w-[56px] sm:min-w-[60px]" style="flex-shrink:0;">
+    <div class="flex flex-col items-center mx-0.5 relative" style="flex-shrink:0;">
       ${badgeHtml}
       <img src="${jerseyPath(p)}" 
            onerror="this.src='/twfpl26-27/public/jerseys/outfield/unknown.png'" 
-           class="w-9 h-9 object-contain" alt="${p.name}" />
-      <div class="player-box-title mt-0.5 shadow-md rounded-t-sm">${p.name || "?"}</div>
-      <div class="player-box-points shadow-md rounded-b-sm">${displayPoints}</div>
+           class="w-10 h-10 object-contain" alt="${p.name}" />
+      <div class="player-box-container mt-0.5">
+        <div class="player-box-title rounded-t-sm">${p.name || "?"}</div>
+        <div class="player-box-points rounded-b-sm">${displayPoints}</div>
+      </div>
     </div>
   `;
 }
 
 function renderPitch(data) {
   const picks = data.picks || []; 
+  
+  // multiplier > 0 သို့မဟုတ် 0 အလိုက် သေချာစွာ ဇောက်ချခွဲထုတ်ခြင်း
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
   
@@ -88,16 +92,19 @@ function renderPitch(data) {
   const mid = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("MI"); });
   const fwd = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("FW") || pos.startsWith("FO"); });
 
-  let htmlContent = "";
+  // 💡 🏟️ PITCH-GRID တည်ဆောက်ပုံစနစ်ဖြင့် အော်တို အချိုးကျ နေရာချခြင်း
+  let htmlContent = `<div class="pitch-grid">`;
   htmlContent += `<div class="pitch-row"> ${gk.map(playerCard).join("")} </div>`;
   htmlContent += `<div class="pitch-row"> ${def.map(playerCard).join("")} </div>`;
   htmlContent += `<div class="pitch-row"> ${mid.map(playerCard).join("")} </div>`;
   htmlContent += `<div class="pitch-row"> ${fwd.map(playerCard).join("")} </div>`;
+  htmlContent += `</div>`; // ပွဲထွက်ကွင်းပြင်ပိတ်ခြင်း
 
+  // ⚙️ 📥 BENCH (အရံလူစာရင်း) CONTAINER PANEL
   if (subs.length > 0) {
     htmlContent += `
-      <div class="mt-1 w-full px-1 py-0.5 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.45);">
-        <p class="text-center font-bold tracking-wide text-white/40 uppercase mb-0.5" style="font-size: 0.5rem;">
+      <div class="mt-1 w-full px-1.5 py-1 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.45); flex-shrink:0;">
+        <p class="text-center font-bold tracking-wide text-white/40 uppercase mb-0.5" style="font-size: 0.55rem;">
           ⚙️ BENCH (အရံလူစာရင်း)
         </p>
         <div class="flex justify-around items-center w-full">
@@ -105,17 +112,20 @@ function renderPitch(data) {
     
     subs.forEach(p => {
       htmlContent += `
-        <div class="flex flex-col items-center mx-0.5 relative min-w-[48px]">
+        <div class="flex flex-col items-center mx-0.5 relative min-w-[50px]">
           <img src="${jerseyPath(p)}" 
                onerror="this.src='/twfpl26-27/public/jerseys/outfield/unknown.png'"
-               class="w-7 h-7 object-contain opacity-75" alt="Jersey" />
-          <div class="player-box-title mt-0.5 scale-90 origin-bottom" style="max-w: 52px;">${p.name || "?"}</div>
-          <div class="player-box-points scale-90 origin-top text-white/60" style="max-w: 52px; background:#111;">${p.livePoints ?? 0}</div>
+               class="w-7.5 h-7.5 object-contain opacity-75" alt="Jersey" />
+          <div class="player-box-container mt-0.5">
+            <div class="player-box-title rounded-t-sm" style="max-w: 52px;">${p.name || "?"}</div>
+            <div class="player-box-points rounded-b-sm text-white/90" style="max-w: 52px; background:#111;">${p.livePoints ?? 0}</div>
+          </div>
         </div>
       `;
     });
     htmlContent += `</div></div>`;
   }
+
   document.getElementById("pitch").innerHTML = htmlContent;
 }
 
@@ -179,3 +189,4 @@ window.sendMessage = async () => {
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
+
