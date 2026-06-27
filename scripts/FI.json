@@ -1,0 +1,5362 @@
+{
+  "AFC Bournemouth": [
+    {
+      "date": "2026-08-23",
+      "time": "14:00",
+      "home_team": "Manchester City",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Crystal Palace",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Aston Villa",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Arsenal": [
+    {
+      "date": "2026-08-21",
+      "time": "20:00",
+      "home_team": "Arsenal",
+      "away_team": "Coventry City",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Brentford",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Arsenal",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Arsenal",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Aston Villa": [
+    {
+      "date": "2026-08-23",
+      "time": "14:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Aston Villa",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Aston Villa",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Aston Villa",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Everton",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Aston Villa",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Liverpool",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Brentford": [
+    {
+      "date": "2026-08-22",
+      "time": "17:30",
+      "home_team": "Brentford",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Brentford",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Coventry City",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Arsenal",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Brentford",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Brighton & Hove Albion": [
+    {
+      "date": "2026-08-23",
+      "time": "14:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Aston Villa",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Manchester United",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Chelsea": [
+    {
+      "date": "2026-08-24",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Chelsea",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Chelsea",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Newcastle United",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Chelsea",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Coventry City": [
+    {
+      "date": "2026-08-21",
+      "time": "20:00",
+      "home_team": "Arsenal",
+      "away_team": "Coventry City",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Coventry City",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Coventry City",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Coventry City",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Chelsea",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Crystal Palace": [
+    {
+      "date": "2026-08-22",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Chelsea",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Crystal Palace",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Arsenal",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Everton": [
+    {
+      "date": "2026-08-22",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Aston Villa",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Everton",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Everton",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Everton",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Manchester City",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Fulham": [
+    {
+      "date": "2026-08-24",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Chelsea",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Hull City": [
+    {
+      "date": "2026-08-22",
+      "time": "12:30",
+      "home_team": "Hull City",
+      "away_team": "Manchester United",
+      "broadcaster": "TNT Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Hull City",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Hull City",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Hull City",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Leeds United",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Ipswich Town": [
+    {
+      "date": "2026-08-22",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Coventry City",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Brentford",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Leeds United": [
+    {
+      "date": "2026-08-22",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Manchester City",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Hull City",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Leeds United",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Everton",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Leeds United",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Liverpool": [
+    {
+      "date": "2026-08-23",
+      "time": "16:30",
+      "home_team": "Newcastle United",
+      "away_team": "Liverpool",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Liverpool",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Aston Villa",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Sunderland",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Coventry City",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Liverpool",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Manchester City": [
+    {
+      "date": "2026-08-23",
+      "time": "14:00",
+      "home_team": "Manchester City",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Manchester City",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Everton",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Leeds United",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Manchester City",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Manchester United": [
+    {
+      "date": "2026-08-22",
+      "time": "12:30",
+      "home_team": "Hull City",
+      "away_team": "Manchester United",
+      "broadcaster": "TNT Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Newcastle United",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Manchester United",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Manchester United",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Manchester United",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Sunderland",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Newcastle United": [
+    {
+      "date": "2026-08-23",
+      "time": "16:30",
+      "home_team": "Newcastle United",
+      "away_team": "Liverpool",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Newcastle United",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Newcastle United",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Manchester United",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Newcastle United",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Nottingham Forest": [
+    {
+      "date": "2026-08-22",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Hull City",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Newcastle United",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Sunderland": [
+    {
+      "date": "2026-08-22",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Brentford",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Liverpool",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Manchester United",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Sunderland",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Hull City",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "Sunderland",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Fulham",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    }
+  ],
+  "Tottenham Hotspur": [
+    {
+      "date": "2026-08-22",
+      "time": "17:30",
+      "home_team": "Brentford",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "Sky Sports"
+    },
+    {
+      "date": "2026-08-29",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Newcastle United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-05",
+      "time": "15:00",
+      "home_team": "Nottingham Forest",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-12",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Everton",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-09-19",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Aston Villa",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-10",
+      "time": "15:00",
+      "home_team": "Manchester United",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-17",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Coventry City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-24",
+      "time": "15:00",
+      "home_team": "Chelsea",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-10-31",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Crystal Palace",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-07",
+      "time": "15:00",
+      "home_team": "Leeds United",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-21",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Ipswich Town",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-11-28",
+      "time": "15:00",
+      "home_team": "Sunderland",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-02",
+      "time": "20:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Fulham",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-05",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Arsenal",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-12",
+      "time": "15:00",
+      "home_team": "Hull City",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-19",
+      "time": "15:00",
+      "home_team": "Liverpool",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-26",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "AFC Bournemouth",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2026-12-30",
+      "time": "20:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Brighton & Hove Albion",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-02",
+      "time": "15:00",
+      "home_team": "Manchester City",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-06",
+      "time": "20:00",
+      "home_team": "Fulham",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-16",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Leeds United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-23",
+      "time": "15:00",
+      "home_team": "Crystal Palace",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-01-30",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Sunderland",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-06",
+      "time": "15:00",
+      "home_team": "Ipswich Town",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-10",
+      "time": "20:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Manchester City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-20",
+      "time": "15:00",
+      "home_team": "Brighton & Hove Albion",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-02-27",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Liverpool",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-03",
+      "time": "20:00",
+      "home_team": "AFC Bournemouth",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-13",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Nottingham Forest",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-03-20",
+      "time": "15:00",
+      "home_team": "Everton",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-10",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Brentford",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-17",
+      "time": "15:00",
+      "home_team": "Newcastle United",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-04-24",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Hull City",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-01",
+      "time": "15:00",
+      "home_team": "Arsenal",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-08",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Chelsea",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-15",
+      "time": "15:00",
+      "home_team": "Coventry City",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-23",
+      "time": "15:00",
+      "home_team": "Tottenham Hotspur",
+      "away_team": "Manchester United",
+      "broadcaster": "N/A"
+    },
+    {
+      "date": "2027-05-30",
+      "time": "15:00",
+      "home_team": "Aston Villa",
+      "away_team": "Tottenham Hotspur",
+      "broadcaster": "N/A"
+    }
+  ]
+}
