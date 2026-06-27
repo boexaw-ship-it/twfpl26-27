@@ -2,14 +2,33 @@ import { auth, db } from "/twfpl26-27/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-let teamsMap = {};
-let playersMap = {}; 
-let firebaseFixturesList = []; // Firebase မှ ဆွဲယူထားသော ပွဲစဉ် ၃၈၀ လုံးစာရင်း
-let selectedGameweek = 1;      // Switch မှာ လက်ရှိရွေးချထားသည့် GW နံပါတ်
-let currentFilterMode = "all";
+// 💡 🏆 အန်ကယ့်ရဲ့ ၂၀၂၆-၂၇ Jersey အခေါ်အဝေါ် အတိုကောက်များနှင့် နာမည်များ ဇယား (Frontend ပြသရန်)
+const teamDetailsMap = {
+  1: { name: "Arsenal", short: "ARS", code: "ars" },
+  2: { name: "Aston Villa", short: "AVL", code: "avl" },
+  3: { name: "AFC Bournemouth", short: "BOU", code: "bou" },
+  4: { name: "Brentford", short: "BRE", code: "bre" },
+  5: { name: "Brighton & Hove Albion", short: "BHA", code: "bha" },
+  6: { name: "Chelsea", short: "CHE", code: "che" },
+  7: { name: "Coventry City", short: "COV", code: "cov" },
+  8: { name: "Crystal Palace", short: "CRY", code: "cry" },
+  9: { name: "Everton", short: "EVE", code: "eve" },
+  10: { name: "Fulham", short: "FUL", code: "ful" },
+  11: { name: "Hull City", short: "HUL", code: "hul" },
+  12: { name: "Ipswich Town", short: "IPS", code: "ips" },
+  13: { name: "Leeds United", short: "LEE", code: "lee" },
+  14: { name: "Liverpool", short: "LIV", code: "liv" },
+  15: { name: "Manchester City", short: "MCI", code: "mci" },
+  16: { name: "Manchester United", short: "MUN", code: "mun" },
+  17: { name: "Newcastle United", short: "NEW", code: "new" },
+  18: { name: "Nottingham Forest", short: "NFO", code: "nfo" },
+  19: { name: "Sunderland", short: "SUN", code: "sun" },
+  20: { name: "Tottenham Hotspur", short: "TOT", code: "tot" }
+};
 
-const PROXY = "https://api.allorigins.win/raw?url=";
-const FPL_BOOTSTRAP = "https://fantasy.premierleague.com/api/bootstrap-static/";
+let firebaseFixturesList = []; // Firebase မှ ဆွဲယူထားသော ပွဲစဉ် ၃၈၀ လုံး
+let selectedGameweek = 1;      // Switch မှာ လက်ရှိရွေးထားသည့် GW (Default: Week 1)
+let currentFilterMode = "all";
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
@@ -21,19 +40,11 @@ onAuthStateChanged(auth, async (user) => {
 async function buildMatchCenterSystem() {
   const listEl = document.getElementById("fixtures-list");
   try {
-    // ၁။ Player Names & Logos များအတွက် Bootstrap static ဒေတာအား ယူခြင်း
-    const bootstrapRes = await fetch(PROXY + encodeURIComponent(FPL_BOOTSTRAP));
-    const bootstrap = await bootstrapRes.json();
-    
-    bootstrap.teams.forEach(t => { teamsMap[t.id] = { name: t.name, short: t.short_name, code: t.code }; });
-    bootstrap.elements.forEach(p => { playersMap[p.id] = p.web_name || p.second_name; });
+    // 💡 အပတ်စဉ် Switch Selector အား (Week 1 မှ 38 အထိ) အော်တို ထုတ်ပေးခြင်း
+    populateGwSelectorOptions();
 
-    // လက်ရှိ Gameweek အား Auto သတ်မှတ်ခြင်း
-    const currentGW = bootstrap.events.find(e => e.is_current) || bootstrap.events.find(e => e.is_next) || bootstrap.events[0];
-    selectedGameweek = currentGW?.id || 1;
-
-    // 💡 🏆 ၂။ အန်ကယ့် အိုင်ဒီယာအမှန်အတိုင်း: Firebase Firestore 'fixtures' Collection ထံမှ တိုက်ရိုက်ဒေတာဆွဲယူခြင်း
-    console.log("🔥 [TWFPL Database] Loading fixtures from Firebase Firestore Cloud...");
+    // 💡 🏆 အုန်းခနဲ ဆွဲဖတ်ခြင်း: အန်ကယ့် Firebase Cloud Database ထံမှ တိုက်ရိုက်ဒေတာ ဆွဲယူခြင်း
+    console.log("🔥 [TWFPL Database] Loading fixtures from Firebase Firestore...");
     const querySnapshot = await getDocs(collection(db, "fixtures"));
     
     firebaseFixturesList = [];
@@ -41,17 +52,14 @@ async function buildMatchCenterSystem() {
       firebaseFixturesList.push({ id: doc.id, ...doc.data() });
     });
 
-    // 💡 ၃။ UI Dropdown Selector Switch အား Week 1 မှ 38 အထိ အလိုအလျောက် ဆောက်ပေးခြင်း
-    populateGwSelectorOptions();
-    
+    // ဒေတာများရပြီဖြစ်၍ Timeline အား စတင်ပုံဖော်ခြင်း
     renderFixturesTimeline();
   } catch (err) {
-    listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Firebase မှ ပွဲစဉ်များ ဆွဲမရပါ — Backend Sync မောင်းထားရန် လိုအပ်ပါသည်ဗျာ</p>`;
+    listEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#f87171;">Firebase မှ ပွဲစဉ်များ ဆွဲမရပါ — Rules သို့မဟုတ် အကောင့်ဝင်ခြင်း စစ်ဆေးပါဗျာ</p>`;
     console.error("Firebase Fixtures Load Error:", err);
   }
 }
 
-// Switch Dropdown options တည်ဆောက်ရေး ဖန်ရှင်
 function populateGwSelectorOptions() {
   const selector = document.getElementById("gw-selector");
   if (!selector) return;
@@ -64,12 +72,15 @@ function populateGwSelectorOptions() {
   selector.innerHTML = optionsHtml;
 }
 
+// 💡 အန်ကယ့်ရဲ့ Jersey ID အလိုက် Logo / Badge သရုပ်ဖော်ပေးမည့် စနစ်
 function teamBadgeHtml(teamId) {
-  const t = teamsMap[teamId];
+  const t = teamDetailsMap[teamId];
   if (!t) return `<span class="text-white text-sm">—</span>`;
+  
+  // အန်ကယ့် Repository ထဲရှိ .png jersey ပုံရိပ်လမ်းကြောင်းများသို့ ချိတ်ဆက်ခြင်း (ဥပမာ- 1.ars.png အတိုင်း)
   return `
     <div class="flex items-center gap-1.5">
-      <img src="https://resources.premierleague.com/premierleague/badges/50/t${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.style.visibility='hidden'" />
+      <img src="/twfpl26-27/assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.src='https://resources.premierleague.com/premierleague/badges/50/t1.png'; this.onerror=null;" />
       <span class="text-white text-sm font-bold tracking-wide">${t.short}</span>
     </div>
   `;
@@ -83,57 +94,13 @@ function translateToMyanmarTime(kickoffUtcString) {
   return { date: dateStr, time: timeStr + " MMT" };
 }
 
-// 💡 🟨 🟥 ⚽ PRE-EXTRACTOR ENGINE: ဂိုး၊ Assist၊ အဝါကတ်၊ အနီကတ်များအား တစ်ခါတည်း စစ်ထုတ်မည့် စနစ်
-function parseMatchCardStatistics(statsArray) {
-  let homeG = []; let awayG = [];
-  let homeA = []; let awayA = [];
-  let homeY = []; let awayY = [];
-  let homeR = []; let awayR = [];
-
-  statsArray.forEach(stat => {
-    // ⚽ Goals Scored
-    if (stat.identifier === "goals_scored") {
-      stat.h.forEach(i => { if(playersMap[i.element]) homeG.push(`${playersMap[i.element]} (${i.value})`); });
-      stat.a.forEach(i => { if(playersMap[i.element]) awayG.push(`${playersMap[i.element]} (${i.value})`); });
-    }
-    // 🅰️ Assists
-    if (stat.identifier === "assists") {
-      stat.h.forEach(i => { if(playersMap[i.element]) homeA.push(playersMap[i.element]); });
-      stat.a.forEach(i => { if(playersMap[i.element]) awayA.push(playersMap[i.element]); });
-    }
-    // 🟨 Yellow Cards
-    if (stat.identifier === "yellow_cards") {
-      stat.h.forEach(i => { if(playersMap[i.element]) homeY.push(`${playersMap[i.element]}`); });
-      stat.a.forEach(i => { if(playersMap[i.element]) awayY.push(`${playersMap[i.element]}`); });
-    }
-    // 🟥 Red Cards
-    if (stat.identifier === "red_cards") {
-      stat.h.forEach(i => { if(playersMap[i.element]) homeR.push(`${playersMap[i.element]}`); });
-      stat.a.forEach(i => { if(playersMap[i.element]) awayR.push(`${playersMap[i.element]}`); });
-    }
-  });
-
-  const hasAnyData = (homeG.length > 0 || awayG.length > 0 || homeY.length > 0 || awayY.length > 0 || homeR.length > 0 || awayR.length > 0);
-
-  return {
-    hasStats: hasAnyData,
-    hGoals: homeG.join(", "), aGoals: awayG.join(", "),
-    hAssists: homeA.length > 0 ? "A: " + homeA.join(", ") : "",
-    aAssists: awayA.length > 0 ? "A: " + awayA.join(", ") : "",
-    hYellows: homeY.length > 0 ? "🟨 " + homeY.join(", ") : "",
-    aYellows: awayY.length > 0 ? "🟨 " + awayY.join(", ") : "",
-    hReds: homeR.length > 0 ? "🟥 " + homeR.join(", ") : "",
-    aReds: awayR.length > 0 ? "🟥 " + awayR.join(", ") : ""
-  };
-}
-
 function renderFixturesTimeline() {
   const listEl = document.getElementById("fixtures-list");
   
-  // 💡 Switch က ရွေးထားတဲ့ သက်ဆိုင်ရာ Gameweek တစ်ခုတည်းက ပွဲစဉ်များကိုသာ Filter စစ်ထုတ်မည်
+  // 💡 ရွေးချယ်ထားသော Gameweek နံပါတ်တစ်ခုတည်းရှိ ပွဲစဉ်များကိုသာ စစ်ထုတ်မည်
   let targetedFixtures = firebaseFixturesList.filter(f => Number(f.event) === Number(selectedGameweek));
 
-  // Tabs Filter Mode (All / Upcoming / Results)
+  // Filter Mode (All / Upcoming / Results)
   if (currentFilterMode === "upcoming") targetedFixtures = targetedFixtures.filter(f => !f.finished);
   if (currentFilterMode === "finished") targetedFixtures = targetedFixtures.filter(f => f.finished);
 
@@ -142,7 +109,7 @@ function renderFixturesTimeline() {
     return;
   }
 
-  // ပွဲချိန်အလိုက် စီစဉ်ခြင်း
+  // ရက်စွဲ/အချိန်အလိုက် စီစဉ်ခြင်း
   targetedFixtures.sort((a,b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
 
   listEl.innerHTML = `
@@ -151,7 +118,6 @@ function renderFixturesTimeline() {
         const { date, time } = translateToMyanmarTime(f.kickoff_time);
         const isLive = f.started && !f.finished;
         const isFinished = f.finished;
-        const s = parseMatchCardStatistics(f.stats || []); // 💡 Live Stats Panel
 
         return `
         <div class="rounded-xl p-3 flex flex-col transition bg-[#1F5C36]" style="border:1px solid ${isLive ? '#ef4444' : '#2A7A47'}; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
@@ -176,40 +142,20 @@ function renderFixturesTimeline() {
             <div class="w-[35%] flex justify-end">${teamBadgeHtml(f.team_a)}</div>
           </div>
 
-          ${s.hasStats ? `
-            <div class="mt-3 pt-2 grid grid-cols-2 gap-x-4 gap-y-1.5 text-[10px] text-white/90" style="border-top:1px dashed rgba(255,255,255,0.12);">
-              
-              <div class="flex flex-col gap-0.5 min-w-0">
-                ${s.hGoals ? `<p class="font-bold text-[#F0D060] truncate">⚽ ${s.hGoals}</p>` : ""}
-                ${s.hAssists ? `<p class="text-white/50 font-medium truncate">${s.hAssists}</p>` : ""}
-                ${s.hReds ? `<p class="text-red-400 font-medium truncate">${s.hReds}</p>` : ""}
-                ${s.hYellows ? `<p class="text-yellow-400/80 font-medium truncate">${s.hYellows}</p>` : ""}
-              </div>
-              
-              <div class="flex flex-col gap-0.5 text-right min-w-0">
-                ${s.aGoals ? `<p class="font-bold text-[#F0D060] truncate">${s.aGoals} ⚽</p>` : ""}
-                ${s.aAssists ? `<p class="text-white/50 font-medium truncate">${s.aAssists}</p>` : ""}
-                ${s.aReds ? `<p class="text-red-400 font-medium truncate">${s.aReds}</p>` : ""}
-                ${s.aYellows ? `<p class="text-yellow-400/80 font-medium truncate">${s.aYellows}</p>` : ""}
-              </div>
-
-            </div>
-          ` : ""}
-
         </div>`;
       }).join("")}
     </div>
   `;
 }
 
-// 💡 🏆 GW SWITCH TRIGGERS: Dropdown ကလစ်နှိပ်လိုက်လျှင် ဒေတာချက်ချင်းလှည့်ပြောင်းပေးမည့် စနစ်
+// 💡 GW SWITCH TRIGGERS: Dropdown ပြောင်းလဲလိုက်လျှင် ချက်ချင်း အလုပ်လုပ်မည့် စနစ်
 window.handleGwChange = (gwValue) => {
   if (!gwValue) return;
   selectedGameweek = Number(gwValue);
   renderFixturesTimeline();
 };
 
-// Global Tabs Controller Modules
+// Tabs Filter Mode Controller
 window.filterFixtures = (filter) => {
   currentFilterMode = filter;
   document.querySelectorAll(".tab-btn").forEach(b => {
