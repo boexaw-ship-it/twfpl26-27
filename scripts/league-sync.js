@@ -1,15 +1,22 @@
 // ============================================
 // TW Fantasy Official League
-// League Sync Script (Standalone Variant)
+// League Sync Script (Standalone Variant - Week Guard Fixed)
 // ============================================
 
 const admin = require("firebase-admin");
 
 // === Firebase Admin Init ===
+if (!process.env.FIREBASE_SERVICE_ACCOUNT) {
+  console.error("❌ Error: FIREBASE_SERVICE_ACCOUNT Environment Variable မတွေ့ရှိပါဗျာ။");
+  process.exit(1);
+}
+
 const serviceAccount = JSON.parse(process.env.FIREBASE_SERVICE_ACCOUNT);
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount),
-});
+if (admin.apps.length === 0) {
+  admin.initializeApp({
+    credential: admin.credential.cert(serviceAccount),
+  });
+}
 const db = admin.firestore();
 
 // === FPL API ===
@@ -99,8 +106,6 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
     
     const squadPicks = (data.picks || []).map(p => {
       const masterInfo = playersMasterMap[p.element] || { name: "?", position: "mid", teamCode: "unknown", livePoints: 0 };
-      
-      // 💡 🏆 ✅ FIX MULTIPLIER: p.multiplier ၏ တန်ဖိုး 0 (Bench) ဖြစ်နေပါက 0 အတိုင်း တိကျစွာသိမ်းရန် ပြင်ဆင်ပြီးစီးမှု
       const finalMultiplier = p.multiplier !== undefined && p.multiplier !== null ? Number(p.multiplier) : 1;
 
       return {
@@ -109,7 +114,7 @@ async function getTeamGwDetail(fplTeamId, gw, playersMasterMap) {
         position: masterInfo.position, 
         teamCode: masterInfo.teamCode, 
         livePoints: masterInfo.livePoints,
-        multiplier: finalMultiplier, // ⬅️ 0 အား 0 အတိုင်း (၁၀၀% Type-safe) သွင်းပေးလိုက်ပါပြီ
+        multiplier: finalMultiplier, 
         isCaptain: p.is_captain === true || p.is_captain === "true" || finalMultiplier > 1,
         isVice: p.is_vice_captain === true || p.is_vice === true 
       };
@@ -185,12 +190,40 @@ async function main() {
   console.log("🚀 Running Unified League Sync Engine...");
   try {
     const gw = await getCurrentGameweek();
+    console.log(`📡 FPL API Current Gameweek: Week ${gw}`);
+
+    // 🎯 💡 ၁။ SAFE GUARD CHECK: Firebase ထံမှ စနစ်၏ နောက်ဆုံးမောင်းထားသော Week အခြေအနေအား ဖတ်ယူခြင်း
+    const systemRef = db.collection("systemState").doc("leagueStatus");
+    const systemSnap = await systemRef.get();
+    
+    let lastProcessedGw = 0;
+    if (systemSnap.exists()) {
+      lastProcessedGw = systemSnap.data().lastProcessedGw || 0;
+    }
+    console.log(`📦 Firebase Last Processed Gameweek: Week ${lastProcessedGw}`);
+
+    // 🎯 💡 ၂။ CRITICAL WEEK GUARD LOGIC: API ရဲ့ Week နံပါတ်က Firebase ထဲကထက် ပိုကြီးမလာသေးရင် ဒေတာထပ်မသိမ်းဘဲ ကျော်သွားမည်
+    if (gw <= lastProcessedGw) {
+      console.log(`⚠️ Warning: Gameweek ${gw} အတွက် Standings ဒေတာများ သိမ်းဆည်းပြီးသား ဖြစ်ပါသည်။ Next Week သို့ မပြောင်းသေး၍ အလိုအလျောက် ကျော်သွားပါသည်ဗျာ။`);
+      process.exit(0);
+    }
+
+    console.log(`🔥 [NEW WEEK DETECTED]: Week ${lastProcessedGw} မှ Week ${gw} သို့ ပြောင်းလဲသွားသဖြင့် စတင်မောင်းနှင်နေပါပြီ...`);
+
     const playersMasterMap = await getPlayerMasterMap();
     
+    // ပင်မ League ပတ်မောင်းခြင်း Loop စနစ်
     for (const league of LEAGUES) {
       await syncLeague(league, gw, playersMasterMap);
     }
-    console.log("🎉 All Standing tasks finished.");
+
+    // 🎯 💡 ၃။ NEXT WEEK SUCCESS RECORD: သမိုင်းမှတ်တမ်း အားလုံးသိမ်းပြီးပါက စနစ်၏ ပတ်မောင်းပြီးမြောက်မှုအား Week အသစ်အတိုင်း ပြောင်းလဲသတ်မှတ်ခြင်း
+    await systemRef.set({
+      lastProcessedGw: Number(gw),
+      updatedAt: admin.firestore.FieldValue.serverTimestamp()
+    }, { merge: true });
+
+    console.log("🎉 All Standing tasks finished and Next Week status updated successfully.");
     process.exit(0);
   } catch (err) {
     console.error("Fatal exception: " + err.message);
