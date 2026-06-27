@@ -22,12 +22,11 @@
     /* Stat Cards Flexible non-scroll system */
     .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:6px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    /* 🏟️ 💡 UNCLE'S ABSOLUTE TACTICAL FIELD SYSTEM */
-    /* ပွဲထွက်ကွင်းပြင်ကြီးအား လုံးဝမရွေ့ဘဲ အသေ (Fixed) ဖြစ်စေရန်နှင့် ကွင်းလိုင်းများပေါ် လူကွက်တိကျစေရန် တွက်ချက်ခြင်း */
+    /* 🏟️ UNCLE'S ABSOLUTE FIXED FIELD GRID */
     .pitch-fixed-field {
       position: relative;
       width: 100%;
-      height: 290px; /* 💡 မိုဘိုင်း Screen ပေါ်တွင် ပွဲထွက် ၁၁ ယောက် စည်းမကျော်ဘဲ ကွင်းစည်းပေါ် ကွက်တိကျစေမည့် အမြင့် */
+      height: 285px; /* မိုဘိုင်းဖုန်းအားလုံးပေါ်တွင် ပွဲထွက်ကွင်းပြင်အမြင့်အသေအား တိကျစွာထိန်းညှိခြင်း */
       display: flex;
       flex-direction: column;
       justify-content: space-between;
@@ -68,21 +67,21 @@
     <span id="chip-badge" class="text-xs font-bold px-3 py-0.5 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
   </div>
 
-  <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-2.5 py-2">
-    <div class="flex gap-2" style="width:100%;height:100%;min-width:0;">
+  <div id="pitch-wrap" style="flex:1.1; min-height:0; overflow:hidden; border-bottom:2px solid rgba(201,168,76,0.3); display:flex;" class="px-2.5 py-2">
+    <div class="flex gap-2 w-full h-full min-width:0;">
       
       <div style="flex:1; position:relative; border-radius:1rem; overflow:hidden; border:1.5px solid rgba(255,255,255,0.2); min-width:0; height:100%; background:linear-gradient(180deg,#144622,#09230e); display:flex; flex-direction:column; justify-content:between; padding:4px;">
         
-        <div style="position:relative; width:100%; flex-shrink:0; background:rgba(0,0,0,0.1); border-radius:0.75rem; overflow:hidden; padding:2px;">
+        <div style="position:relative; width:100%; flex-shrink:0; background:rgba(0,0,0,0.08); border-radius:0.75rem; overflow:hidden; padding:2px;">
           
-          <svg style="position:absolute;top:0;left:0;width:100%;height:290px;opacity:0.28;pointer-events:none;z-index:0;" viewBox="0 0 200 290" preserveAspectRatio="none">
-            <rect x="6" y="6" width="188" height="278" fill="none" stroke="white" stroke-width="1.2"/>
-            <line x1="6" y1="145" x2="194" y2="145" stroke="white" stroke-width="1.2"/>
-            <circle cx="100" cy="145" r="22" fill="none" stroke="white" stroke-width="1.2"/>
+          <svg style="position:absolute;top:0;left:0;width:100%;height:285px;opacity:0.28;pointer-events:none;z-index:0;" viewBox="0 0 200 285" preserveAspectRatio="none">
+            <rect x="6" y="6" width="188" height="273" fill="none" stroke="white" stroke-width="1.2"/>
+            <line x1="6" y1="142" x2="194" y2="142" stroke="white" stroke-width="1.2"/>
+            <circle cx="100" cy="142" r="22" fill="none" stroke="white" stroke-width="1.2"/>
             <rect x="38" y="6" width="124" height="36" fill="none" stroke="white" stroke-width="1.2"/>
-            <rect x="38" y="248" width="124" height="36" fill="none" stroke="white" stroke-width="1.2"/>
+            <rect x="38" y="243" width="124" height="36" fill="none" stroke="white" stroke-width="1.2"/>
             <rect x="68" y="6" width="64" height="12" fill="none" stroke="white" stroke-width="1.2"/>
-            <rect x="68" y="272" width="64" height="12" fill="none" stroke="white" stroke-width="1.2"/>
+            <rect x="68" y="267" width="64" height="12" fill="none" stroke="white" stroke-width="1.2"/>
           </svg>
 
           <div id="pitch">
@@ -90,8 +89,8 @@
           </div>
         </div>
 
-        <div id="bench-scroll-area" style="width:100%; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; margin-top:4px; display:flex; flex-direction:column; justify-content:end;">
-          <div id="bench-container" style="width:100%;"></div>
+        <div id="bench-scroll-area" style="width:100%; flex:1; overflow-y:auto; -webkit-overflow-scrolling:touch; margin-top:4px; display:flex; flex-direction:column; justify-content:start;">
+          <div id="bench-container" style="width:100%; padding-bottom: 2px;"></div>
         </div>
         
       </div>
@@ -125,12 +124,12 @@
     </div>
   </div>
 
-  <div class="flex-1 flex flex-col overflow-hidden">
+  <div class="flex-1 flex flex-col overflow-hidden" style="flex:0.9;">
     <div style="padding:4px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;">
       <p class="text-xs font-semibold uppercase tracking-widest" style="color:#C9A84C;">💬 Live Chat</p>
     </div>
 
-    <div id="chat-lock-banner" class="hidden" style="padding:6px 16px;background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.2);flex-shrink:0;">
+    <div id="chat-lock-banner" class="hidden" style="padding:4px 16px;background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.2);flex-shrink:0;">
       <p class="text-xs" style="color:#E8D5A3;">🔒 Approve ပြီးမှ Chat ရေးနိုင်ပါမည် — View ကိုတော့ ကြည့်ရှုနိုင်ပါသည်</p>
     </div>
 
