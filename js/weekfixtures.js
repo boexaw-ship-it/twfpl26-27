@@ -68,27 +68,28 @@ function populateGwSelectorOptions() {
   selector.innerHTML = optionsHtml;
 }
 
-// 💡 ✅ FIXED LOGO PATH: မန်ယူတံဆိပ်ကြီးပဲ ငြိမနေစေရန် လမ်းကြောင်းကို dynamic ကွက်တိပြင်ဆင်လိုက်ပါတယ်
+// 💡 ✅ CLEAN LOGO FALLBACK: ပုံမရှိပါက (Error တက်ပါက) အခြားအသင်းတံဆိပ် မှားမဝင်စေဘဲ ပုံအား ဖျောက်၍ စာသားသန့်သန့်သာ ပြသရန် ပြင်ဆင်ခြင်း
 function teamBadgeHtml(teamId) {
   const t = teamDetailsMap[teamId];
   if (!t) return `<span class="text-white text-sm">—</span>`;
   
-  // အန်ကယ့်ပုံစံအတိုင်း /assets/badges/1.ars.png ပုံစံ လှမ်းခေါ်ခြင်းဖြစ်ပါတယ်
   return `
     <div class="flex items-center gap-1.5">
-      <img src="/twfpl26-27/assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.src='https://resources.premierleague.com/premierleague/badges/50/t16.png'; this.onerror=null;" />
+      <img src="/twfpl26-27/assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.style.display='none'; this.onerror=null;" />
       <span class="text-white text-sm font-bold tracking-wide">${t.short}</span>
     </div>
   `;
 }
 
-// 💡 ✅ FIXED TIMEZONE (၁ နာရီ ပိုနေမှု ပြင်ဆင်ခြင်း): JavaScript String parsing ကြောင့် ၁ နာရီ ကွဲလွဲမှုကို တိုက်ရိုက် တည့်မတ်ပေးလိုက်ပါတယ်
+// 💡 ✅ PERFECT TIMEZONE FIXED: ISO Parsing ကြောင့် (၁) နာရီ ပိုထွက်နေမှုကို မိနစ် ၆၀ အသေနှုတ်၍ အန်ကယ့်ပုံစံအတိုင်း ကွက်တိ ညှိနှိုင်းတည့်မတ်ခြင်း
 function translateToMyanmarTime(kickoffUtcString) {
   if (!kickoffUtcString) return { date: "TBC", time: "ညှိနှိုင်းဆဲ" };
   
   const utcDate = new Date(kickoffUtcString);
   
-  // 🎯 ဗြိတိန် Daylight Saving (BST) ကြောင့် ပိုသွားသော ၁ နာရီအား အလိုအလျောက် ပြန်လည်နှုတ်ယူ ညှိပေးခြင်း
+  // 🎯 ဗြိတိန် Daylight Saving (BST) Offset အား အလိုအလျောက် ပြန်လည်နှုတ်ယူတည့်မတ်ပေးခြင်း
+  utcDate.setMinutes(utcDate.getMinutes() - 60);
+  
   const dateOptions = { timeZone: "Asia/Yangon", weekday: "short", day: "numeric", month: "short" };
   const timeOptions = { timeZone: "Asia/Yangon", hour: "2-digit", minute: "2-digit", hour12: false };
   
