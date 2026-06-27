@@ -22,28 +22,26 @@
     /* Stat Cards Flexible non-scroll system */
     .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:6px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    /* 💡 🏆 ✅ LEAGUE POPUP FIELD DESIGN SYSTEM BASED ON UNCLE'S IMAGE */
-    /* ကွင်းစည်းများနှင့် Player တန်းများအကြား ကွင်းပြင်နေရာအကျယ်အဝန်းကို မျှတစွာ နေရာချပေးမည့် Row Class */
+    /* 💡 🏆 ✅ LEAGUE POPUP FIELD DESIGN SYSTEM - MICRO OPTIMIZATION */
     .pitch-row {
       display: flex;
       flex-wrap: nowrap;
       justify-content: center;
       align-items: center;
       width: 100%;
-      padding: 2px 0;
-      min-height: 52px; /* 💡 တန်းတစ်ခုစီအတွက် အနိမ့်ဆုံးအမြင့်သတ်မှတ်၍ လူမရှိသော်လည်း နေရာမပျောက်စေရန် ထိန်းခြင်း */
+      padding: 4px 0;
     }
 
-    /* Player Card အတွင်းရှိ နာမည်နှင့် ရမှတ်ပြသမှုကို အဖြူရောင် Box ပုံစံ ကွက်တိ ဖော်ပြခြင်း */
+    /* 🎯 💡 အန်ကယ်မိန့်ဆိုသကဲ့သို့ နာမည်ကတ်ပြားနှင့် Point Box အကျယ်အား သေးချလိုက်ခြင်း (max-width: 54px သို့ လျှော့ချ) */
     .player-box-title {
       background: #ffffff;
       color: #000000;
-      font-size: 10px;
+      font-size: 8px; /* စာလုံးအရွယ်အစား သေးချခြင်း */
       font-weight: 700;
-      padding: 1px 3px;
+      padding: 1px 2px;
       text-align: center;
       width: 100%;
-      max-width: 68px;
+      max-width: 54px; /* 👈 ကတ်ပြားအကျယ်အား သိသိသာသာ သေးချလိုက်သဖြင့် ဘေးလူနှင့် လုံးဝမညှပ်တော့ပါ */
       white-space: nowrap;
       overflow: hidden;
       text-overflow: ellipsis;
@@ -51,12 +49,12 @@
     .player-box-points {
       background: #000000;
       color: #ffffff;
-      font-size: 11px;
+      font-size: 9px; /* ရမှတ်စာလုံး သေးချခြင်း */
       font-weight: 900;
-      padding: 1px 3px;
+      padding: 1px 2px;
       text-align: center;
       width: 100%;
-      max-width: 68px;
+      max-width: 54px; /* 👈 အကျယ်ကို ၅၄px သို့ တူညီစွာ ထိန်းညှိခြင်း */
     }
   </style>
 
@@ -85,7 +83,7 @@
     <span id="chip-badge" class="text-xs font-bold px-3 py-0.5 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
   </div>
 
-  <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-2">
+  <div id="pitch-wrap" style="flex:1;min-height:0;overflow:hidden;border-bottom:2px solid rgba(201,168,76,0.3);display:flex;" class="px-3 py-2 max-h-[460px]">
     <div class="flex gap-2.5" style="width:100%;height:100%;min-width:0;">
       
       <div style="flex:1;position:relative;border-radius:1rem;overflow:hidden;border:1.5px solid rgba(255,255,255,0.25);min-width:0;height:100%;background:linear-gradient(180deg,#144622,#09230e);">
