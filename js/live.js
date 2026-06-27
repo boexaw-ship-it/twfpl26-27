@@ -49,17 +49,17 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 Player Card Maker (အဝိုင်း Border + အောက်ခြေ Shadow Drop Layer ပါဝင်သည်)
-function playerCard(p) {
+// 📛 Player Card Maker (အဝိုင်း Border + ပါးလွှာသော shadow ပုံစံတပြေးညီစနစ်)
+function playerCard(p, isBench = false) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
   
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
 
-  const ringColor = isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
+  // 💡 Bench ဖြစ်ပါက သပ်ရပ်သော အဖြူရောင်ဖျော့ Ring ခတ်မည်၊ ပွဲထွက်ဆိုပါက C/V အလိုက် အရောင်ခွဲခြားမည်
+  const ringColor = isBench ? 'rgba(255,255,255,0.35)' : isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
-  // C / V Badge လေးများကို ဂျာစီအဝိုင်းလေး၏ ညာဘက်အပေါ်ထောင့်တွင် ကွက်တိထင်သာမြင်သာရှိအောင် absolute position ညှိခြင်း
   const badge = mult === 3
     ? '<span style="position:absolute; top:-3px; right:-5px; font-size:0.5rem; background:#F0D060; color:#0D2B1A; border-radius:9999px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:900; border:1px solid #000; z-index:10;">3x</span>' 
     : isCap
@@ -68,8 +68,9 @@ function playerCard(p) {
     ? '<span style="position:absolute; top:-3px; right:-5px; font-size:0.52rem; background:#C0C0C0; color:#0D2B1A; border-radius:9999px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:900; border:1px solid #000; z-index:10;">V</span>' 
     : '';
 
+  // 💡 🏆 အန်ကယ့်ဆန္ဒအတိုင်း ပါးလွှာကျနသော အမည်းရောင် shadow drop (rgba(0,0,0,0.55)) ဖြင့် ပေါလောပေါ်အောင် ပုံဖော်ခြင်း
   return `
-    <div class="flex flex-col items-center mx-0.5 shadow-[0_4px_10px_rgba(0,0,0,0.6)] p-1 rounded-xl" style="flex-shrink:0; min-w-[50px];">
+    <div class="flex flex-col items-center mx-1" style="flex-shrink:0; min-w-[50px]; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.55));">
       <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-visible relative" style="background:#1F5C36; border:2px solid ${ringColor};">
         <img src="${jerseyPath(p)}" 
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
@@ -95,7 +96,7 @@ function renderPitch(data) {
   const mid = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("MI"); });
   const fwd = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("FW") || pos.startsWith("FO"); });
 
-  const makeRow = (players) => `<div class="field-row"> ${players.map(playerCard).join("")} </div>`; 
+  const makeRow = (players) => `<div class="field-row"> ${players.map(p => playerCard(p, false)).join("")} </div>`; 
 
   let htmlContent = `
     ${makeRow(gk)}
@@ -105,30 +106,19 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
-  // 📥 ⚙️ BENCH (အရံလူစာရင်း) Panel — ဇွတ်မှိန်မချတော့ဘဲ သန့်ရှင်းသော Border + Shadow ဖြင့် တည်ဆောက်ခြင်း
+  // 📥 💡 🏆 BENCH CONTAINER (အမည်းရောင် Box ကြီး ဖြုတ်ပစ်ပြီး အဖြူရောင်ဘောင်ပါးပါးလေးဖြင့် Lineup အတိုင်း ပြသခြင်း)
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
-      <div class="w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/20 shadow-[0_4px_12px_rgba(0,0,0,0.7)]" style="background: rgba(0,0,0,0.55);">
-        <p class="text-center font-black tracking-wide text-[#C9A84C]/70 uppercase mb-1" style="font-size: 0.5rem;">
+      <div class="w-full px-2 py-1 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.15);">
+        <p class="text-center font-black tracking-wide text-white/40 uppercase mb-1" style="font-size: 0.5rem; letter-spacing: 0.05em;">
           📋 BENCH (အရံလူစာရင်း)
         </p>
         <div class="flex justify-around items-center w-full">
-    `;
-    
-    subs.forEach(p => {
-      benchContent += `
-        <div class="flex flex-col items-center mx-0.5 relative min-w-[48px] shadow-[0_4px_8px_rgba(0,0,0,0.5)] p-0.5 rounded-lg">
-          <div class="w-7.5 h-7.5 rounded-full flex items-center justify-center mb-0.5 overflow-hidden" style="background:#164225; border:1.5px solid rgba(255,255,255,0.4);">
-            <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-5.5 h-5.5 object-contain rounded-full" />
-            <span style="display:none;font-size:0.65rem;">👕</span>
-          </div>
-          <p class="text-white text-center font-bold truncate" style="font-size:0.48rem; max-w:44px;">${p.name || "?"}</p>
-          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.6); padding:0 3px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
+          ${subs.map(p => playerCard(p, true)).join("")}
         </div>
-      `;
-    });
-    benchContent += `</div></div>`;
+      </div>
+    `;
   }
   document.getElementById("bench-container").innerHTML = benchContent;
 }
@@ -193,3 +183,4 @@ window.sendMessage = async () => {
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
+
