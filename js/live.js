@@ -49,7 +49,7 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 💡 🏆 UNCLE'S CIRCULAR CARD WITH TOP-RIGHT OVERLAY BADGES (FIXED)
+// 📛 Player Card Maker (အဝိုင်း Border + အောက်ခြေ Shadow Drop Layer ပါဝင်သည်)
 function playerCard(p) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -59,7 +59,7 @@ function playerCard(p) {
 
   const ringColor = isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
-  // 💡 C / V Badge လေးများကို ဂျာစီအဝိုင်းလေး၏ ညာဘက်အပေါ်ထောင့်တွင် အတိအကျ ကျော်တက်ပေါ်စေရန် Absolute Position ချိန်ညှိမှု
+  // C / V Badge လေးများကို ဂျာစီအဝိုင်းလေး၏ ညာဘက်အပေါ်ထောင့်တွင် ကွက်တိထင်သာမြင်သာရှိအောင် absolute position ညှိခြင်း
   const badge = mult === 3
     ? '<span style="position:absolute; top:-3px; right:-5px; font-size:0.5rem; background:#F0D060; color:#0D2B1A; border-radius:9999px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:900; border:1px solid #000; z-index:10;">3x</span>' 
     : isCap
@@ -69,8 +69,8 @@ function playerCard(p) {
     : '';
 
   return `
-    <div class="flex flex-col items-center mx-1" style="flex-shrink:0; min-w-[50px];">
-      <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-visible relative shadow-md" style="background:#1F5C36; border:2px solid ${ringColor};">
+    <div class="flex flex-col items-center mx-0.5 shadow-[0_4px_10px_rgba(0,0,0,0.6)] p-1 rounded-xl" style="flex-shrink:0; min-w-[50px];">
+      <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-visible relative" style="background:#1F5C36; border:2px solid ${ringColor};">
         <img src="${jerseyPath(p)}" 
              onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
              class="w-6.5 h-6.5 object-contain rounded-full" alt="${p.name}" />
@@ -97,7 +97,6 @@ function renderPitch(data) {
 
   const makeRow = (players) => `<div class="field-row"> ${players.map(playerCard).join("")} </div>`; 
 
-  // ၁။ ပွဲထွက်ကွင်းပြင်ကြီးသို့ Row ၄ ခု ကွက်တိ ထည့်သွင်းခြင်း
   let htmlContent = `
     ${makeRow(gk)}
     ${makeRow(def)}
@@ -106,12 +105,12 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
-  // ၂။ BENCH (အရံလူစာရင်း) Panel အား အောက်ခြေတွင် တစ်ပါတည်း တွဲလျက် Scroll ဆွဲနိုင်ရန် သီးသန့် ထုတ်ပေးခြင်း
+  // 📥 ⚙️ BENCH (အရံလူစာရင်း) Panel — ဇွတ်မှိန်မချတော့ဘဲ သန့်ရှင်းသော Border + Shadow ဖြင့် တည်ဆောက်ခြင်း
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
-      <div class="w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/20" style="background: rgba(0,0,0,0.55);">
-        <p class="text-center font-black tracking-wide text-[#C9A84C]/50 uppercase mb-1" style="font-size: 0.5rem;">
+      <div class="w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/20 shadow-[0_4px_12px_rgba(0,0,0,0.7)]" style="background: rgba(0,0,0,0.55);">
+        <p class="text-center font-black tracking-wide text-[#C9A84C]/70 uppercase mb-1" style="font-size: 0.5rem;">
           📋 BENCH (အရံလူစာရင်း)
         </p>
         <div class="flex justify-around items-center w-full">
@@ -119,13 +118,13 @@ function renderPitch(data) {
     
     subs.forEach(p => {
       benchContent += `
-        <div class="flex flex-col items-center mx-0.5 relative min-w-[48px] opacity-40">
-          <div class="w-7.5 h-7.5 rounded-full flex items-center justify-center mb-0.5 overflow-hidden" style="background:#164225; border:1px solid rgba(255,255,255,0.15);">
-            <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-5.5 h-5.5 object-contain" />
+        <div class="flex flex-col items-center mx-0.5 relative min-w-[48px] shadow-[0_4px_8px_rgba(0,0,0,0.5)] p-0.5 rounded-lg">
+          <div class="w-7.5 h-7.5 rounded-full flex items-center justify-center mb-0.5 overflow-hidden" style="background:#164225; border:1.5px solid rgba(255,255,255,0.4);">
+            <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-5.5 h-5.5 object-contain rounded-full" />
             <span style="display:none;font-size:0.65rem;">👕</span>
           </div>
-          <p class="text-white text-center font-medium truncate" style="font-size:0.48rem; max-w:44px;">${p.name || "?"}</p>
-          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.4); padding:0 2.5px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
+          <p class="text-white text-center font-bold truncate" style="font-size:0.48rem; max-w:44px;">${p.name || "?"}</p>
+          <span style="font-size:0.55rem; color:#C9A84C; font-weight:800; background:rgba(0,0,0,0.6); padding:0 3px; border-radius:2px; mt-0.5">${p.livePoints ?? 0}</span>
         </div>
       `;
     });
