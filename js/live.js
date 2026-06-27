@@ -49,7 +49,7 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 Player Card Maker (အဝိုင်း Border + ပါးလွှာသော shadow ပုံစံတပြေးညီစနစ်)
+// 📛 Player Card Maker (အန်ကယ်အလိုရှိသည့် မူရင်းအဝိုင်းဒီဇိုင်းစစ်စစ်)
 function playerCard(p, isBench = false) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -57,8 +57,8 @@ function playerCard(p, isBench = false) {
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
 
-  // 💡 Bench ဖြစ်ပါက သပ်ရပ်သော အဖြူရောင်ဖျော့ Ring ခတ်မည်၊ ပွဲထွက်ဆိုပါက C/V အလိုက် အရောင်ခွဲခြားမည်
-  const ringColor = isBench ? 'rgba(255,255,255,0.35)' : isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
+  // 💡 အန်ကယ်ပြောသကဲ့သို့ အရံလူဆိုပါက ရွှေရောင်/ဝါရောင် Border ခတ်မည်၊ ပွဲထွက်ဆိုပါက C/V အလိုက် ခွဲခြားမည်
+  const ringColor = isBench ? '#C9A84C' : isCap ? '#F0D060' : Ext = isVc ? '#C0C0C0' : '#2A7A47'; 
 
   const badge = mult === 3
     ? '<span style="position:absolute; top:-3px; right:-5px; font-size:0.5rem; background:#F0D060; color:#0D2B1A; border-radius:9999px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:900; border:1px solid #000; z-index:10;">3x</span>' 
@@ -68,7 +68,6 @@ function playerCard(p, isBench = false) {
     ? '<span style="position:absolute; top:-3px; right:-5px; font-size:0.52rem; background:#C0C0C0; color:#0D2B1A; border-radius:9999px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:900; border:1px solid #000; z-index:10;">V</span>' 
     : '';
 
-  // 💡 🏆 အန်ကယ့်ဆန္ဒအတိုင်း ပါးလွှာကျနသော အမည်းရောင် shadow drop (rgba(0,0,0,0.55)) ဖြင့် ပေါလောပေါ်အောင် ပုံဖော်ခြင်း
   return `
     <div class="flex flex-col items-center mx-1" style="flex-shrink:0; min-w-[50px]; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.55));">
       <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-visible relative" style="background:#1F5C36; border:2px solid ${ringColor};">
@@ -106,12 +105,12 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
-  // 📥 💡 🏆 BENCH CONTAINER (အမည်းရောင် Box ကြီး ဖြုတ်ပစ်ပြီး အဖြူရောင်ဘောင်ပါးပါးလေးဖြင့် Lineup အတိုင်း ပြသခြင်း)
+  // 📥 💡 🏆 BENCH CONTAINER (အမည်းရောင် Box ကြီး ဖြုတ်ပြီး ပါးလွှာသော ရွှေရောင်ဘောင်လေး ခတ်ခြင်း)
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
-      <div class="w-full px-2 py-1 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.15);">
-        <p class="text-center font-black tracking-wide text-white/40 uppercase mb-1" style="font-size: 0.5rem; letter-spacing: 0.05em;">
+      <div class="w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/30" style="background: rgba(0,0,0,0.15);">
+        <p class="text-center font-black tracking-wide text-[#C9A84C]/70 uppercase mb-1" style="font-size: 0.5rem; letter-spacing: 0.05em;">
           📋 BENCH (အရံလူစာရင်း)
         </p>
         <div class="flex justify-around items-center w-full">
@@ -183,4 +182,3 @@ window.sendMessage = async () => {
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
-
