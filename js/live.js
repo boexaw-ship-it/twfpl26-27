@@ -20,7 +20,7 @@ onAuthStateChanged(auth, async (user) => {
     updateChatLock(); 
 
     if (data.fplTeamId) {
-      // 1. livePoints Collection Watcher (အမှတ်နှင့် Summary ဒေတာများ ရယူခြင်း)
+      // 1. livePoints Watcher
       onSnapshot(doc(db, "livePoints", data.fplTeamId), (d) => {
         if (d.exists()) {
           document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—"; 
@@ -35,7 +35,7 @@ onAuthStateChanged(auth, async (user) => {
         }
       });
       
-      // 2. liveTeams Collection Watcher (ကွင်းပြင်လူစာရင်း ရယူခြင်း)
+      // 2. liveTeams Watcher
       onSnapshot(doc(db, "liveTeams", data.fplTeamId), (d) => {
         if (d.exists()) renderPitch(d.data()); 
       });
@@ -45,17 +45,17 @@ onAuthStateChanged(auth, async (user) => {
   loadChat(); 
 });
 
-// 👕 🎨 ဂျာစီပုံရိပ်လမ်းကြောင်း (Goalkeeper နှင့် Outfield တိကျစွာ ခွဲခြားမှု Class)
+// 👕 🎨 ဂျာစီပုံရိပ်လမ်းကြောင်း (GK နှင့် Outfield ကွက်တိစစ်ဆေးခြင်း)
 function jerseyPath(p) {
-  const posClean = String(p.position || "").toUpperCase().trim(); // 💡 Case Insensitive Fix
-  const folder = (posClean === "GK" || posClean === "GKP") ? "gk" : "outfield"; 
+  const pos = String(p.position || "").toUpperCase().trim();
+  const folder = (pos.startsWith("GK")) ? "gk" : "outfield"; 
   const code = String(p.teamCode || "unknown").toLowerCase().trim(); 
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
 // 📛 Player Card ကတ်ပြားဒီဇိုင်းပုံစံစစ်စစ် (နာမည်အကွက်ဖြူ + ရမှတ်အကွက်မည်း)
 function playerCard(p) {
-  const mult = p.multiplier || 1; 
+  const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
   
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
@@ -71,7 +71,7 @@ function playerCard(p) {
   }
 
   return `
-    <div class="flex flex-col items-center mx-1 my-0.5 relative min-w-[65px] sm:min-w-[70px]" style="flex-shrink:0;">
+    <div class="flex flex-col items-center mx-0.5 my-0.5 relative min-w-[62px] sm:min-w-[68px]" style="flex-shrink:0;">
       ${badgeHtml}
       <img src="${jerseyPath(p)}" 
            onerror="this.src='/twfpl26-27/public/jerseys/outfield/unknown.png'" 
@@ -82,19 +82,19 @@ function playerCard(p) {
   `;
 }
 
-// 🏟️ Starters နှင့် Subs ခွဲထုတ်၍ Live Pitch ကွင်းပြင်ပုံဖော်ခြင်း
+// 🏟️ 🎯 💡 Fail-Safe နေရာချစနစ် Engine
 function renderPitch(data) {
   const picks = data.picks || []; 
   
-  // multiplier > 0 ဖြစ်လျှင် ပွဲထွက် (Starters) ၊ multiplier === 0 ဖြစ်လျှင် အရံ (Bench) ဖြစ်သည်
+  // 💡 String ဒေတာအဝင်များပါမကျန် စိတ်ချရစေရန် Number တန်ဖိုးသို့ တင်းကျပ်စွာပြောင်းလဲခြင်း
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
   
-  // 🎯 💡 🏆 CRITICAL FIX: စာလုံးအကြီး/အသေး နှစ်မျိုးစလုံး (GK/gk, DEF/def) မှန်ကန်စွာ ဝင်ဆံ့စေရန် စစ်ဆေးခြင်း
-  const gk = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos === "GK" || pos === "GKP"; });
-  const def = starters.filter(p => String(p.position || "").toUpperCase().trim() === "DEF");
-  const mid = starters.filter(p => String(p.position || "").toUpperCase().trim() === "MID");
-  const fwd = starters.filter(p => String(p.position || "").toUpperCase().trim() === "FWD");
+  // 💡 GKP, DEFENDER, MIDFIELDER, FORWARD စာလုံးရေအရှည်ကြီးများပါဝင်လာပါက ရှေ့စာလုံး ၂ လုံးတည်းဖြင့် အုပ်စုခွဲခြင်း (Fail-Safe Grouping)
+  const gk = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("GK"); });
+  const def = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("DE"); });
+  const mid = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("MI"); });
+  const fwd = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("FW") || pos.startsWith("FO"); });
 
   let htmlContent = "";
 
@@ -110,11 +110,10 @@ function renderPitch(data) {
   // 🏟️ Row 4 — Forwards Row
   htmlContent += `<div class="pitch-row"> ${fwd.map(playerCard).join("")} </div>`;
 
-  // ============================================
-  // 📥 ⚙️ BENCH (အရံလူစာရင်း ၄ ယောက်) သီးသန့် အောက်ခြေ Panel
+  // ⚙️ 📥 BENCH (အရံလူစာရင်း ၄ ယောက်) PANEL
   if (subs.length > 0) {
     htmlContent += `
-      <div class="mt-2 w-full px-2 py-1 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.35);">
+      <div class="mt-1 w-full px-1.5 py-1 rounded-xl border border-white/10" style="background: rgba(0,0,0,0.45);">
         <p class="text-center font-bold tracking-wide text-white/40 uppercase mb-0.5" style="font-size: 0.55rem;">
           ⚙️ BENCH (အရံလူစာရင်း)
         </p>
@@ -123,12 +122,12 @@ function renderPitch(data) {
     
     subs.forEach(p => {
       htmlContent += `
-        <div class="flex flex-col items-center mx-0.5 relative min-w-[55px]">
+        <div class="flex flex-col items-center mx-0.5 relative min-w-[52px]">
           <img src="${jerseyPath(p)}" 
                onerror="this.src='/twfpl26-27/public/jerseys/outfield/unknown.png'"
                class="w-8 h-8 object-contain opacity-75" alt="Jersey" />
-          <div class="player-box-title mt-0.5 scale-90 origin-bottom" style="max-w: 60px;">${p.name || "?"}</div>
-          <div class="player-box-points scale-90 origin-top text-white/60" style="max-w: 60px; background:#111;">${p.livePoints ?? 0}</div>
+          <div class="player-box-title mt-0.5 scale-90 origin-bottom" style="max-w: 58px;">${p.name || "?"}</div>
+          <div class="player-box-points scale-90 origin-top text-white/60" style="max-w: 58px; background:#111;">${p.livePoints ?? 0}</div>
         </div>
       `;
     });
@@ -136,11 +135,10 @@ function renderPitch(data) {
     htmlContent += `</div></div>`;
   }
 
-  // Master Pitch HTML Injection
   document.getElementById("pitch").innerHTML = htmlContent;
 }
 
-// 🔒 Chat Message Lock Control Engine
+// 🔒 Chat Message Lock
 function updateChatLock() {
   const input = document.getElementById("chat-input"); 
   const sendBtn = document.getElementById("send-btn"); 
@@ -160,7 +158,7 @@ function updateChatLock() {
   }
 }
 
-// 💬 Live Chat Real-time Snapshot Watcher
+// 💬 Live Chat Listener
 function loadChat() {
   const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(50)); 
   onSnapshot(q, (snapshot) => {
@@ -190,7 +188,6 @@ function loadChat() {
   });
 }
 
-// 📤 Message Sending Trigger
 window.sendMessage = async () => {
   if (!isApproved) return; 
   const input = document.getElementById("chat-input"); 
@@ -200,7 +197,6 @@ window.sendMessage = async () => {
   await addDoc(collection(db, "chat"), { text, teamName: currentTeamName, uid: currentUser.uid, createdAt: serverTimestamp() }); 
 };
 
-// ⌨️ Keyboard Enter Handler
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
