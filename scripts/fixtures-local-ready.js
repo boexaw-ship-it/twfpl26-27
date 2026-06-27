@@ -17,7 +17,7 @@ if (admin.apps.length === 0) {
 
 const db = admin.firestore();
 
-// 💡 🏆 ✅ ၂၀၂၆-၂၇ TEAM ID MAP: အန်ကယ့်ရဲ့ ဂျာစီဖိုင်အမည် (၁ မှ ၂၀ အစီအစဉ်) အတိုင်း ကွက်တိ ပြင်ဆင်ပြီးစီးမှု
+// 💡 အန်ကယ့် Jersey ID အစီအစဉ်အတိုင်း ကွက်တိ (၁ မှ ၂၀)
 const teamIdMap = {
   "Arsenal": 1,
   "Aston Villa": 2,
@@ -45,16 +45,17 @@ async function buildLocalFixturesReady() {
   try {
     const jsonPath = path.join(__dirname, "FI.json");
     if (!fs.existsSync(jsonPath)) {
-      throw new Error("scripts/ folder ထဲတွင် FI.json ဖိုင်အား ရှာမတွေ့ပါဗျာ။ အရင်ထည့်ပေးပါဦး။");
+      throw new Error("scripts/ folder ထဲတွင် FI.json ဖိုင်အား ရှာမတွေ့ပါဗျာ။");
     }
 
     const rawData = fs.readFileSync(jsonPath, "utf-8");
     const teamFixtures = JSON.parse(rawData);
 
-    console.log("📦 FI.json မှ ၂၀၂၆-၂၇ ပွဲစဉ်များကို အန်ကယ့် Jersey ID အသစ်များဖြင့် စုစည်းနေပါသည်...");
+    console.log("📦 FI.json မှ ၂၀၂၆-၂၇ ပွဲစဉ်များကို တိကျသော Structure အသစ်ဖြင့် စိစစ်နေပါသည်...");
 
     let allUniqueMatches = new Map();
 
+    // ပွဲစဉ်များကို ထပ်နေသည်များ စစ်ထုတ်ခြင်း
     for (const teamName in teamFixtures) {
       const matches = teamFixtures[teamName];
       
@@ -64,27 +65,28 @@ async function buildLocalFixturesReady() {
         
         if (!homeId || !awayId) return;
 
-        // မြန်မာစံတော်ချိန် (MMT) မှ UTC သို့ အချိုးကျ ပြောင်းလဲ၍ ISO String တည်ဆောက်ခြင်း
+        // မြန်မာစံတော်ချိန် (MMT) မှ UTC သို့ ISO String တည်ဆောက်ခြင်း
         const localDateTime = new Date(`${m.date}T${m.time}:00`);
         const utcDateTimeStr = localDateTime.toISOString();
 
+        // Unique Key အဖြစ် Home VS Away ပုံစံ သတ်မှတ်ခြင်း
         const matchKey = `${homeId}_vs_${awayId}`;
 
         if (!allUniqueMatches.has(matchKey)) {
           allUniqueMatches.set(matchKey, {
-            homeId: homeId,
-            awayId: awayId,
+            team_h: homeId,
+            team_a: awayId,
             kickoff_time: utcDateTimeStr
           });
         }
       });
     }
 
-    // ပွဲချိန်အလိုက် Timeline အစီအစဉ်တကျ စီခြင်း
+    // ရက်စွဲ/ပွဲချိန်အလိုက် Timeline အစီအစဉ်အတိုင်း တန်းစီခြင်း
     const sortedMatches = Array.from(allUniqueMatches.values()).sort((a, b) => new Date(a.kickoff_time) - new Date(b.kickoff_time));
     
-    console.log(`✅ ၂၀၂၆-၂၇ အသင်းစစ်စစ် စစ်ထုတ်ပြီး ပွဲစဉ်အရေအတွက်: (${sortedMatches.length}) ခု ရရှိပါသည်။`);
-    console.log("🚀 Firebase Firestore ထဲသို့ တစ်ရာသီလုံးစာ နေရာလွတ် (Ready Matrix) မောင်းထည့်နေပါပြီ...");
+    console.log(`✅ စစ်ထုတ်ပြီး စုစုပေါင်း ပွဲစဉ်အရေအတွက်: (${sortedMatches.length}) ခု ရရှိပါသည်။`);
+    console.log("🚀 Firebase Firestore ထဲသို့ Structure အမှန်ဖြင့် အစားထိုး မောင်းထည့်နေပါပြီ...");
 
     let batch = db.batch();
     let count = 0;
@@ -92,28 +94,30 @@ async function buildLocalFixturesReady() {
     sortedMatches.forEach((match, index) => {
       const id = index + 1; // 1 မှ 380 အထိ ပွဲစဉ် ID
       
-      // ပွဲစဉ် ၁၀ ခုစီကို အုပ်စုဖွဲ့၍ Week 1 မှ 38 အထိ အချိုးကျ ခွဲဝေခြင်း
+      // ပွဲစဉ် ၁၀ ခုစီကို Week 1 မှ 38 အထိ အုပ်စုခွဲခြင်း
       const calculatedGw = Math.floor((id - 1) / 10) + 1;
 
       const fixtureDocRef = db.collection("fixtures").doc(String(id));
 
+      // 💡 ✅ FIXED STRUCTURE: ပင်မ Fields များနှင့် Stats နေရာအား သန့်ရှင်းစွာ သီးခြားခွဲထုတ်လိုက်ပါသည်
       const fixtureData = {
         id: Number(id),
-        event: Number(calculatedGw), // Dynamic Week 1 to 38
+        event: Number(calculatedGw), 
         code: 20262700 + id,
         kickoff_time: match.kickoff_time,
         started: false,
         finished: false,
         minutes: 0,
-        team_h: Number(match.homeId),
-        team_a: Number(match.awayId),
-        team_h_score: null,
-        team_a_score: null,
-        stats: [], // API မချိတ်ခင် စာရင်းအားလုံးအား အလွတ် (Ready အဖြစ်) ထားရှိခြင်း
+        team_h: Number(match.team_h),       // 🏡 ပင်မ Field အပြင်ဘက်သို့ ထုတ်ထားပါသည်
+        team_a: Number(match.team_a),       // 🚀 ပင်မ Field အပြင်ဘက်သို့ ထုတ်ထားပါသည်
+        team_h_score: null,                 // 🏡 ပင်မ Field အပြင်ဘက်သို့ ထုတ်ထားပါသည်
+        team_a_score: null,                 // 🚀 ပင်မ Field အပြင်ဘက်သို့ ထုတ်ထားပါသည်
+        stats: [],                          // ⚽ Stats အား Array သီးသန့် သန့်ရှင်းစွာ ထားရှိပါသည်
         last_updated: admin.firestore.FieldValue.serverTimestamp()
       };
 
-      batch.set(fixtureDocRef, fixtureData, { merge: true });
+      // set နေရာတွင် merge: false ဖြင့် အစားထိုးခြင်းဖြင့် ပုံစံဟောင်းမှားယွင်းမှုများကို အပြီးတိုင် ခြစ်ဖျက်ပစ်ပါမည်
+      batch.set(fixtureDocRef, fixtureData);
       count++;
 
       if (count % 400 === 0) {
@@ -126,11 +130,11 @@ async function buildLocalFixturesReady() {
       await batch.commit();
     }
 
-    console.log(`🏆 [SUCCESS READY] ၂၀၂၆-၂၇ အသင်း ID အမှန်များဖြင့် Week 1 မှ 38 အလိုက် Firebase ထဲသို့ မောင်းထည့်ပြီးစီးပါပြီ အန်ကယ်ဗျာ!`);
+    console.log(`🏆 [SUCCESS] တည်ဆောက်ပုံ Structure အမှန်ဖြင့် Firebase ထဲသို့ ပွဲစဉ် ၃၈၀ လုံး အစားထိုးမောင်းထည့်ပြီးပါပြီ အန်ကယ်ဗျာ!`);
     process.exit(0);
 
   } catch (error) {
-    console.error("❌ Local Matrix Sync ကျရှုံးရပါသည် အန်ကယ်:", error);
+    console.error("❌ Matrix Sync ကျရှုံးရပါသည် အန်ကယ်:", error);
     process.exit(1);
   }
 }
