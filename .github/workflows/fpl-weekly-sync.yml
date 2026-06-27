@@ -1,31 +1,32 @@
 # ============================================
 # TW Fantasy Official League
-# Weekly Sync Workflow
+# Weekly Sync Workflow (Match-Day Optimized)
 # ============================================
-# ဒီ Workflow က —
+# ဒီ Workflow က စနစ်နှစ်ခုစလုံးအား ပူးတွဲမောင်းနှင်ပေးတယ် —
 #   1. scripts/weekly-live-sync.js  → User team picks + live points
 #   2. scripts/league-sync.js       → Private League 2 ခု standings
-# နှစ်ခုလုံးကို run ပြီး Firebase ထဲ data update လုပ်ပေးတယ်
-#
-# Trigger:
-#   - Manual: GitHub Actions tab ကနေ "Run workflow" ခလုတ်နှိပ်ပြီး run
-#   - Auto:   6 နာရီတစ်ခါ အလိုအလျောက် run
 # ============================================
 
 name: FPL Weekly Live Sync
 
 on:
-  # Manual trigger — Admin လိုချင်တဲ့အချိန် run လို့ရအောင်
+  # 💡 1. MANUAL TRIGGER — Admin လိုချင်တဲ့အချိန် GitHub Actions ထဲမှ ဝင်နှိပ်ပြီး မောင်းရန် Manual ခလုတ်
   workflow_dispatch:
 
-  # Auto trigger — 6 နာရီတစ်ခါ
+  # 💡 2. AUTO SCHEDULE (CRON) — စနေ၊ တနင်္ဂနွေ ပွဲကန်ချိန်အတွင်းသာ (၂) နာရီတစ်ခါ အော်တိုမောင်းရန်
   schedule:
-    - cron: "0 */6 * * *"
+    # 🎯 စနေနေ့ (Saturday) မြန်မာစံတော်ချိန် ညနေ 18:00, 20:00, 22:00, 24:00 (သန်းခေါင်) တိတိတွင် မောင်းမည်
+    # (UTC အနေဖြင့် 11:30, 13:30, 15:30, 17:30 တွင် အလုပ်လုပ်ပါမည်)
+    - cron: '30 11,13,15,17 * * 6'
+
+    # 🎯 တနင်္ဂနွေနေ့ (Sunday) မြန်မာစံတော်ချိန် ညနေ 18:00, 20:00, 22:00, 24:00 (သန်းခေါင်) တိတိတွင် မောင်းမည်
+    # (UTC အနေဖြင့် 11:30, 13:30, 15:30, 17:30 တွင် အလုပ်လုပ်ပါမည်)
+    - cron: '30 11,13,15,17 * * 0'
 
 jobs:
   sync:
     runs-on: ubuntu-latest
-    timeout-minutes: 10
+    timeout-minutes: 12          # 💡 Script နှစ်ခုစလုံး ပူးတွဲမောင်းရန်အတွက် အချိန်အား ၁၂ မိနစ် Safe ထားရှိခြင်း
 
     steps:
       # Step 1 — Repo code ကို checkout လုပ်
@@ -38,17 +39,19 @@ jobs:
         with:
           node-version: 20
 
-      # Step 3 — Dependencies Install
+      # Step 3 — Dependencies Install (FPL ဆီက ဒေတာဆွဲရန် axios ကိုပါ တစ်ခါတည်း ပူးတွဲထည့်သွင်းခြင်း)
       - name: Install Dependencies
-        run: npm install firebase-admin
+        run: |
+          npm init -y
+          npm install firebase-admin axios
 
-      # Step 4 — Weekly Live Sync (Team picks + Points)
+      # Step 4 — Weekly Live Sync (User များ၏ ၁၅ ယောက် Squad နှင့် Live ရမှတ်များ ရေးသွင်းခြင်း)
       - name: Run Weekly Live Sync
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
         run: node scripts/weekly-live-sync.js
 
-      # Step 5 — League Standings Sync (Private League 2 ခု)
+      # Step 5 — League Standings Sync (Week Guard ပါဝင်သော Standings နှင့် Picks Update လုပ်ခြင်း)
       - name: Run League Sync
         env:
           FIREBASE_SERVICE_ACCOUNT: ${{ secrets.FIREBASE_SERVICE_ACCOUNT }}
@@ -56,4 +59,5 @@ jobs:
 
       # Step 6 — Sync ပြီးရင် summary log
       - name: Sync Complete
-        run: echo "✅ TW Fantasy Sync Completed at $(date)"
+        run: echo "✅ TW Fantasy Weekly Live & League Sync Completed Successfully at $(date)"
+        
