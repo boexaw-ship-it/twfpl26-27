@@ -55,7 +55,8 @@ export function initRealtimeInsights(uid) {
                         ownership: m.ownership || playerItem.ownership || 0,
                         form: m.form || 0,
                         totalPoints: m.totalPoints || 0,
-                        gwPoints: m.gwPoints || 0
+                        gwPoints: m.gwPoints || 0,
+                        team: m.team || playerItem.team || "" // 🛑 Team Code သိရှိရန် သိမ်းဆည်းခြင်း
                       };
                     }
                   }
@@ -198,7 +199,7 @@ window.activatePlayerSwapMode = (playerId, name, position) => {
 };
 
 /**
- * 🛒 MARKET SELECTION WITH VALIDATION GUARD RULES
+ * 🛒 MARKET SELECTION WITH FPL ULTIMATE VALIDATION GUARDS
  */
 window.executeMarketPlaceSelection = (newPlayerDocId) => {
   if (!activeSwapId) return;
@@ -211,12 +212,42 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
 
   const oldPlayer = currentLiveSquadState[oldPlayerIndex];
 
-  // 🔒 CUSTOM MODAL POSITION GUARD (No Browser Alert!)
+  // 🔒 1. POSITION GUARD
   if (String(newPlayerData.position).toLowerCase() !== activeSwapPosition) {
     if (window.showPremiumAlertBox) {
       window.showPremiumAlertBox(`FPL Regulation Error: ${activeSwapPosition.toUpperCase()} နေရာတွင် ${newPlayerData.position.toUpperCase()} လူစားလဲခွင့်မရှိပါဗျာ။`, "❌");
     }
     return;
+  }
+
+  // 🔒 2. DUPLICATE GUARD (ဝယ်ပြီးသား ကစားသမား ပြန်ဝယ်မရအောင် တားဆီးခြင်း)
+  const isAlreadyInSquad = currentLiveSquadState.some(p => String(p.playerId) === String(newPlayerData.playerId));
+  if (isAlreadyInSquad) {
+    if (window.showPremiumAlertBox) {
+      window.showPremiumAlertBox(`FPL Violation: ${newPlayerData.name} သည် သင့်အသင်းတွင် ရှိနှင့်ပြီးသား ဖြစ်သဖြင့် ထပ်မံဝယ်ယူခွင့် မရှိပါဗျာ။`, "👥");
+    }
+    return;
+  }
+
+  // 🔒 3. 3-PLAYERS MAX PER TEAM GUARD (တစ်သင်းတည်းက အများဆုံး ၃ ယောက်ပဲ ရရမည့် စည်းကမ်း)
+  const newPlayerTeam = String(newPlayerData.team || "").toUpperCase().trim();
+  if (newPlayerTeam) {
+    let teamCount = 0;
+    currentLiveSquadState.forEach((p, idx) => {
+      // လူစားလဲခံရမည့် ကစားသမားဟောင်းကို ချန်လှပ်တွက်ချက်ရမည်
+      if (idx !== oldPlayerIndex) {
+        if (String(p.team || "").toUpperCase().trim() === newPlayerTeam) {
+          teamCount++;
+        }
+      }
+    });
+
+    if (teamCount >= 3) {
+      if (window.showPremiumAlertBox) {
+        window.showPremiumAlertBox(`FPL Regulation: ${newPlayerTeam} အသင်းမှ ကစားသမား ၃ ယောက်ပြည့်နေပြီဖြစ်၍ ထပ်မံထည့်သွင်းခွင့်မရှိပါဗျာ။`, "🚫");
+      }
+      return;
+    }
   }
 
   // BUDGET CONSTRAINT REGULATION GUARD
@@ -226,7 +257,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     else provisionalCost += parseFloat(p.price || 0);
   });
 
-  // 🔒 CUSTOM MODAL BUDGET GUARD (No Browser Alert!)
+  // 🔒 4. BUDGET GUARD
   if (provisionalCost > 100.0) {
     if (window.showPremiumAlertBox) {
       window.showPremiumAlertBox(`Budget Violation: အသင်းတန်ဖိုး စုစုပေါင်း £${provisionalCost.toFixed(1)}m ဖြစ်သွားသဖြင့် FPL ခွင့်ပြုချက် £100.0m ထက် ကျော်လွန်နေပါသည်ဗျာ။`, "💰");
@@ -234,7 +265,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     return;
   }
 
-  // Swap Approved -> Commit Data
+  // Swap Approved -> Commit New State
   currentLiveSquadState[oldPlayerIndex] = {
     ...oldPlayer,
     playerId: newPlayerData.playerId,
@@ -243,7 +274,8 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     ownership: newPlayerData.ownership,
     form: newPlayerData.form || 0,
     totalPoints: newPlayerData.totalPoints || 0,
-    gwPoints: newPlayerData.gwPoints || 0
+    gwPoints: newPlayerData.gwPoints || 0,
+    team: newPlayerData.team || "" // Team သိမ်းဆည်းမည်
   };
 
   const outBar = document.getElementById("template-out-bar");
@@ -277,7 +309,7 @@ window.resetDraftToFPLRealtime = () => {
   if (cacheKey) {
     localStorage.removeItem(cacheKey);
     if (window.showPremiumAlertBox) {
-      window.showPremiumAlertBox("🎉 Budget Сည်းကမ်းချက်များနှင့် လူစာရင်းများအားလုံး FPL Official Live အတိုင်း ပြန်လည် Reset/Sync ပြီးစီးပါပြီဗျာ!", "🎉");
+      window.showPremiumAlertBox("🎉 Budget စည်းကမ်းချက်များနှင့် လူစာရင်းများအားလုံး FPL Official Live အတိုင်း ပြန်လည် Reset/Sync ပြီးစီးပါပြီဗျာ!", "🎉");
       setTimeout(() => { window.location.reload(); }, 1200);
     } else {
       window.location.reload();
@@ -317,7 +349,7 @@ export function renderUserSquadList(squadArray) {
             <span class="text-[10px] px-2 py-0.5 rounded-full font-black text-white" style="background:${posBg};">${pos}</span>
             <div>
               <p class="text-white text-sm font-semibold truncate max-w-[110px] sm:max-w-[160px]">${p.name || '—'}</p>
-              <p class="text-[9px] text-[#3A9E5F]">Pts: ${p.totalPoints || 0} | Form: ${p.form || 0}</p>
+              <p class="text-[9px] text-[#3A9E5F]">Pts: ${p.totalPoints || 0} | Team: ${p.team || '—'}</p>
             </div>
           </div>
         </div>
@@ -336,8 +368,7 @@ export function renderUserSquadList(squadArray) {
 }
 
 /**
- * 🛒 💡 🏆 PERFECT FIX POSITION SCROLL SIZE LIMIT ENGINE
- * ကုဒ်လုံးဝမပွဘဲ သတ်မှတ်အရေအတွက်အတိုင်း တိတိကျကျ စစ်ထုတ်ပေးသော Logic စစ်စစ်
+ * Compact Market Render List
  */
 function executeMarketRender() {
   let filtered = [...allPlayersCache];
@@ -358,7 +389,7 @@ function executeMarketRender() {
     return parseFloat(b.form || 0) - parseFloat(a.form || 0);
   });
 
-  // UI Button Active indicators update
+  // UI Button Active States
   ["form", "points", "price", "ownership"].forEach(k => {
     const btn = document.getElementById("msort-" + k);
     if (btn) {
@@ -370,7 +401,7 @@ function executeMarketRender() {
     }
   });
 
-  // 🔒 🏆 အန်ကယ် သတ်မှတ်ပေးလိုက်သော နေရာအလိုက် ကွက်တိ Slice Limits များ (GK: 40, DEF/MID/FWD: 100)
+  // Position-wise limits (GK: 40, DEF/MID/FWD: 100)
   let finalSliceCount = 100;
   if (activeSwapPosition === "gk") {
     finalSliceCount = 40;
@@ -388,7 +419,10 @@ function executeMarketRender() {
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
             <span class="text-[9px] px-1.5 py-0.5 rounded-full font-black text-white" style="background:${posBg};">${pos}</span>
-            <p class="text-white text-xs font-bold truncate max-w-[120px]">${p.name || '—'}</p>
+            <div>
+              <p class="text-white text-xs font-bold truncate max-w-[120px]">${p.name || '—'}</p>
+              <p class="text-[8px] text-[#E8D5A3]/60 text-left">Club: ${p.team || '—'}</p>
+            </div>
           </div>
           <div class="flex items-center gap-2">
             <p class="font-bold text-[#C9A84C] text-xs font-mono">£${parseFloat(p.price || 0).toFixed(1)}m</p>
