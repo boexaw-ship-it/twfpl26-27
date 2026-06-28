@@ -19,22 +19,37 @@ export function initRealtimeInsights(uid) {
     }
   });
 
-  // 👕 🎯 🚀 CRITICAL FIX: SQUAD 15 PLAYERS REAL-TIME FETCHING ENGINE
-  // အသုံးပြုသူ၏ ယူဆာ ID မှတစ်ဆင့် fplTeamId ကို ရှာဖွေပြီး liveTeams ဒေတာကို စက္ကန့်ပိုင်းအတွင်း ဆွဲထုတ်ခြင်း
+  // 👕 🎯 🚀 CRITICAL DATABASE ALIGNMENT SYNC ENGINE
+  // အသုံးပြုသူ၏ users node မှ fplTeamId ကို ဖတ်ပြီး liveTeams collection အောက်ရှိ ဒေတာကို ဆွဲထုတ်ခြင်း
   if (uid) {
     getDoc(doc(db, "users", uid)).then((userSnap) => {
       if (userSnap.exists() && userSnap.data().fplTeamId) {
-        const teamId = userSnap.data().fplTeamId; // ယူဆာ၏ FPL Team ID ကို ရယူခြင်း
+        const teamId = userSnap.data().fplTeamId; // ရလာသော အသင်း ID (ဥပမာ- dmIsVFopP3...)
         
-        // liveTeams collection အောက်ရှိ သက်ဆိုင်ရာ Team ID node အား Real-time တိုက်ရိုက်ချိတ်ဆက်နားထောင်ခြင်း
+        // 🛡️ liveTeams collection အောက်ရှိ သက်ဆိုင်ရာ အသင်း ID စာရင်းအား Live နားထောင်ခြင်း
         onSnapshot(doc(db, "liveTeams", teamId), (squadSnap) => {
           if (squadSnap.exists()) {
             const teamData = squadSnap.data();
             
-            // တွက်ချက်မှုများ ပိုမိုမြန်ဆန်စေရန်အတွက် Players array ရှိမရှိ စစ်ဆေးပြီး Render ပြုလုပ်ခြင်း
-            if (teamData && teamData.players) {
-              renderUserSquadList(teamData.players);
-              calculateTeamShieldTracker(teamData.players); // Shield Tracker အား အော်တိုတွက်ချက်ခိုင်းခြင်း
+            // 💡 🎯 FLEXIBLE DATABASE CHECK ENGINE
+            // အန်ကယ့် database ၏ players array အမည် သို့မဟုတ် သီးသန့် field တည်ဆောက်ပုံများကို ပျော့ပျောင်းစွာ ရှာဖွေခြင်း
+            let finalSquadArray = [];
+            if (teamData.players && Array.isArray(teamData.players)) {
+              finalSquadArray = teamData.players;
+            } else if (teamData.squad && Array.isArray(teamData.squad)) {
+              finalSquadArray = teamData.squad;
+            } else {
+              // Array ပုံစံမဟုတ်ဘဲ Object အတွင်း Field များဖြင့် သိမ်းဆည်းထားပါက စစ်ထုတ်ယူခြင်း
+              Object.keys(teamData).forEach(key => {
+                if (teamData[key] && typeof teamData[key] === 'object' && teamData[key].name) {
+                  finalSquadArray.push(teamData[key]);
+                }
+              });
+            }
+
+            if (finalSquadArray.length > 0) {
+              renderUserSquadList(finalSquadArray);
+              calculateTeamShieldTracker(finalSquadArray); // Shield Tracker အား အော်တိုတွက်ချက်ခိုင်းခြင်း
             } else {
               fallbackSquadMessage();
             }
@@ -46,7 +61,7 @@ export function initRealtimeInsights(uid) {
         fallbackSquadMessage();
       }
     }).catch((err) => {
-      console.error("Error fetching user document:", err);
+      console.error("Error fetching sync paths:", err);
       fallbackSquadMessage();
     });
   }
@@ -73,11 +88,6 @@ function fallbackSquadMessage() {
  */
 function renderUserSquadList(squadArray) {
   let html = "";
-  if (!squadArray || squadArray.length === 0) {
-    fallbackSquadMessage();
-    return;
-  }
-
   squadArray.forEach((p, idx) => {
     html += buildHtmlRow(p, idx + 1, `${p.ownership || 0}% owned`, "Current Squad Selection");
   });
