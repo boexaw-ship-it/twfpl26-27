@@ -1,7 +1,7 @@
 import { db } from "/twfpl26-27/js/firebase-config.js";
 import { collection, doc, onSnapshot, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Global Cache Controls
+// Global Variables For Filter & Live Engine Cache
 let allPlayersCache = [];
 let showGemsOnlyGlobal = false;
 
@@ -11,7 +11,7 @@ let showGemsOnlyGlobal = false;
  */
 export function initRealtimeInsights(uid) {
   
-  // 🗓️ Current Gameweek အဝိုင်းတံဆိပ်စာသားကို Firebase ရဲ့ status/current ထဲမှ ဖတ်ယူခြင်း
+  // 🗓️ Current Gameweek Header Listener
   onSnapshot(doc(db, "status", "current"), (d) => {
     if (d.exists()) {
       const gwLabel = document.getElementById("gw-header-label");
@@ -19,37 +19,25 @@ export function initRealtimeInsights(uid) {
     }
   });
 
-  // 👕 🎯 🚀 CRITICAL DATABASE ALIGNMENT SYNC ENGINE
-  // အသုံးပြုသူ၏ users node မှ fplTeamId ကို ဖတ်ပြီး liveTeams collection အောက်ရှိ ဒေတာကို ဆွဲထုတ်ခြင်း
+  // 👕 🎯 🚀 UNCLE'S TRUE path: 15 SQUAD PLAYERS FROM LIVETEAMS SYNC
+  // အန်ကယ် ပေးပို့ထားသော live.js မူရင်းအလုပ်လုပ်ပုံအတိုင်း users မှတစ်ဆင့် fplTeamId ကိုဖတ်ပြီး 
+  // doc(db, "liveTeams", fplId) အောက်ရှိ picks/players ဒေတာဇယားကို စက္ကန့်ပိုင်းအတွင်း ဖတ်ယူခြင်း
   if (uid) {
     getDoc(doc(db, "users", uid)).then((userSnap) => {
       if (userSnap.exists() && userSnap.data().fplTeamId) {
-        const teamId = userSnap.data().fplTeamId; // ရလာသော အသင်း ID (ဥပမာ- dmIsVFopP3...)
+        const fplId = userSnap.data().fplTeamId; // အန်ကယ့် ကိုယ်ပိုင် FPL Team ID ရယူခြင်း
         
-        // 🛡️ liveTeams collection အောက်ရှိ သက်ဆိုင်ရာ အသင်း ID စာရင်းအား Live နားထောင်ခြင်း
-        onSnapshot(doc(db, "liveTeams", teamId), (squadSnap) => {
+        // liveTeams collection ကို မူရင်းအတိုင်း တိုက်ရိုက် Watcher လုပ်ခြင်း
+        onSnapshot(doc(db, "liveTeams", fplId), (squadSnap) => {
           if (squadSnap.exists()) {
             const teamData = squadSnap.data();
             
-            // 💡 🎯 FLEXIBLE DATABASE CHECK ENGINE
-            // အန်ကယ့် database ၏ players array အမည် သို့မဟုတ် သီးသန့် field တည်ဆောက်ပုံများကို ပျော့ပျောင်းစွာ ရှာဖွေခြင်း
-            let finalSquadArray = [];
-            if (teamData.players && Array.isArray(teamData.players)) {
-              finalSquadArray = teamData.players;
-            } else if (teamData.squad && Array.isArray(teamData.squad)) {
-              finalSquadArray = teamData.squad;
-            } else {
-              // Array ပုံစံမဟုတ်ဘဲ Object အတွင်း Field များဖြင့် သိမ်းဆည်းထားပါက စစ်ထုတ်ယူခြင်း
-              Object.keys(teamData).forEach(key => {
-                if (teamData[key] && typeof teamData[key] === 'object' && teamData[key].name) {
-                  finalSquadArray.push(teamData[key]);
-                }
-              });
-            }
-
-            if (finalSquadArray.length > 0) {
-              renderUserSquadList(finalSquadArray);
-              calculateTeamShieldTracker(finalSquadArray); // Shield Tracker အား အော်တိုတွက်ချက်ခိုင်းခြင်း
+            // အန်ကယ့် database တည်ဆောက်ပုံ Flexible ဖြစ်စေရန် picks သို့မဟုတ် players array အား ရွေးချယ်ဖတ်ယူခြင်း
+            const squadArray = teamData.picks || teamData.players || [];
+            
+            if (squadArray.length > 0) {
+              renderUserSquadList(squadArray);
+              calculateTeamShieldTracker(squadArray); // Shield Tracker အား ပိုင်ဆိုင်မှု ပျမ်းမျှတွက်ချက်ခိုင်းခြင်း
             } else {
               fallbackSquadMessage();
             }
@@ -61,7 +49,7 @@ export function initRealtimeInsights(uid) {
         fallbackSquadMessage();
       }
     }).catch((err) => {
-      console.error("Error fetching sync paths:", err);
+      console.error("Error path syncing squad database:", err);
       fallbackSquadMessage();
     });
   }
@@ -151,11 +139,11 @@ function executeInsightsRender() {
 }
 
 /**
- * Modular Row Card HTML Template
+ * Modular Row Card HTML Template (Clean English Version Only)
  */
 function buildHtmlRow(p, index, rightLabel, subText) {
   let posBg = "#9f1239";
-  const pos = String(p.position || "").toUpperCase();
+  const pos = String(p.position || "").toUpperCase().trim();
   if (pos === "GK") posBg = "#1d4ed8";
   else if (pos === "DEF") posBg = "#15803d";
   else if (pos === "MID") posBg = "#92400e";
