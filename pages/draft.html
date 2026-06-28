@@ -9,10 +9,20 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
+    /* 💡 🎯 🚀 PERFECT SELECTION BLOCKER WITHOUT BREAKING LINKS/BUTTONS */
+    /* စာသားများကို ဖိထားပါက Google Menu တက်ခြင်းကိုသာ ပိတ်ပြီး၊ ခလုတ်များနှင့် နှိပ်စနစ်များကို လုံးဝမထိခိုက်စေသော CSS အသစ် */
     * { 
       -webkit-tap-highlight-color: transparent; 
-      -webkit-user-select: none !important;
-      user-select: none !important;
+      -webkit-user-select: none;
+      user-select: none;
+    }
+    
+    /* နှိပ်ရမည့် Component တည်နေရာများအား Pointer Active စနစ် ပြန်လည်ပွင့်စေရန် သီးသန့်ပေးခြင်း */
+    button, [onclick], a, .segment-btn {
+      -webkit-user-select: auto !important;
+      user-select: auto !important;
+      pointer-events: auto !important;
+      cursor: pointer;
     }
     
     body { 
@@ -46,7 +56,6 @@
 </head>
 <body>
 
-  <!-- Top Navigation Panel -->
   <div style="background:#041e12; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
     <div class="flex items-center">
       <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
@@ -58,9 +67,8 @@
     </div>
   </div>
 
-  <!-- Real-time Evaluation Widgets -->
-  <div class="p-4 grid grid-cols-2 gap-3 flex-shrink-0 bg-[#041e12]">
-    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5">
+  <div class="p-4 grid grid-cols-2 gap-3 flex-shrink-0 bg-[#041e12] relative z-10">
+    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5 cursor-pointer active:scale-[0.99] transition-all" onclick="console.log('Compare clicked')">
       <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">DRAFT TEMPLATE COMPARE</span>
       <div class="flex items-center justify-between text-white text-xs font-bold font-mono mt-0.5">
         <span class="text-yellow-500">Out: 45%</span>
@@ -73,30 +81,26 @@
       </div>
     </div>
 
-    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between">
+    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between cursor-pointer active:scale-[0.99] transition-all" onclick="console.log('Radar clicked')">
       <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">CAPTAINCY RISK RADAR</span>
       <p id="captain-risk-text" class="text-[10px] font-black text-yellow-500 mt-1 leading-tight">Tactical Move! (Elite Rivals 75% captained Haaland)</p>
     </div>
   </div>
 
-  <!-- Tab Segments Selector -->
-  <div class="flex bg-[#041e12] border-b border-[#1F5C36]/60 flex-shrink-0">
+  <div class="flex bg-[#041e12] border-b border-[#1F5C36]/60 flex-shrink-0 relative z-20">
     <button onclick="switchDraftTab('squad')" id="seg-squad" class="segment-btn active">👕 MY SQUAD (15)</button>
     <button onclick="switchDraftTab('ownership')" id="seg-ownership" class="segment-btn">📊 OWNERSHIP INSIGHTS</button>
     <button onclick="switchDraftTab('fixtures')" id="seg-fixtures" class="segment-btn">🗓️ FIXTURE MATRIX</button>
   </div>
 
-  <!-- Fixed Router Display Box -->
-  <div class="flex-1 overflow-y-auto no-scrollbar relative bg-[#041e12]">
+  <div class="flex-1 overflow-y-auto no-scrollbar relative bg-[#041e12] z-10">
     
-    <!-- Tab 1: My Squad Section -->
     <div id="view-squad" class="tab-content absolute inset-0 p-4 overflow-y-auto no-scrollbar">
       <div id="my-squad-list">
-        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your squad list...</p>
+        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your 15 players list...</p>
       </div>
     </div>
     
-    <!-- Tab 2: Ownership Insights Section -->
     <div id="view-ownership" class="tab-content hidden absolute inset-0 p-4 overflow-y-auto no-scrollbar space-y-3">
       <div class="flex items-center justify-between bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-2 flex-shrink-0">
         <span class="text-[10px] font-bold text-[#E8D5A3] uppercase tracking-wider pl-1">Scout Intelligence Filter</span>
@@ -109,7 +113,6 @@
       </div>
     </div>
 
-    <!-- Tab 3: Fixture Matrix Section -->
     <div id="view-fixtures" class="tab-content hidden absolute inset-0 p-4 overflow-y-auto no-scrollbar space-y-3">
       <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer flex-shrink-0" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
@@ -153,7 +156,6 @@
     </div>
   </div>
 
-  <!-- Filter Dropdown Modal -->
   <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
     <div class="w-full max-w-md rounded-t-2xl p-4 flex flex-col" style="background:#041e12; border-top: 2px solid #C9A84C; max-height:75vh;">
       <div class="flex justify-between items-center pb-3 border-b border-gray-800 mb-2">
@@ -213,7 +215,7 @@
   </script>
 
   <script>
-    // Tab Controller Fix (Absolute Reset display to safe view blocking)
+    // Tab Controller (Absolute Block Layer Fixed)
     function switchDraftTab(tabId) {
       document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
