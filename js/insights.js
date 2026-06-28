@@ -35,7 +35,7 @@ export function initRealtimeInsights(uid) {
           calculateTeamShieldTracker(currentLiveSquadState);
           evaluateSquadBudgetMetrics(); 
           checkCaptaincyRiskRadar();
-          initializeDefaultCompareBar(); // 🔥 စစချင်း Default Compare တွက်ခိုင်းခြင်း
+          triggerInitialTemplateCompare(); 
         } else {
           onSnapshot(doc(db, "liveTeams", fplId), async (squadSnap) => {
             if (squadSnap.exists()) {
@@ -69,7 +69,7 @@ export function initRealtimeInsights(uid) {
                 calculateTeamShieldTracker(currentLiveSquadState);
                 evaluateSquadBudgetMetrics(); 
                 checkCaptaincyRiskRadar();
-                initializeDefaultCompareBar(); // 🔥 စစချင်း Default Compare တွက်ခိုင်းခြင်း
+                triggerInitialTemplateCompare(); 
               }
             }
           });
@@ -89,15 +89,22 @@ export function initRealtimeInsights(uid) {
 }
 
 /**
- * 📊 💡 🏆 INITIAL LOAD COMPARE BAR ENGINE
- * လူမလဲခင် စစချင်းမှာ အသင်း၏ လက်ရှိပျမ်းမျှ Ownership ကို အခြေခံအဖြစ် တွက်ချက်ပြသပေးခြင်း
+ * 📊 INITIAL TEMPLATE COMPARE ENGINE
  */
-function initializeDefaultCompareBar() {
+function triggerInitialTemplateCompare() {
   if (!currentLiveSquadState || currentLiveSquadState.length === 0) return;
-  
-  let totalOwnership = 0;
-  currentLiveSquadState.forEach(p => { totalOwnership += parseFloat(p.ownership || 0); });
-  const averageOwnership = Math.round(totalOwnership / currentLiveSquadState.length);
+
+  let highestOwn = 0;
+  let lowestOwn = 100;
+
+  currentLiveSquadState.forEach(p => {
+    const own = parseFloat(p.ownership || 0);
+    if (own > highestOwn) highestOwn = own;
+    if (own < lowestOwn && own > 0) lowestOwn = own;
+  });
+
+  if (highestOwn === 0) highestOwn = 45;
+  if (lowestOwn === 100) lowestOwn = 8;
 
   const outLabel = document.getElementById("template-out-label");
   const inLabel = document.getElementById("template-in-label");
@@ -105,10 +112,10 @@ function initializeDefaultCompareBar() {
   const inBar = document.getElementById("template-in-bar");
 
   if (outLabel && inLabel && outBar && inBar) {
-    outLabel.textContent = `Squad: ${averageOwnership}%`; // လက်ရှိအသင်းပျမ်းမျှအား ပြခြင်း
-    inLabel.textContent = `Target`;
-    outBar.style.width = `${averageOwnership}%`;
-    inBar.style.width = `0%`; // လူသစ်မရှိသေးသဖြင့် 0 ပြထားခြင်း
+    outLabel.textContent = `Out: ${Math.round(highestOwn)}%`;
+    inLabel.textContent = `In: ${Math.round(lowestOwn)}%`;
+    outBar.style.width = `${highestOwn}%`;
+    inBar.style.width = `${lowestOwn}%`;
   }
 }
 
@@ -234,7 +241,6 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     gwPoints: newPlayerData.gwPoints || 0
   };
 
-  // Compare Progress bars indicators update
   const outBar = document.getElementById("template-out-bar");
   const inBar = document.getElementById("template-in-bar");
   if (outBar && inBar) {
@@ -321,21 +327,32 @@ export function renderUserSquadList(squadArray) {
 }
 
 /**
- * Compact Market Render List
+ * 🛒 💡 🏆 ADVANCED POSITION-BOUNDED VIEW ENGINE (အန်ကယ် ရွှေဉာဏ်တော် စွမ်းသည့်စနစ်)
+ * GK: 40 | DEF: 100 | MID: 100 | FWD: 100 ကန့်သတ်ချက်ဖြင့် Smart Sorting မောင်းနှင်ခြင်း
  */
 function executeMarketRender() {
   let filtered = [...allPlayersCache];
+  
+  // လက်ရှိ ရွေးချယ်ထားသော နေရာအလိုက် ကစားသမားများကိုသာ ကွက်တိ ဇကာတင်စစ်ထုတ်ခြင်း
   if (activeSwapPosition) {
     filtered = filtered.filter(p => String(p.position).toLowerCase() === activeSwapPosition);
   }
 
+  // 🧠 SMART SORTING ALGORITHM - အန်ကယ်ပြောသလို "Form ကောင်းပြီး Ownership အများဆုံးလူ" ကို ထိပ်ဆုံးတင်ပေးခြင်း
+  // ပထမဦးစားပေး Form ဖြင့်စီပြီး၊ Form တူပါက ဒုတိယဦးစားပေး Ownership အများဆုံးဖြင့် ထပ်မံထက်ဆင့်စီပေးသော အဆင့်မြင့် စမတ်စနစ်
   filtered.sort((a, b) => {
     if (currentMarketSortKey === "price") return parseFloat(b.price || 0) - parseFloat(a.price || 0);
     if (currentMarketSortKey === "ownership") return parseFloat(b.ownership || 0) - parseFloat(a.ownership || 0);
     if (currentMarketSortKey === "points") return parseInt(b.totalPoints || 0) - parseInt(a.totalPoints || 0);
+    
+    // Default (Form Mode) : Form အရင်ယှဉ်၊ တူရင် Own% အများဆုံးကို ထိပ်ဆုံးပို့
+    if (parseFloat(b.form || 0) === parseFloat(a.form || 0)) {
+      return parseFloat(b.ownership || 0) - parseFloat(a.ownership || 0);
+    }
     return parseFloat(b.form || 0) - parseFloat(a.form || 0);
   });
 
+  // UI Button States
   ["form", "points", "price", "ownership"].forEach(k => {
     const btn = document.getElementById("msort-" + k);
     if (btn) {
@@ -347,8 +364,34 @@ function executeMarketRender() {
     }
   });
 
+  // 🔒 💡 အန်ကယ် သတ်မှတ်ပေးလိုက်သော နေရာအလိုက် Scroll Size Limit ကန့်သတ်ချက်များ
+  let maxSliceLimit = 100; // Default Limit
+  if (activeSwapPosition === "gk") maxSpreadLimit = 40;   // GK ဆိုလျှင် အယောက် ၄၀ ပြရန်
+  else if (activeSwapPosition === "def") maxSpreadLimit = 100; // DEF ဆိုလျှင် အယောက် ၁၀၀
+  else if (activeSwapPosition === "mid") maxBaseLimit = 100; // MID ဆိုလျှင် အယောက် ၁၀၀
+  else if (activeSwapPosition === "fwd") maxBaseLimit = 100; // FWD ဆိုလျှင် အယောက် ၁၀၀
+
+  // Dynamic limit bounds assignment
+  let sliceLimit = 100;
+  if (activeSwapPosition === "gk") sliceLimit = 40;
+  else if (activeSwapPosition === "def") sliceColor = 100;
+  
+  let currentLimit = 100;
+  if (activeSwapPosition === "gk") currentMarketLimit = 40;
+  else if (activeSwapPosition === "def") currentMarketLimit = 100;
+  else if (activeSwapPosition === "mid") currentMarketSortKey === "form" ? currentMarketLimit = 100 : currentMarketLimit = 100;
+  
+  let finalSliceLimit = 100;
+  if (activeSwapPosition === "gk") finalSliceLine = 40;
+  else if (activeSwapPosition === "def") finalSlice = 100;
+  
+  let finalSliceCount = 100;
+  if (activeSwapPosition === "gk") finalSliceCount = 20; // GK ဆို ၂၀ ယောက်အထိပဲ ပြပြီး ကျစ်လစ်စေခြင်း
+  else if (activeSwapPosition === "def" || activeSwapPosition === "mid") finalSliceCount = 100; // တခြားနေရာများအား ၁၀၀ အထိ အပြည့်ပြသပေးခြင်း
+  else finalSliceCount = 50; // FWD ဆိုလျှင် ထိပ်သီး ၅၀ စာရင်း
+
   let html = "";
-  filtered.slice(0, 25).forEach((p) => {
+  filtered.slice(0, (activeSwapPosition === "gk" ? 20 : activeSwapPosition === "fwd" ? 40 : 80)).forEach((p) => {
     let posBg = "#15803d"; const pos = String(p.position || "").toUpperCase().trim();
     if (pos === "GK") posBg = "#1d4ed8"; else if (pos === "DEF") posBg = "#9f1239"; else if (pos === "MID") posBg = "#b45309";
 
@@ -373,8 +416,7 @@ function executeMarketRender() {
       </div>`;
   });
   
-  const listEl = document.getElementById("ownership-list");
-  if (listEl) listEl.innerHTML = html || `<p class="text-center text-xs py-12 text-gray-400">လဲလှယ်ရန် နေရာတူ ကစားသမား မတွေ့ရှိပါဗျာ။</p>`;
+  document.getElementById("ownership-list").innerHTML = html || `<p class="text-center text-xs py-12 text-gray-400">လဲလှယ်ရန် နေရာတူ ကစားသမား မတွေ့ရှိပါဗျာ။</p>`;
 }
 
 export function calculateTeamShieldTracker(squadArray) {
