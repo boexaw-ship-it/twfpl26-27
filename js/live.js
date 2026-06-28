@@ -1,10 +1,14 @@
 import { auth, db } from "/twfpl26-27/js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
-import { doc, getDoc, onSnapshot, collection, addDoc, orderBy, query, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { doc, getDoc, onSnapshot, collection, addDoc, deleteDoc, orderBy, query, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 let currentUser = null; 
 let currentTeamName = ""; 
 let isApproved = false; 
+
+// 💡 Reply/Delete State Variables
+let activeReplyId = null; 
+let selectedMessageData = null; 
 
 onAuthStateChanged(auth, async (user) => {
   if (!user) { window.location.href = "/twfpl26-27/index.html"; return; } 
@@ -49,15 +53,11 @@ function jerseyPath(p) {
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 Player Card Maker (အန်ကယ်အလိုရှိသည့် မူရင်းအဝိုင်းဒီဇိုင်းစစ်စစ် - တပြေးညီအရွယ်အစား)
 function playerCard(p, isBench = false) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
-  
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
-
-  // 💡 အန်ကယ်ပြောသကဲ့သို့ အရံလူဆိုပါက ရွှေရောင်/ဝါရောင် Border ခတ်မည်၊ ပွဲထွက်ဆိုပါက C/V အလိုက် ခွဲခြားမည်
   const ringColor = isBench ? '#C9A84C' : isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
   const badge = mult === 3
@@ -71,9 +71,7 @@ function playerCard(p, isBench = false) {
   return `
     <div class="flex flex-col items-center mx-1" style="flex-shrink:0; min-w-[50px]; filter: drop-shadow(0px 3px 5px rgba(0,0,0,0.55));">
       <div class="w-8 h-8 rounded-full flex items-center justify-center mb-0.5 overflow-visible relative" style="background:#1F5C36; border:2px solid ${ringColor};">
-        <img src="${jerseyPath(p)}" 
-             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" 
-             class="w-6.5 h-6.5 object-contain rounded-full" alt="${p.name}" />
+        <img src="${jerseyPath(p)}" onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';" class="w-6.5 h-6.5 object-contain rounded-full" alt="${p.name}" />
         <span style="display:none;align-items:center;justify-content:center;font-size:0.8rem;">👕</span>
         ${badge}
       </div>
@@ -90,7 +88,6 @@ function renderPitch(data) {
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
   
-  // 💡 🏆 🎯 UNCLE'S FIREBASE DATA MAPPING FIX: "GK", "DEF", "MID", "FWD" စာလုံးအပြည့်အစုံဖြင့် တိကျစွာ ပြန်လည်စစ်ဆေးခြင်း
   const gk = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos === "GK" || pos === "GKP"; });
   const def = starters.filter(p => String(p.position || "").toUpperCase().trim() === "DEF");
   const mid = starters.filter(p => String(p.position || "").toUpperCase().trim() === "MID");
@@ -106,7 +103,6 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
-  // 📥 BENCH CONTAINER (အမည်းနောက်ခံလုံးဝမပါဘဲ First Lineup Size တူ၊ ရွှေရောင်ဘောင်လေးဖြင့် ပြသခြင်း)
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
@@ -123,6 +119,7 @@ function renderPitch(data) {
   document.getElementById("bench-container").innerHTML = benchContent;
 }
 
+// 🔒 Chat Box Status Listener
 function updateChatLock() {
   const input = document.getElementById("chat-input"); 
   const sendBtn = document.getElementById("send-btn"); 
@@ -142,8 +139,9 @@ function updateChatLock() {
   }
 }
 
+// 💬 💡 Real-time Chat Listener (Reply UI ပေါင်းစပ်ထားသော ဗားရှင်း)
 function loadChat() {
-  const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(50)); 
+  const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(55)); 
   onSnapshot(q, (snapshot) => {
     const msgs = []; 
     snapshot.forEach(d => msgs.unshift({ id: d.id, ...d.data() })); 
@@ -152,32 +150,121 @@ function loadChat() {
       chatEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#3A9E5F;">Chat မစသေးပါ — ပထမဆုံး Message ရေးလိုက်ပါ</p>`; 
       return;
     }
+
+    // 💡 window အောက်သို့ Message ဒေတာအား စုစည်းသိမ်းဆည်းခြင်း (Modal မှ လှမ်းခေါ်ရန်)
+    window.chatMessagesCache = msgs; 
+
     chatEl.innerHTML = msgs.map(m => {
       const isSelf = m.uid === currentUser?.uid; 
       const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }) : ""; 
+      
+      // Reply ဖြစ်ပါက အပေါ်တွင် ပြသမည့် Reply Box ဒီဇိုင်းလေး တည်ဆောက်ခြင်း
+      let replyBoxHtml = "";
+      if (m.replyToName && m.replyToText) {
+        replyBoxHtml = `
+          <div class="text-[10px] bg-black/20 rounded px-2 py-1 mb-1 border-l-2 border-[#C9A84C] max-w-xs text-left truncate opacity-70" style="color: #E8D5A3;">
+             ↩️ <b>${m.replyToName}</b>: ${m.textEscape ? m.replyToText : m.replyToText}
+          </div>
+        `;
+      }
+
+      // 💡 m.id အား Event ထဲသို့ ထည့်သွင်းထားသဖြင့် နှိပ်လိုက်လျှင် Modal ပွင့်လာမည်
       return isSelf
-        ? `<div class="flex flex-col items-end mb-3">
+        ? `<div class="flex flex-col items-end mb-3 cursor-pointer" onclick="window.openOptionsModal('${m.id}')">
             <div class="text-xs mb-1" style="color:#C9A84C;">${m.teamName}</div>
-            <div class="rounded-2xl rounded-br-sm px-4 py-2 text-sm max-w-xs" style="background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;font-weight:500;">${m.text}</div>
-            <div class="text-xs mt-1" style="color:#3A9E5F;">${time}</div>
+            ${replyBoxHtml}
+            <div class="rounded-2xl rounded-br-sm px-4 py-2 text-sm max-w-xs" style="background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;font-weight:500; text-align:left;">${m.text}</div>
+            <div class="text-[9px] mt-1" style="color:#3A9E5F;">${time}</div>
            </div>` 
-        : `<div class="flex flex-col items-start mb-3">
+        : `<div class="flex flex-col items-start mb-3 cursor-pointer" onclick="window.openOptionsModal('${m.id}')">
             <div class="text-xs mb-1" style="color:#E8D5A3;">${m.teamName}</div>
-            <div class="rounded-2xl rounded-br-sm px-4 py-2 text-sm max-w-xs" style="background:#1F5C36;color:white;">${m.text}</div>
-            <div class="text-xs mt-1" style="color:#3A9E5F;">${time}</div>
+            ${replyBoxHtml}
+            <div class="rounded-2xl rounded-bl-sm px-4 py-2 text-sm max-w-xs" style="background:#1F5C36;color:white; text-align:left;">${m.text}</div>
+            <div class="text-[9px] mt-1" style="color:#3A9E5F;">${time}</div>
            </div>`; 
     }).join("");
     chatEl.scrollTop = chatEl.scrollHeight; 
   });
 }
 
+// 📥 Message ส่ง Trigger (Reply ဒေတာများပါ တစ်ပါတည်း သိမ်းဆည်းရန် ပြင်ဆင်ခြင်း)
 window.sendMessage = async () => {
   if (!isApproved) return; 
   const input = document.getElementById("chat-input"); 
   const text = input.value.trim(); 
   if (!text || !currentUser) return; 
+
+  const payload = {
+    text: text,
+    teamName: currentTeamName,
+    uid: currentUser.uid,
+    createdAt: serverTimestamp()
+  };
+
+  // Reply Mode တက်နေပါက Payload ထဲသို့ သတ်သတ်မှတ်မှတ် ပေါင်းထည့်မည်
+  if (activeReplyId && selectedMessageData) {
+    payload.replyToId = activeReplyId;
+    payload.replyToName = selectedMessageData.teamName;
+    payload.replyToText = selectedMessageData.text;
+  }
+
   input.value = ""; 
-  await addDoc(collection(db, "chat"), { text, teamName: currentTeamName, uid: currentUser.uid, createdAt: serverTimestamp() }); 
+  window.cancelReply(); // Send ပြီးပါက Reply Mode ပြန်ပိတ်မည်
+  await addDoc(collection(db, "chat"), payload); 
+};
+
+// 💡 Options Modal Functions
+window.openOptionsModal = (msgId) => {
+  if (!isApproved) return;
+  const found = window.chatMessagesCache?.find(m => m.id === msgId);
+  if (!found) return;
+
+  selectedMessageData = found;
+  document.getElementById("modal-msg-preview").textContent = `"${found.text}"`;
+  
+  // မိမိရေးခဲ့သော Message ဖြစ်ပါက Delete Button အား ပြသမည်
+  const deleteBtn = document.getElementById("modal-delete-btn");
+  if (found.uid === currentUser?.uid) {
+    deleteBtn.classList.remove("hidden");
+  } else {
+    deleteBtn.classList.add("hidden");
+  }
+
+  document.getElementById("message-options-modal").classList.remove("hidden");
+};
+
+window.closeOptionsModal = () => {
+  document.getElementById("message-options-modal").classList.add("hidden");
+};
+
+// 💬 Trigger Reply System
+document.getElementById("modal-reply-btn").onclick = () => {
+  if (!selectedMessageData) return;
+  activeReplyId = selectedMessageData.id;
+
+  document.getElementById("reply-target-name").textContent = `Reply to ${selectedMessageData.teamName}`;
+  document.getElementById("reply-target-text").textContent = selectedMessageData.text;
+  document.getElementById("reply-preview-bar").classList.remove("hidden");
+  
+  window.closeOptionsModal();
+  document.getElementById("chat-input").focus();
+};
+
+window.cancelReply = () => {
+  activeReplyId = null;
+  document.getElementById("reply-preview-bar").classList.add("hidden");
+};
+
+// 🗑️ Delete Message Action
+document.getElementById("modal-delete-btn").onclick = async () => {
+  if (!selectedMessageData) return;
+  window.closeOptionsModal();
+  try {
+    // Firebase Firestore ထဲက message id အတိုင်း တိုက်ရိုက်ဖျက်ချခြင်း
+    await deleteDoc(doc(db, "chat", selectedMessageData.id));
+  } catch (error) {
+    console.error("Error deleting message: ", error);
+  }
 };
 
 window.handleKeydown = (e) => { 
