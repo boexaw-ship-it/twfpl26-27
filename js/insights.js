@@ -33,8 +33,8 @@ export function initRealtimeInsights(uid) {
           currentLiveSquadState = JSON.parse(savedData);
           renderUserSquadList(currentLiveSquadState);
           calculateTeamShieldTracker(currentLiveSquadState);
-          evaluateSquadBudgetMetrics();
-          checkCaptaincyRiskRadar(); // Dynamic check
+          evaluateSquadBudgetMetrics(); // 🔥 နေရာမှန် တွက်ချက်ခြင်း
+          checkCaptaincyRiskRadar();
         } else {
           onSnapshot(doc(db, "liveTeams", fplId), async (squadSnap) => {
             if (squadSnap.exists()) {
@@ -50,8 +50,8 @@ export function initRealtimeInsights(uid) {
                       const m = pDoc.data();
                       return {
                         ...playerItem,
-                        price: m.price || 0,
-                        ownership: m.ownership || 0,
+                        price: m.price || playerItem.price || 0,
+                        ownership: m.ownership || playerItem.ownership || 0,
                         form: m.form || 0,
                         totalPoints: m.totalPoints || 0,
                         gwPoints: m.gwPoints || 0
@@ -66,7 +66,7 @@ export function initRealtimeInsights(uid) {
                 
                 renderUserSquadList(currentLiveSquadState);
                 calculateTeamShieldTracker(currentLiveSquadState);
-                evaluateSquadBudgetMetrics();
+                evaluateSquadBudgetMetrics(); // 🔥 နေရာမှန် တွက်ချက်ခြင်း
                 checkCaptaincyRiskRadar();
               }
             }
@@ -88,13 +88,11 @@ export function initRealtimeInsights(uid) {
 
 /**
  * 👑 💡 🏆 CAPTAINCY RISK RADAR REAL-TIME EVALUATOR
- * User ရွေးချယ်လိုက်သော Captain ID အပေါ်မူတည်၍ Strategy Alert အော်တိုပြောင်းပေးသော စနစ်
  */
 function checkCaptaincyRiskRadar() {
   const radarLabel = document.getElementById("captain-risk-text");
   if (!radarLabel) return;
 
-  // လက်ရှိ အသင်းသား ၁၅ ယောက်ထဲတွင် isCaptain: true ဖြစ်နေသော လူအား ရှာဖွေခြင်း
   const currentCaptain = currentLiveSquadState.find(p => p.isCaptain === true || p.isCaptain === "true");
 
   if (!currentCaptain) {
@@ -103,57 +101,53 @@ function checkCaptaincyRiskRadar() {
     return;
   }
 
-  // ဗျူဟာမြောက် စစ်ဆေးချက် - Haaland (Id: 233 သို့မဟုတ် အမည်တွင် Haaland ပါက) ကို ပေးထားလျှင် Safe Choice ပြခြင်း
   const capName = String(currentCaptain.name).toLowerCase();
-  
   if (capName.includes("haaland") || currentCaptain.playerId === 233) {
     radarLabel.textContent = `🟢 Safe Choice! You are matching the Elite Template (75% rivals captained Haaland).`;
     radarLabel.style.color = "#22c55e";
   } else {
-    // အခြား Differential လူများကို ပေးပါက စွန့်စားမှုအဆင့်အား သတိပေးခြင်း
     radarLabel.textContent = `⚠️ Tactical Move! You captained ${currentCaptain.name} (Elite Rivals 75% captained Haaland).`;
     radarLabel.style.color = "#eab308";
   }
 }
 
 /**
- * 👑 USER INTERFACE: CAPTAIN (C) ယာယီရွှေ့ပြောင်းစမ်းသပ်မှု စနစ်
+ * 👑 USER INTERFACE: CAPTAIN (C) TOGGLE ACTION
  */
 window.toggleDraftCaptainSelection = (targetPlayerId) => {
-  // ၁၅ ယောက်လုံးထဲမှ ကပ္ပတိန်အဟောင်းများအားလုံးကို အရင်ဖျက်ပစ်ခြင်း
-  currentLiveSquadState.forEach(p => {
-    p.isCaptain = false;
-  });
-
-  // အန်ကယ် နှိပ်လိုက်သော လူအသစ်အား Captain အဖြစ် အစားထိုးခန့်အပ်ခြင်း
+  currentLiveSquadState.forEach(p => { p.isCaptain = false; });
   const newCap = currentLiveSquadState.find(p => String(p.playerId) === String(targetPlayerId));
   if (newCap) newCap.isCaptain = true;
 
-  // Phone Memory အား အပ်ဒိတ်လုပ်ပြီး UI အသစ် ပြန်ဆွဲခြင်း
   const cacheKey = Object.keys(localStorage).find(k => k.startsWith("twf_draft_squad_"));
   if (cacheKey) localStorage.setItem(cacheKey, JSON.stringify(currentLiveSquadState));
 
   renderUserSquadList(currentLiveSquadState);
-  checkCaptaincyRiskRadar(); // Radar အား ချက်ချင်း ပြန်တွက်ခိုင်းခြင်း
+  checkCaptaincyRiskRadar();
 };
 
 /**
- * 🔒 FPL REGULATION: BUDGET TRACKER LOGIC
+ * 🔒 💡 🏆 FPL REGULATION: THE INDESTRUCTIBLE CORRECT BUDGET CALCULATOR
+ * ပထမဆုံး load လုပ်ချိန်ကတည်းက လက်ရှိအသင်းသား ၁၅ ယောက်၏ ဈေးနှုန်းအစစ်ကို စုစည်းတွက်ချက်ပေးသော Logic အမှန်စစ်စစ်
  */
 function evaluateSquadBudgetMetrics() {
-  let totalCost = 0;
-  localSquadState.forEach(p => { totalCost += parseFloat(p.price || 0); });
-  localSquadState = currentLiveSquadState;
+  if (!currentLiveSquadState || currentLiveSquadState.length === 0) return;
   
   let totalCostVal = 0;
-  currentLiveSquadState.forEach(p => { totalCostVal += parseFloat(p.price || 0); });
+  // အသင်းသား ၁၅ ယောက်လုံး၏ စုစုပေါင်းတန်ဖိုးအား ပေါင်းစပ်ခြင်း
+  currentLiveSquadState.forEach(p => { 
+    totalCostVal += parseFloat(p.price || 0); 
+  });
   
+  // £100.0m ထဲမှ နှုတ်၍ လက်ကျန် Remaining Bank အမှန်အား ရှာဖွေခြင်း
   const remainingBank = 100.0 - totalCostVal;
+  
   const bankLabel = document.getElementById("budget-bank-label");
   const costLabel = document.getElementById("budget-total-cost");
   
   if (bankLabel) {
     bankLabel.textContent = `£${remainingBank.toFixed(1)}m`;
+    // ပိုက်ဆံကျန်ရင် အစိမ်းရောင်ပြပြီး ပိုက်ဆံမလောက်ရင် အနီရောင်ဖြင့် စမတ်ကျကျပြောင်းလဲခြင်း
     bankLabel.style.color = remainingBank >= 0 ? "#22c55e" : "#ef4444";
   }
   if (costLabel) {
@@ -178,7 +172,7 @@ window.activatePlayerSwapMode = (playerId, name, position) => {
 };
 
 /**
- * 🛒 MARKET SELECTION
+ * 🛒 MARKET SELECTION WITH VALIDATION GUARD RULES
  */
 window.executeMarketPlaceSelection = (newPlayerDocId) => {
   if (!activeSwapId) return;
@@ -191,13 +185,13 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
 
   const oldPlayer = currentLiveSquadState[oldPlayerIndex];
 
-  // POSITION GUARD
+  // POSITION GUARD RULE
   if (String(newPlayerData.position).toLowerCase() !== activeSwapPosition) {
     alert(`FPL Regulation Error: ${activeSwapPosition.toUpperCase()} နေရာတွင် ${newPlayerData.position.toUpperCase()} လူစားလဲခွင့်မရှိပါဗျာ။`);
     return;
   }
 
-  // BUDGET GUARD
+  // BUDGET CONSTRAINT REGULATION GUARD
   let provisionalCost = 0;
   currentLiveSquadState.forEach((p, idx) => {
     if (idx === oldPlayerIndex) provisionalCost += parseFloat(newPlayerData.price || 0);
@@ -209,7 +203,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     return;
   }
 
-  // Approved -> Swap
+  // Rules Approved -> Commit to Local memory State array
   currentLiveSquadState[oldPlayerIndex] = {
     ...oldPlayer,
     playerId: newPlayerData.playerId,
@@ -221,7 +215,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     gwPoints: newPlayerData.gwPoints || 0
   };
 
-  // Update Compare progress
+  // Compare Progress bars indicators update
   const outBar = document.getElementById("template-out-bar");
   const inBar = document.getElementById("template-in-bar");
   if (outBar && inBar) {
@@ -270,7 +264,7 @@ export function sortSquadByFPLFormat(squadArray) {
 }
 
 /**
- * Render User Squad with Captaincy Toggle Button Included
+ * Render Squad Interface List Block
  */
 export function renderUserSquadList(squadArray) {
   let html = "";
@@ -278,7 +272,6 @@ export function renderUserSquadList(squadArray) {
     let posBg = "#15803d"; const pos = String(p.position || "").toUpperCase().trim();
     if (pos === "GK") posBg = "#1d4ed8"; else if (pos === "DEF") posBg = "#9f1239"; else if (pos === "MID") posBg = "#b45309";
 
-    // Is current loop item captain?
     const isCap = p.isCaptain === true || p.isCaptain === "true";
     const capBadgeStyle = isCap ? "background:#C9A84C; color:#041e12;" : "background:rgba(0,0,0,0.3); color:#3A9E5F; border:1px solid #1e6a3c;";
 
@@ -299,21 +292,17 @@ export function renderUserSquadList(squadArray) {
             <p class="font-bold text-[#C9A84C] font-mono text-sm">£${parseFloat(p.price || 0).toFixed(1)}m</p>
             <p class="text-[9px] text-[#E8D5A3]">${p.ownership || 0}% owned</p>
           </div>
-          
-          <button onclick="window.toggleDraftCaptainSelection('${p.playerId}')" class="w-7 h-8 text-[10px] font-black rounded-lg transition-all active:scale-95" style="${capBadgeStyle}">
-            C
-          </button>
-          
+          <button onclick="window.toggleDraftCaptainSelection('${p.playerId}')" class="w-7 h-8 text-[10px] font-black rounded-lg transition-all active:scale-95" style="${capBadgeStyle}">C</button>
           <button onclick="window.activatePlayerSwapMode('${p.playerId}', '${p.name.replace(/'/g, "\\'")}', '${pos}')" class="w-7 h-8 rounded-lg bg-black/30 border border-[#1e6a3c] flex items-center justify-center text-xs">🔄</button>
         </div>
       </div>`;
   });
   document.getElementById("my-squad-list").innerHTML = html;
-  evaluateSquadBudgetMetrics();
+  evaluateSquadBudgetMetrics(); // 🔥 အမြဲတမ်း ညှိနှိုင်းတွက်ချက်စေခြင်း
 }
 
 /**
- * Market render engine logic
+ * Compact Market Render List
  */
 function executeMarketRender() {
   let filtered = [...allPlayersCache];
