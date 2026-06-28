@@ -1,6 +1,7 @@
 import { db } from "/twfpl26-27/js/firebase-config.js";
 import { collection, doc, onSnapshot, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// Global Variables For Filter & Live Engine Cache
 let allPlayersCache = [];
 let showGemsOnlyGlobal = false;
 
@@ -17,7 +18,7 @@ export function initRealtimeInsights(uid) {
     }
   });
 
-  // 👕 Tab 1 Fix: Users node -> fplTeamId -> liveTeams Cross-mapping
+  // 👕 Tab 1: Users node -> fplTeamId -> liveTeams -> Cross-mapping with scoutPlayers
   if (uid) {
     getDoc(doc(db, "users", uid)).then((userSnap) => {
       if (userSnap.exists() && userSnap.data().fplTeamId) {
@@ -29,12 +30,14 @@ export function initRealtimeInsights(uid) {
             const rawSquadArray = teamData.picks || teamData.players || [];
             
             if (rawSquadArray.length > 0) {
-              // Cross Ref Mapping with Master Database For Price & Ownership %
+              // 🔄 💡 🏆 SERVER ALIGNMENT FIX: Mapping via "scoutPlayers" Collection
+              // liveTeams ထဲရှိ playerId အား အခြေခံ၍ ဆာဗာမှသွင်းပေးသော scoutPlayers ဒေတာနှင့် လှမ်းဖတ်ချိတ်ဆက်ခြင်း
               const enrichedSquad = await Promise.all(rawSquadArray.map(async (playerItem) => {
                 const pIdStr = String(playerItem.playerId || ""); 
                 if (pIdStr) {
                   try {
-                    const playerDocSnap = await getDoc(doc(db, "players", pIdStr));
+                    // players အစား ဆာဗာသွင်းပေးသည့် scoutPlayers သို့ ပြောင်းလဲချိတ်ဆက်မှု
+                    const playerDocSnap = await getDoc(doc(db, "scoutPlayers", pIdStr));
                     if (playerDocSnap.exists()) {
                       const masterData = playerDocSnap.data();
                       return {
@@ -50,7 +53,6 @@ export function initRealtimeInsights(uid) {
                 return playerItem;
               }));
 
-              // 💡 🎯 🚀 CRITICAL FIX: STRUCTURED POSITION SORTING 
               // GK (2) -> DEF (5) -> MID (5) -> FWD (3) စနစ်တကျစီခြင်း
               const sortedSquad = sortSquadByFPLFormat(enrichedSquad);
 
@@ -72,8 +74,9 @@ export function initRealtimeInsights(uid) {
     });
   }
 
-  // 📊 Tab 2: Global Ownership Insights List
-  const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"));
+  // 📊 Tab 2: Global Ownership Insights List (Connecting to scoutPlayers Collection)
+  // ဆာဗာမှ နေ့စဉ် update လုပ်ပေးနေသည့် scoutPlayers ထဲမှ ownership အများဆုံးစာရင်းအား ဆွဲယူခြင်း
+  const qOwnership = query(collection(db, "scoutPlayers"), orderBy("ownership", "desc"));
   onSnapshot(qOwnership, (snap) => {
     allPlayersCache = [];
     snap.forEach(doc => { allPlayersCache.push(doc); });
@@ -162,7 +165,7 @@ function executeInsightsRender() {
 }
 
 /**
- * 🎨 💡 CRITICAL UI FIX: BRAND NEW UNCLE'S COLOR DEFINITIONS 
+ * 🎨 💡 UNCLE'S COLOR DEFINITIONS
  * GK (အပြာ) | DEF (အနီ) | MID (အဝါ) | FWD (အစိမ်း)
  */
 function buildHtmlRow(p, index, rightLabel, subText) {
@@ -204,4 +207,3 @@ window.toggleHiddenGemsFilter = () => {
   }
   executeInsightsRender();
 };
-
