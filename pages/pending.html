@@ -23,8 +23,8 @@
             document.getElementById("status-area").innerHTML = `
               <div class="text-center">
                 <div class="text-4xl mb-3">❌</div>
-                <p class="font-semibold text-red-400">Register ငြင်းပယ်ခံရသည်</p>
-                <p class="text-xs mt-2 text-red-300">Admin ကို ဆက်သွယ်ပါ</p>
+                <p class="font-semibold text-red-400">Register Ngat Ppe Khan Ra Thal</p>
+                <p class="text-xs mt-2 text-red-300">Admin Ko Sat Thwal Par</p>
               </div>`;
           }
         }
@@ -37,8 +37,22 @@
     };
   </script>
   <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: linear-gradient(180deg, #0D2B1A 0%, #1B4D2E 50%, #0D2B1A 100%); min-height: 100vh; }
+    * { 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    /* 💡 🎯 🚀 CRITICAL MOBILE SELECT BLOCK ENGINE */
+    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ Loading Icon နှင့် ခလုတ်ကိုမဆို ဖိမိပါက Google Translate / Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
+    body { 
+      font-family: "Inter", sans-serif; 
+      background: linear-gradient(180deg, #0D2B1A 0%, #1B4D2E 50%, #0D2B1A 100%); 
+      min-height: 100vh; 
+      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
+      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
+      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
+      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
+    }
+    
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .pulse-ring { animation: pulseRing 2s ease-out infinite; }
     @keyframes pulseRing { 0% { transform:scale(0.8); opacity:1; } 100% { transform:scale(1.5); opacity:0; } }
