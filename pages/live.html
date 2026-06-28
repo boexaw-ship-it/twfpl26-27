@@ -19,11 +19,8 @@
     #chat-messages::-webkit-scrollbar, #pitch-scroll-wrapper::-webkit-scrollbar { width:3px; }
     #chat-messages::-webkit-scrollbar-thumb, #pitch-scroll-wrapper::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
     
-    /* Stat Cards Flexible non-scroll system */
-    .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:4px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+    .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:6px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
 
-    /* 🏟️ UNCLE'S GLOBAL SCROLLING FIELD CANVAS */
-    /* ကစားသမားများ ကွင်းစည်းပေါ်သို့ ညီညာစွာ ကွက်တိကျစေရန် ပင်မအမြင့်အား 390px သို့ ညှိနှိုင်းခြင်း */
     .main-scroll-pitch-canvas {
       position: relative;
       width: 100%;
@@ -72,11 +69,9 @@
     <div class="flex gap-2 w-full h-full min-width:0;">
       
       <div style="flex:1; position:relative; border-radius:1rem; overflow:hidden; border:1.5px solid rgba(255,255,255,0.2); min-width:0; height:100%; background:linear-gradient(180deg,#144622,#09230e);">
-        
         <div id="pitch-scroll-wrapper" style="width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px; display:flex; flex-direction:column; gap:6px;">
           
           <div class="main-scroll-pitch-canvas">
-            
             <svg style="position:absolute;top:0;left:0;width:100%;height:390px;opacity:0.25;pointer-events:none;z-index:0;" viewBox="0 0 200 390" preserveAspectRatio="none">
               <rect x="6" y="6" width="188" height="378" fill="none" stroke="white" stroke-width="1.2"/>
               <line x1="6" y1="195" x2="194" y2="195" stroke="white" stroke-width="1.2"/>
@@ -90,17 +85,13 @@
             <div id="pitch" style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
               <p class="text-center text-xs py-8" style="color:#3A9E5F;">Team loading...</p>
             </div>
-
           </div>
 
           <div id="bench-container" style="width:100%; flex-shrink:0; padding-bottom:4px;"></div>
-
         </div>
-        
       </div>
 
       <div style="width:96px;flex-shrink:0;height:100%;overflow:hidden;" class="flex flex-col gap-1 justify-between">
-        
         <div class="rounded-xl p-2 flex flex-col justify-center" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.25);flex:1.2;">
           <p class="text-xs uppercase tracking-wide mb-0.5" style="color:#C9A84C;font-size:0.55rem;">Gameweek</p>
           <div class="flex items-end gap-0.5">
@@ -108,21 +99,9 @@
             <span style="font-size:0.55rem;color:#E8D5A3;">pts</span>
           </div>
         </div>
-        
-        <div class="stat-card">
-          <p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">GW Rank</p>
-          <p id="gw-rank" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;margin-top:2px;">—</p>
-        </div>
-        
-        <div class="stat-card">
-          <p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">Overall Pts</p>
-          <p id="overall-pts" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;margin-top:2px;">—</p>
-        </div>
-
-        <div class="stat-card">
-          <p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">Captain</p>
-          <p id="captain-pts" class="font-bold" style="font-family:'Bebas Neue';font-size:0.95rem;color:#C9A84C;margin-top:2px;">—</p>
-        </div>
+        <div class="stat-card"><p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">GW Rank</p><p id="gw-rank" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;margin-top:2px;">—</p></div>
+        <div class="stat-card"><p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">Overall Pts</p><p id="overall-pts" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;margin-top:2px;">—</p></div>
+        <div class="stat-card"><p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">Captain</p><p id="captain-pts" class="font-bold" style="font-family:'Bebas Neue';font-size:0.95rem;color:#C9A84C;margin-top:2px;">—</p></div>
       </div>
 
     </div>
@@ -139,11 +118,28 @@
 
     <div id="chat-messages" style="flex:1;overflow-y:auto;padding:10px 16px;"></div>
 
+    <div id="reply-preview-bar" class="hidden px-4 py-2 flex items-center justify-between border-t border-[#1F5C36]" style="background: rgba(201,168,76,0.05);">
+      <div class="flex flex-col min-w-0 flex-1">
+        <span id="reply-target-name" class="text-[10px] font-bold text-[#C9A84C]">Reply to zaw moe</span>
+        <span id="reply-target-text" class="text-xs text-white/60 truncate">Message text...</span>
+      </div>
+      <button onclick="window.cancelReply()" class="text-xs font-bold px-2 py-1 text-red-400 bg-red-500/10 rounded-md ml-2">✖</button>
+    </div>
+
     <div style="padding:8px 12px;border-top:1px solid #1F5C36;display:flex;gap:8px;align-items:center;flex-shrink:0;background:#0D2B1A;">
       <input id="chat-input" type="text" placeholder="Message ရိုက်ပါ..." onkeydown="window.handleKeydown(event)" disabled
         style="flex:1;background:#1F5C36;border:1px solid #2A7A47;color:white;border-radius:0.75rem;padding:10px 14px;font-size:0.85rem;outline:none;"
         onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='#2A7A47'" />
       <button id="send-btn" onclick="window.sendMessage()" disabled style="opacity:0.4;background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;border-radius:0.75rem;padding:10px 16px;font-weight:700;font-size:0.85rem;">Send</button>
+    </div>
+  </div>
+
+  <div id="message-options-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
+    <div class="w-full max-w-xs rounded-xl border border-[#1F5C36] p-4 flex flex-col gap-3 shadow-2xl" style="background:#0D2B1A;">
+      <p id="modal-msg-preview" class="text-xs text-white/50 truncate border-b border-white/10 pb-2"></p>
+      <button id="modal-reply-btn" class="w-full bg-[#1F5C36] hover:bg-[#2A7A47] text-white font-bold py-2.5 rounded-lg text-sm transition-all">💬 Reply (ပြန်စာရေးရန်)</button>
+      <button id="modal-delete-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition-all hidden">🗑️ Delete Message (ဖျက်ပစ်ရန်)</button>
+      <button onclick="window.closeOptionsModal()" class="w-full text-white/60 text-xs py-1 mt-1 font-medium">Cancel (ပယ်ဖျက်ရန်)</button>
     </div>
   </div>
 
