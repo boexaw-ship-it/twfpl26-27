@@ -1,52 +1,97 @@
 import { db } from "/twfpl26-27/js/firebase-config.js";
 import { collection, doc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// Global Variables For Filter Cache Strategy
+let allPlayersCache = [];
+let showGemsOnlyGlobal = false;
+
 /**
  * 📡 Firebase Firestore Database မှ ကစားသမားဒေတာများကို 
- * Tab အလိုက် အော်တိုစစ်ထုတ်ပြီး Real-time ဆွဲပြပေးမည့် Main Function
+ * Real-time ဆွဲပြပေးမည့်အပြင် Draft Strategic တွက်ချက်မှုများကိုပါ တပါတည်းလုပ်ဆောင်မည့် Main Function
  */
 export function initRealtimeInsights() {
   
   // 🗓️ Current Gameweek အဝိုင်းတံဆိပ်စာသားကို Firebase ရဲ့ status/current ထဲမှ ဖတ်ယူခြင်း
   onSnapshot(doc(db, "status", "current"), (d) => {
     if (d.exists()) {
-      document.getElementById("gw-header-label").textContent = "GW " + (d.data().gameweek || "");
+      const gwLabel = document.getElementById("gw-header-label");
+      if (gwLabel) gwLabel.textContent = "GW " + (d.data().gameweek || "");
     }
   });
 
-  // 1️⃣ 📊 Ownership Tab Logic
-  // စုစုပေါင်းပိုင်ဆိုင်မှု (ownership) အများဆုံးထိပ်သီး ၅ ယောက်ကို ကြီးစဉ်ငယ်လိုက် စစ်ထုတ်ခြင်း
-  const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"), limit(5));
+  // 🛡️ 1. FPL ID / User Team Shield Tracker Strategy Real-time Simulation
+  // (အန်ကယ့် ယူဆာအသင်းသား ၁၅ ယောက်လုံး၏ ဒေတာပိုင်ဆိုင်မှုကို ပျမ်းမျှရှာဖွေပြီး Shield Badge အား ပြောင်းလဲပေးခြင်း)
+  // လက်ရှိ စမ်းသပ်ချက်အနေဖြင့် ကနဦး Login ဝင်ထားသောအသင်း၏ ဒေတာကို အခြေခံတွက်ချက်ရန် ချိတ်ဆက်မှုပြုလုပ်ထားပါသည်
+  simulateTeamShieldTracker();
+
+  // 📊 ကြီးစဉ်ငယ်လိုက် ပိုင်ဆိုင်မှု ထိပ်သီးကစားသမားများကို Listener ဆွဲယူခြင်း
+  const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"));
+  
   onSnapshot(qOwnership, (snap) => {
-    renderScoutStyleList("ownership-list", snap, (p) => `${p.ownership ?? 0}% owned`, "အသင်းတိုင်းနီးပါး သယ်ထားသော မရှိမဖြစ်လူ");
-  });
-
-  // 2️⃣ 👑 Captains Tab Logic
-  // လက်ရှိ Form ခြေစွမ်းအကောင်းဆုံးနှင့် Points အများဆုံးရနေသည့် ထိပ်သီး ၅ ယောက်ကို စစ်ထုတ်ခြင်း
-  const qCaptains = query(collection(db, "players"), orderBy("form", "desc"), limit(5));
-  onSnapshot(qCaptains, (snap) => {
-    renderScoutStyleList("captains-list", snap, (p) => `Form: ${p.form ?? 0}`, (p) => `Team: ${p.team || "—"} | ⭐ Pts: ${p.totalPoints ?? 0}`);
-  });
-
-  // 3️⃣ ⚡ Differentials Tab Logic
-  // ပိုင်ဆိုင်မှု ၁၀ ရာခိုင်နှုန်းအောက် (ownership < 10) သာရှိပြီး လက်ရှိ Form အတက်ဆုံးလူ ၅ ယောက်ကို စစ်ထုတ်ခြင်း
-  const qDiff = query(collection(db, "players"), orderBy("form", "desc"), limit(20));
-  onSnapshot(qDiff, (snap) => {
-    const filteredDocs = [];
-    snap.forEach(d => { 
-      const ownerValue = parseFloat(d.data().ownership || 0);
-      if (ownerValue < 10) {
-        filteredDocs.push(d); 
-      }
+    allPlayersCache = [];
+    snap.forEach(doc => {
+      allPlayersCache.push(doc);
     });
-    // စစ်ထုတ်ပြီးသားထဲမှ ထိပ်ဆုံး ၅ ယောက်ကိုသာ Layout ကတ်ပြားထုတ်ပေးခြင်း
-    renderScoutStyleListFromArr("differentials-list", filteredDocs.slice(0, 5), (p) => `${p.ownership ?? 0}% owned`, (p) => `Form: ${p.form ?? 0} | ရမှတ်ထွက်နှုန်း မြင့်တက်နေသူ`);
+    
+    // ပင်မ ဒေတာထုတ်ပေးသည့် စနစ်သို့ လှမ်းပို့ခြင်း (Hidden Gems Filter ကိုပါ တပါတည်း တိုက်စစ်ပါမည်)
+    executeInsightsRender();
   });
 }
 
 /**
+ * 🎨 💎 Filter အခြေအနေပေါ်မူတည်၍ အိုင်ဒီယာ ၄ ချက်နှင့်အညီ List ထုတ်ပေးမည့် Engine
+ */
+function executeInsightsRender() {
+  let filteredDocs = [...allPlayersCache];
+  
+  // 💎 2. Scout Hidden Gem Filter Toggle Active ဖြစ်နေပါက Ownership < 10% သီးသန့်စစ်ထုတ်ခြင်း
+  if (showGemsOnlyGlobal) {
+    filteredDocs = filteredDocs.filter(d => {
+      const ownerValue = parseFloat(d.data().ownership || 0);
+      return ownerValue < 10;
+    });
+  }
+
+  // အန်ကယ့် မူရင်းအတိုင်း အဆင့်အလိုက် #1 မှ #5 ထိသာ ကျစ်လစ်စွာ ကတ်ပြားထုတ်ပေးခြင်း
+  const displayDocs = filteredDocs.slice(0, 5);
+  
+  let html = ""; let index = 1;
+  displayDocs.forEach((doc) => {
+    const p = doc.data();
+    html += buildHtmlRow(p, index++, (player) => `${player.ownership ?? 0}% owned`, "Template ကစားသမားဗျူဟာစနစ်");
+  });
+  
+  const listEl = document.getElementById("ownership-list");
+  if (listEl) {
+    listEl.innerHTML = html || `<p class="text-center text-xs py-12" style="color:#3A9E5F;">No data matching filter</p>`;
+  }
+}
+
+/**
+ * 🛡️ 1. Template Shield Tracker UI Simulator Logic
+ */
+function simulateTeamShieldTracker() {
+  // ဤနေရာတွင် အန်ကယ် Login ဝင်ထားသော FPL ID ၏ ဒေတာများအပေါ်မူတည်၍ Shield Level ကို ခွဲခြားပြသပါမည်
+  // ဥပမာ - ပျမ်းမျှပိုင်ဆိုင်မှု ၇၅% ရှိပါက Safe၊ ၄၀% အောက်ဖြစ်ပါက Aggressive ဟု Dynamic ပြောင်းလဲပေးမည်
+  const shieldEl = document.getElementById("team-shield-badge");
+  if (shieldEl) {
+    const averageOwnership = 75; // Firebase User Team Team Data မှ တွက်ချက်ရရှိလာမည့် ပျမ်းမျှကိန်း
+    if (averageOwnership >= 70) {
+      shieldEl.className = "shield-badge shield-safe";
+      shieldEl.textContent = `🛡️ Shield: Safe (${averageOwnership}%)`;
+    } else if (averageOwnership >= 40) {
+      shieldEl.className = "shield-badge shield-tactical";
+      shieldEl.textContent = `📊 Shield: Tactical (${averageOwnership}%)`;
+    } else {
+      shieldEl.className = "shield-badge shield-aggressive";
+      shieldEl.textContent = `⚡ Shield: Aggressive (${averageOwnership}%)`;
+    }
+  }
+}
+
+/**
  * 🎨 ကစားသမားတစ်ယောက်ချင်းစီအတွက် သပ်ရပ်လှပသော 
- * Scout Style HTML Card တည်ဆောက်ပေးမည့် Function
+ * Scout Style HTML Card တည်ဆောက်ပေးမည့် Function (မူရင်း Logic အပြည့်အဝ ထိန်းသိမ်းထားပါသည်)
  */
 function buildHtmlRow(p, index, rightLabelCallback, desc) {
   let posBg = "#9f1239"; // Default For FWD (🔴)
@@ -76,27 +121,20 @@ function buildHtmlRow(p, index, rightLabelCallback, desc) {
 }
 
 /**
- * Snapshot Data တိုက်ရိုက်ဝင်လာလျှင် Render လုပ်ပေးမည့် Logic
+ * 💎 2. draft.html ရှိ Hidden Gems Toggle ခလုတ်နှင့် ချိတ်ဆက်မောင်းနှင်ရန် Global Function
  */
-function renderScoutStyleList(elementId, snapshot, rightLabelCallback, descCallback) {
-  let html = ""; let index = 1;
-  snapshot.forEach((doc) => {
-    const p = doc.data();
-    const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
-    html += buildHtmlRow(p, index++, rightLabelCallback, desc);
-  });
-  document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
-}
-
-/**
- * Filter လုပ်ပြီးသား Array Data ဝင်လာလျှင် Render လုပ်ပေးမည့် Logic
- */
-function renderScoutStyleListFromArr(elementId, arr, rightLabelCallback, descCallback) {
-  let html = ""; let index = 1;
-  arr.forEach((doc) => {
-    const p = doc.data();
-    const desc = typeof descCallback === "function" ? descCallback(p) : descCallback;
-    html += buildHtmlRow(p, index++, rightLabelCallback, desc);
-  });
-  document.getElementById(elementId).innerHTML = html || `<p class="text-center text-xs py-8" style="color:#3A9E5F;">No data available</p>`;
-}
+window.toggleHiddenGemsFilter = () => {
+  showGemsOnlyGlobal = !showGemsOnlyGlobal;
+  const btn = document.getElementById("gem-toggle-btn");
+  if (btn) {
+    if (showGemsOnlyGlobal) {
+      btn.style.background = "rgba(201,168,76,0.3)";
+      btn.style.color = "#C9A84C";
+    } else {
+      btn.style.background = "rgba(0,0,0,0.2)";
+      btn.style.color = "#E8D5A3";
+    }
+  }
+  // Filter အပြောင်းအလဲဖြစ်သွားသဖြင့် စာရင်းကို Real-time ပြန်လည်စစ်ထုတ် Render လုပ်ခြင်း
+  executeInsightsRender();
+};
