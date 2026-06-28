@@ -5,11 +5,11 @@ let allPlayersCache = [];
 let showGemsOnlyGlobal = false;
 
 /**
- * Main Dynamic Router Engine Connection
+ * Main Strategy Router Engine
  */
 export function initRealtimeInsights(uid) {
   
-  // 🗓️ GW Global Snapshot Listener
+  // GW Listener
   onSnapshot(doc(db, "status", "current"), (d) => {
     if (d.exists()) {
       const gwLabel = document.getElementById("gw-header-label");
@@ -17,20 +17,30 @@ export function initRealtimeInsights(uid) {
     }
   });
 
-  // 👕 Tab 1 Logic: Fetch Current User 15 Players List and Display immediately
+  // 👕 Tab 1 Fix: Users Collection ထဲမှ fplTeamId ကို အရင်ရှာဖွေပြီးမှ Squad ဒေတာဆွဲထုတ်ခြင်း
   if (uid) {
-    onSnapshot(doc(db, "liveTeams", uid), (snapshot) => {
-      if (snapshot.exists()) {
-        const teamData = snapshot.data();
-        const squadArray = teamData.players || [];
-        renderUserSquadList(squadArray);
+    getDoc(doc(db, "users", uid)).then((userSnap) => {
+      if (userSnap.exists() && userSnap.data().fplTeamId) {
+        const teamId = userSnap.data().fplTeamId; // ရလာသော Team ID (ဥပမာ- dmIsVFopP3...)
+        
+        // liveTeams အောက်တွင် ၎င်း Team ID ဖြင့် ကစားသမား ၁၅ ယောက်ကို Listener ချိတ်ဆက်ခြင်း
+        onSnapshot(doc(db, "liveTeams", teamId), (squadSnap) => {
+          if (squadSnap.exists()) {
+            const teamData = squadSnap.data();
+            renderUserSquadList(teamData.players || []);
+          } else {
+            fallbackSquadMessage();
+          }
+        });
       } else {
-        document.getElementById("my-squad-list").innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">No squad data found.</p>`;
+        fallbackSquadMessage();
       }
+    }).catch(() => {
+      fallbackSquadMessage();
     });
   }
 
-  // 📊 Tab 2 Logic: Ownership Matrix Query
+  // 📊 Tab 2: Ownership Real-time Insights Listener
   const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"));
   onSnapshot(qOwnership, (snap) => {
     allPlayersCache = [];
@@ -39,13 +49,18 @@ export function initRealtimeInsights(uid) {
   });
 }
 
+function fallbackSquadMessage() {
+  const el = document.getElementById("my-squad-list");
+  if (el) el.innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">No squad data found in database.</p>`;
+}
+
 /**
- * Render Engine for User's 15 Squad Players
+ * Render Engine for 15 Players Squad List
  */
 function renderUserSquadList(squadArray) {
   let html = "";
   if (squadArray.length === 0) {
-    document.getElementById("my-squad-list").innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">Squad list empty.</p>`;
+    fallbackSquadMessage();
     return;
   }
 
@@ -78,7 +93,7 @@ function executeInsightsRender() {
 }
 
 /**
- * Modular Standalone Card Renderer (No Myanmar Text Included)
+ * Standard Metric Card Layout Builder
  */
 function buildHtmlRow(p, index, rightLabel, subText) {
   let posBg = "#9f1239";
@@ -107,7 +122,7 @@ function buildHtmlRow(p, index, rightLabel, subText) {
 }
 
 /**
- * Interactive Filter Switch
+ * Filter Controller
  */
 window.toggleHiddenGemsFilter = () => {
   showGemsOnlyGlobal = !showGemsOnlyGlobal;
