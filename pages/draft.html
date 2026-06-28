@@ -12,8 +12,6 @@
     * { 
       -webkit-tap-highlight-color: transparent; 
       -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
       user-select: none !important;
     }
     
@@ -48,7 +46,7 @@
 </head>
 <body>
 
-  <!-- Top Real-time Header Panel -->
+  <!-- Top Navigation Panel -->
   <div style="background:#041e12; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
     <div class="flex items-center">
       <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
@@ -60,7 +58,7 @@
     </div>
   </div>
 
-  <!-- Real-time Multi-Variant Evaluation Widgets Container -->
+  <!-- Real-time Evaluation Widgets -->
   <div class="p-4 grid grid-cols-2 gap-3 flex-shrink-0 bg-[#041e12]">
     <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5">
       <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">DRAFT TEMPLATE COMPARE</span>
@@ -81,38 +79,38 @@
     </div>
   </div>
 
-  <!-- 📊 Compact Switch Tabs Segment Controls (3 Tabs Structure - No Scroll) -->
+  <!-- Tab Segments Selector -->
   <div class="flex bg-[#041e12] border-b border-[#1F5C36]/60 flex-shrink-0">
     <button onclick="switchDraftTab('squad')" id="seg-squad" class="segment-btn active">👕 MY SQUAD (15)</button>
     <button onclick="switchDraftTab('ownership')" id="seg-ownership" class="segment-btn">📊 OWNERSHIP INSIGHTS</button>
     <button onclick="switchDraftTab('fixtures')" id="seg-fixtures" class="segment-btn">🗓️ FIXTURE MATRIX</button>
   </div>
 
-  <!-- Main Display Space Context Injection Area -->
-  <div class="flex-1 overflow-y-auto scrollbar-none flex flex-col">
+  <!-- Fixed Router Display Box -->
+  <div class="flex-1 overflow-y-auto no-scrollbar relative bg-[#041e12]">
     
-    <!-- Tab 1: Login ID User 15 Players List (Default State View) -->
-    <div id="view-squad" class="tab-content p-4 space-y-2 flex flex-col flex-1">
-      <div id="my-squad-list" class="flex-1 overflow-y-auto no-scrollbar">
-        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your 15 players list...</p>
+    <!-- Tab 1: My Squad Section -->
+    <div id="view-squad" class="tab-content absolute inset-0 p-4 overflow-y-auto no-scrollbar">
+      <div id="my-squad-list">
+        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your squad list...</p>
       </div>
     </div>
     
-    <!-- Tab 2: Ownership Insights & Filter Module Layout -->
-    <div id="view-ownership" class="tab-content hidden p-4 space-y-3 flex flex-col flex-1">
+    <!-- Tab 2: Ownership Insights Section -->
+    <div id="view-ownership" class="tab-content hidden absolute inset-0 p-4 overflow-y-auto no-scrollbar space-y-3">
       <div class="flex items-center justify-between bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-2 flex-shrink-0">
         <span class="text-[10px] font-bold text-[#E8D5A3] uppercase tracking-wider pl-1">Scout Intelligence Filter</span>
         <button id="gem-toggle-btn" onclick="toggleHiddenGemsFilter()" class="text-[9px] font-black px-2.5 py-1 rounded-md border border-[#C9A84C]/30 text-[#E8D5A3] bg-black/20 transition-all">
           💎 GEMS (<10%)
         </button>
       </div>
-      <div class="flex-1 overflow-y-auto no-scrollbar">
-        <div id="ownership-list"><p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading insights list...</p></div>
+      <div id="ownership-list">
+        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading insights list...</p>
       </div>
     </div>
 
-    <!-- Tab 3: Fixture Matrix Matrix Table Block Grid -->
-    <div id="view-fixtures" class="tab-content hidden p-4 flex flex-col space-y-3 flex-1">
+    <!-- Tab 3: Fixture Matrix Section -->
+    <div id="view-fixtures" class="tab-content hidden absolute inset-0 p-4 overflow-y-auto no-scrollbar space-y-3">
       <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer flex-shrink-0" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
         <div class="flex items-center gap-1.5">
@@ -121,8 +119,8 @@
         </div>
       </div>
 
-      <div class="w-full flex-1 overflow-x-auto rounded-xl border no-scrollbar" style="background:#124c2a; border-color:#1e6a3c;">
-        <table class="text-center text-[10px] border-collapse table-fixed h-full" style="width: calc(55px + ( (100vw - 87px) / 4 * 38 )); min-width: 2300px;">
+      <div class="w-full overflow-x-auto rounded-xl border no-scrollbar" style="background:#124c2a; border-color:#1e6a3c;">
+        <table class="text-center text-[10px] border-collapse table-fixed" style="width: calc(55px + ( (100vw - 87px) / 4 * 38 )); min-width: 2300px;">
           <thead class="text-[9px] uppercase tracking-wider border-b" style="background:#041e12; border-color:#1e6a3c; color:#3A9E5F;">
             <tr id="fixture-header-row">
               <th class="text-left font-bold sticky left-0 z-20 border-r" style="background:#041e12; border-color:#1e6a3c; width: 55px; padding: 10px 6px;">Team</th>
@@ -155,7 +153,7 @@
     </div>
   </div>
 
-  <!-- Popover Sheet Box -->
+  <!-- Filter Dropdown Modal -->
   <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
     <div class="w-full max-w-md rounded-t-2xl p-4 flex flex-col" style="background:#041e12; border-top: 2px solid #C9A84C; max-height:75vh;">
       <div class="flex justify-between items-center pb-3 border-b border-gray-800 mb-2">
@@ -215,11 +213,13 @@
   </script>
 
   <script>
+    // Tab Controller Fix (Absolute Reset display to safe view blocking)
     function switchDraftTab(tabId) {
       document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
-      document.querySelectorAll('.tab-content').forEach(content => content.className = "tab-content hidden");
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      
       document.getElementById('seg-' + tabId).classList.add('active');
-      document.getElementById('view-' + tabId).className = tabId === 'fixtures' ? "tab-content flex flex-col space-y-3 flex-1" : "tab-content p-4 space-y-4 flex flex-col flex-1";
+      document.getElementById('view-' + tabId).classList.remove('hidden');
     }
   </script>
 </body>
