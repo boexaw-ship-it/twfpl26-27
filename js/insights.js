@@ -1,15 +1,17 @@
 import { db } from "/twfpl26-27/js/firebase-config.js";
 import { collection, doc, onSnapshot, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
+// Global Cache Controls
 let allPlayersCache = [];
 let showGemsOnlyGlobal = false;
 
 /**
- * Main Strategy Router Engine
+ * 📡 Firebase Firestore Database မှ ကစားသမားဒေတာများကို 
+ * Real-time ဆွဲပြပေးမည့်အပြင် Draft Strategic တွက်ချက်မှုများကိုပါ တပါတည်းလုပ်ဆောင်မည့် Main Function
  */
 export function initRealtimeInsights(uid) {
   
-  // GW Listener
+  // 🗓️ Current Gameweek အဝိုင်းတံဆိပ်စာသားကို Firebase ရဲ့ status/current ထဲမှ ဖတ်ယူခြင်း
   onSnapshot(doc(db, "status", "current"), (d) => {
     if (d.exists()) {
       const gwLabel = document.getElementById("gw-header-label");
@@ -17,17 +19,25 @@ export function initRealtimeInsights(uid) {
     }
   });
 
-  // 👕 Tab 1 Fix: Users Collection ထဲမှ fplTeamId ကို အရင်ရှာဖွေပြီးမှ Squad ဒေတာဆွဲထုတ်ခြင်း
+  // 👕 🎯 🚀 CRITICAL FIX: SQUAD 15 PLAYERS REAL-TIME FETCHING ENGINE
+  // အသုံးပြုသူ၏ ယူဆာ ID မှတစ်ဆင့် fplTeamId ကို ရှာဖွေပြီး liveTeams ဒေတာကို စက္ကန့်ပိုင်းအတွင်း ဆွဲထုတ်ခြင်း
   if (uid) {
     getDoc(doc(db, "users", uid)).then((userSnap) => {
       if (userSnap.exists() && userSnap.data().fplTeamId) {
-        const teamId = userSnap.data().fplTeamId; // ရလာသော Team ID (ဥပမာ- dmIsVFopP3...)
+        const teamId = userSnap.data().fplTeamId; // ယူဆာ၏ FPL Team ID ကို ရယူခြင်း
         
-        // liveTeams အောက်တွင် ၎င်း Team ID ဖြင့် ကစားသမား ၁၅ ယောက်ကို Listener ချိတ်ဆက်ခြင်း
+        // liveTeams collection အောက်ရှိ သက်ဆိုင်ရာ Team ID node အား Real-time တိုက်ရိုက်ချိတ်ဆက်နားထောင်ခြင်း
         onSnapshot(doc(db, "liveTeams", teamId), (squadSnap) => {
           if (squadSnap.exists()) {
             const teamData = squadSnap.data();
-            renderUserSquadList(teamData.players || []);
+            
+            // တွက်ချက်မှုများ ပိုမိုမြန်ဆန်စေရန်အတွက် Players array ရှိမရှိ စစ်ဆေးပြီး Render ပြုလုပ်ခြင်း
+            if (teamData && teamData.players) {
+              renderUserSquadList(teamData.players);
+              calculateTeamShieldTracker(teamData.players); // Shield Tracker အား အော်တိုတွက်ချက်ခိုင်းခြင်း
+            } else {
+              fallbackSquadMessage();
+            }
           } else {
             fallbackSquadMessage();
           }
@@ -35,7 +45,8 @@ export function initRealtimeInsights(uid) {
       } else {
         fallbackSquadMessage();
       }
-    }).catch(() => {
+    }).catch((err) => {
+      console.error("Error fetching user document:", err);
       fallbackSquadMessage();
     });
   }
@@ -49,17 +60,20 @@ export function initRealtimeInsights(uid) {
   });
 }
 
+/**
+ * Squad Load မအောင်မြင်ပါက fallback ပြသပေးမည့်စာသား
+ */
 function fallbackSquadMessage() {
   const el = document.getElementById("my-squad-list");
   if (el) el.innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">No squad data found in database.</p>`;
 }
 
 /**
- * Render Engine for 15 Players Squad List
+ * 👕 Tab 1 Render: အန်ကယ့် လက်ရှိလူ ၁၅ ယောက်အား သပ်ရပ်စွာ ထုတ်ပေးခြင်း
  */
 function renderUserSquadList(squadArray) {
   let html = "";
-  if (squadArray.length === 0) {
+  if (!squadArray || squadArray.length === 0) {
     fallbackSquadMessage();
     return;
   }
@@ -67,11 +81,45 @@ function renderUserSquadList(squadArray) {
   squadArray.forEach((p, idx) => {
     html += buildHtmlRow(p, idx + 1, `${p.ownership || 0}% owned`, "Current Squad Selection");
   });
-  document.getElementById("my-squad-list").innerHTML = html;
+  
+  const squadContainer = document.getElementById("my-squad-list");
+  if (squadContainer) squadContainer.innerHTML = html;
 }
 
 /**
- * Filter Engine for Global Ownership Insights
+ * 🛡️ 1. Template Shield Tracker Real-time Strategy Analyzer
+ */
+function renderTeamShieldTracker(averageOwnership) {
+  const shieldEl = document.getElementById("team-shield-badge");
+  if (shieldEl) {
+    if (averageOwnership >= 70) {
+      shieldEl.className = "shield-badge shield-safe";
+      shieldEl.textContent = `SHIELD: SAFE (${Math.round(averageOwnership)}%)`;
+    } else if (averageOwnership >= 40) {
+      shieldEl.className = "shield-badge shield-tactical";
+      shieldEl.textContent = `SHIELD: TACTICAL (${Math.round(averageOwnership)}%)`;
+    } else {
+      shieldEl.className = "shield-badge shield-aggressive";
+      shieldEl.textContent = `SHIELD: AGGRESSIVE (${Math.round(averageOwnership)}%)`;
+    }
+  }
+}
+
+/**
+ * လူစာရင်းမှ ပိုင်ဆိုင်မှု ပျမ်းမျှအား တွက်ချက်ပေးသည့် Function
+ */
+function calculateTeamShieldTracker(squadArray) {
+  if (!squadArray || squadArray.length === 0) return;
+  let totalOwnership = 0;
+  squadArray.forEach(p => {
+    totalOwnership += parseFloat(p.ownership || 0);
+  });
+  const avg = totalOwnership / squadArray.length;
+  renderTeamShieldTracker(avg);
+}
+
+/**
+ * 📊 Tab 2 Render: Global Ownership Insights List
  */
 function executeInsightsRender() {
   let filteredDocs = [...allPlayersCache];
@@ -93,7 +141,7 @@ function executeInsightsRender() {
 }
 
 /**
- * Standard Metric Card Layout Builder
+ * Modular Row Card HTML Template
  */
 function buildHtmlRow(p, index, rightLabel, subText) {
   let posBg = "#9f1239";
@@ -122,7 +170,7 @@ function buildHtmlRow(p, index, rightLabel, subText) {
 }
 
 /**
- * Filter Controller
+ * 💎 Hidden Gems Toggle Controller
  */
 window.toggleHiddenGemsFilter = () => {
   showGemsOnlyGlobal = !showGemsOnlyGlobal;
