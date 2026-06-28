@@ -1,14 +1,21 @@
 {
-  "name": "TW Fantasy Official League",
-  "short_name": "TW Fantasy",
-  "description": "TW FPL Mini League 2026-27",
-  "start_url": "/index.html",
-  "display": "standalone",
-  "background_color": "#0D2B1A",
-  "theme_color": "#1B4D2E",
-  "orientation": "portrait",
+  "short_name": "TW FM",
+  "name": "TW Fantasy League",
   "icons": [
-    { "src": "/public/icon-192x192.png", "sizes": "192x192", "type": "image/png" },
-    { "src": "/public/icon-512x512.png", "sizes": "512x512", "type": "image/png" }
-  ]
+    {
+      "src": "/twfpl26-27/public/icons/icon-192x192.png",
+      "type": "image/png",
+      "sizes": "192x192"
+    },
+    {
+      "src": "/twfpl26-27/public/icons/icon-512x512.png",
+      "type": "image/png",
+      "sizes": "512x512"
+    }
+  ],
+  "start_url": "/twfpl26-27/index.html",
+  "background_color": "#0D2B1A",
+  "theme_color": "#0D2B1A",
+  "display": "standalone",
+  "orientation": "portrait"
 }
