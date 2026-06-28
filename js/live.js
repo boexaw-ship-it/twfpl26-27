@@ -57,8 +57,8 @@ function playerCard(p, isBench = false) {
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
 
-  // 💡 အန်ကယ်ပြောသကဲ့သို့ အရံလူဆိုပါက ရွှေရောင်/ဝါရောင် Border ခတ်မည်၊ ပွဲထွက်ဆိုပါက C/V အလိုက် ခွဲခြားမည်
-  const ringColor = isBench ? '#C9A84C' : isCap ? '#F0D060' : Ext = isVc ? '#C0C0C0' : '#2A7A47'; 
+  // 🎯 💡 🏆 CRITICAL TYPO BUG FIXED HERE (Ext = စာလုံးအပိုအား ဖယ်ရှားရှင်းလင်းပြီးပါပြီ)
+  const ringColor = isBench ? '#C9A84C' : isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
   const badge = mult === 3
     ? '<span style="position:absolute; top:-3px; right:-5px; font-size:0.5rem; background:#F0D060; color:#0D2B1A; border-radius:9999px; width:13px; height:13px; display:flex; align-items:center; justify-content:center; font-weight:900; border:1px solid #000; z-index:10;">3x</span>' 
@@ -105,7 +105,6 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
-  // 📥 💡 🏆 BENCH CONTAINER (အမည်းရောင် Box ကြီး ဖြုတ်ပြီး ပါးလွှာသော ရွှေရောင်ဘောင်လေး ခတ်ခြင်း)
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
@@ -141,6 +140,7 @@ function updateChatLock() {
   }
 }
 
+// Live Chat Snapshot Listener
 function loadChat() {
   const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(50)); 
   onSnapshot(q, (snapshot) => {
@@ -162,7 +162,7 @@ function loadChat() {
            </div>` 
         : `<div class="flex flex-col items-start mb-3">
             <div class="text-xs mb-1" style="color:#E8D5A3;">${m.teamName}</div>
-            <div class="rounded-2xl rounded-bl-sm px-4 py-2 text-sm max-w-xs" style="background:#1F5C36;color:white;">${m.text}</div>
+            <div class="rounded-2xl rounded-br-sm px-4 py-2 text-sm max-w-xs" style="background:#1F5C36;color:white;">${m.text}</div>
             <div class="text-xs mt-1" style="color:#3A9E5F;">${time}</div>
            </div>`; 
     }).join("");
