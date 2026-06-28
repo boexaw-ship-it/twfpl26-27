@@ -33,8 +33,9 @@ export function initRealtimeInsights(uid) {
           currentLiveSquadState = JSON.parse(savedData);
           renderUserSquadList(currentLiveSquadState);
           calculateTeamShieldTracker(currentLiveSquadState);
-          evaluateSquadBudgetMetrics(); // 🔥 နေရာမှန် တွက်ချက်ခြင်း
+          evaluateSquadBudgetMetrics(); 
           checkCaptaincyRiskRadar();
+          initializeDefaultCompareBar(); // 🔥 စစချင်း Default Compare တွက်ခိုင်းခြင်း
         } else {
           onSnapshot(doc(db, "liveTeams", fplId), async (squadSnap) => {
             if (squadSnap.exists()) {
@@ -66,8 +67,9 @@ export function initRealtimeInsights(uid) {
                 
                 renderUserSquadList(currentLiveSquadState);
                 calculateTeamShieldTracker(currentLiveSquadState);
-                evaluateSquadBudgetMetrics(); // 🔥 နေရာမှန် တွက်ချက်ခြင်း
+                evaluateSquadBudgetMetrics(); 
                 checkCaptaincyRiskRadar();
+                initializeDefaultCompareBar(); // 🔥 စစချင်း Default Compare တွက်ခိုင်းခြင်း
               }
             }
           });
@@ -87,7 +89,31 @@ export function initRealtimeInsights(uid) {
 }
 
 /**
- * 👑 💡 🏆 CAPTAINCY RISK RADAR REAL-TIME EVALUATOR
+ * 📊 💡 🏆 INITIAL LOAD COMPARE BAR ENGINE
+ * လူမလဲခင် စစချင်းမှာ အသင်း၏ လက်ရှိပျမ်းမျှ Ownership ကို အခြေခံအဖြစ် တွက်ချက်ပြသပေးခြင်း
+ */
+function initializeDefaultCompareBar() {
+  if (!currentLiveSquadState || currentLiveSquadState.length === 0) return;
+  
+  let totalOwnership = 0;
+  currentLiveSquadState.forEach(p => { totalOwnership += parseFloat(p.ownership || 0); });
+  const averageOwnership = Math.round(totalOwnership / currentLiveSquadState.length);
+
+  const outLabel = document.getElementById("template-out-label");
+  const inLabel = document.getElementById("template-in-label");
+  const outBar = document.getElementById("template-out-bar");
+  const inBar = document.getElementById("template-in-bar");
+
+  if (outLabel && inLabel && outBar && inBar) {
+    outLabel.textContent = `Squad: ${averageOwnership}%`; // လက်ရှိအသင်းပျမ်းမျှအား ပြခြင်း
+    inLabel.textContent = `Target`;
+    outBar.style.width = `${averageOwnership}%`;
+    inBar.style.width = `0%`; // လူသစ်မရှိသေးသဖြင့် 0 ပြထားခြင်း
+  }
+}
+
+/**
+ * 👑 CAPTAINCY RISK RADAR REAL-TIME EVALUATOR
  */
 function checkCaptaincyRiskRadar() {
   const radarLabel = document.getElementById("captain-risk-text");
@@ -127,27 +153,20 @@ window.toggleDraftCaptainSelection = (targetPlayerId) => {
 };
 
 /**
- * 🔒 💡 🏆 FPL REGULATION: THE INDESTRUCTIBLE CORRECT BUDGET CALCULATOR
- * ပထမဆုံး load လုပ်ချိန်ကတည်းက လက်ရှိအသင်းသား ၁၅ ယောက်၏ ဈေးနှုန်းအစစ်ကို စုစည်းတွက်ချက်ပေးသော Logic အမှန်စစ်စစ်
+ * 🔒 FPL REGULATION: BUDGET TRACKER LOGIC
  */
 function evaluateSquadBudgetMetrics() {
   if (!currentLiveSquadState || currentLiveSquadState.length === 0) return;
   
   let totalCostVal = 0;
-  // အသင်းသား ၁၅ ယောက်လုံး၏ စုစုပေါင်းတန်ဖိုးအား ပေါင်းစပ်ခြင်း
-  currentLiveSquadState.forEach(p => { 
-    totalCostVal += parseFloat(p.price || 0); 
-  });
+  currentLiveSquadState.forEach(p => { totalCostVal += parseFloat(p.price || 0); });
   
-  // £100.0m ထဲမှ နှုတ်၍ လက်ကျန် Remaining Bank အမှန်အား ရှာဖွေခြင်း
   const remainingBank = 100.0 - totalCostVal;
-  
   const bankLabel = document.getElementById("budget-bank-label");
   const costLabel = document.getElementById("budget-total-cost");
   
   if (bankLabel) {
     bankLabel.textContent = `£${remainingBank.toFixed(1)}m`;
-    // ပိုက်ဆံကျန်ရင် အစိမ်းရောင်ပြပြီး ပိုက်ဆံမလောက်ရင် အနီရောင်ဖြင့် စမတ်ကျကျပြောင်းလဲခြင်း
     bankLabel.style.color = remainingBank >= 0 ? "#22c55e" : "#ef4444";
   }
   if (costLabel) {
@@ -203,7 +222,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     return;
   }
 
-  // Rules Approved -> Commit to Local memory State array
+  // Swap Approved
   currentLiveSquadState[oldPlayerIndex] = {
     ...oldPlayer,
     playerId: newPlayerData.playerId,
@@ -264,7 +283,7 @@ export function sortSquadByFPLFormat(squadArray) {
 }
 
 /**
- * Render Squad Interface List Block
+ * Render User Squad List
  */
 export function renderUserSquadList(squadArray) {
   let html = "";
@@ -298,7 +317,7 @@ export function renderUserSquadList(squadArray) {
       </div>`;
   });
   document.getElementById("my-squad-list").innerHTML = html;
-  evaluateSquadBudgetMetrics(); // 🔥 အမြဲတမ်း ညှိနှိုင်းတွက်ချက်စေခြင်း
+  evaluateSquadBudgetMetrics(); 
 }
 
 /**
