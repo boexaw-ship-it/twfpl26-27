@@ -9,18 +9,35 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    * { 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    /* 💡 🎯 🚀 CRITICAL MOBILE SELECT BLOCK ENGINE */
+    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ ခလုတ်နှင့် ပွဲစဉ်ဇယားကတ်ပြားကိုမဆို ဖိမိပါက Google Translate / Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
+    body { 
+      font-family: "Inter", sans-serif; 
+      background: #0D2B1A; 
+      height: 100vh; 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
+      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
+      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
+      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
+    }
+    
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
     .nav-item.active { color:#C9A84C; }
     .tab-btn { flex:1; padding:12px 0; font-size:0.8rem; font-weight:700; border-bottom:2px solid transparent; background:transparent; cursor:pointer; transition: all 0.2s; }
     
-    /* 💡 Custom Scrollbar Styling */
+    /* Custom Scrollbar Styling */
     #fixtures-scroll-container::-webkit-scrollbar { width: 3px; }
     #fixtures-scroll-container::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
     
-    /* 💡 Stats Box Dropdown Animation */
+    /* Stats Box Dropdown Animation */
     .stats-expand-box { max-height: 0; overflow: hidden; transition: max-height 0.3s ease-out; }
     .stats-expand-box.open { max-height: 500px; transition: max-height 0.4s ease-in; }
   </style>
