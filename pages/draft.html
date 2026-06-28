@@ -45,22 +45,21 @@
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
     
-    /* 🛡️ 💡 🏆 FIXED SHIELD FRAME TEXT CLIPPING PROOF STYLE */
-    /* စာသားများ မည်သို့မျှ လျှံထွက်ခွင့်မရှိစေရန် တိကျသေချာသော အနားသတ်ကန့်သတ်ချက်များ */
+    /* 🛡️ FIXED AUTO-EXTENDING SHIELD BADGE STYLES */
+    /* Handled formatting limits explicitly to keep longer labels flat and safe inside the block layout */
     .shield-box { 
       padding: 6px 12px; 
       border-radius: 6px; 
-      font-size: 10px; 
+      font-size: 9px; 
       font-weight: 900; 
       text-transform: uppercase; 
       text-align: center; 
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 100%;
-      max-width: 145px; /* အပြင်ဘက်ကို တိုးမထွက်နိုင်စေရန် ကန့်သတ်ချက်အသစ် */
+      white-space: nowrap; /* Forces text to stay on one single horizontal row line */
       box-sizing: border-box;
-      white-space: nowrap;
+      width: auto;         /* Allows it to naturally size up or down based on padding rules */
     }
     .shield-safe { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; }
     .shield-tactical { background: rgba(234,179,8,0.1); border: 1px solid #eab308; color: #eab308; }
@@ -99,12 +98,12 @@
       </div>
     </div>
 
-    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-3">
-      <div class="flex flex-col min-w-0">
+    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-2 overflow-hidden">
+      <div class="flex flex-col min-w-0 flex-1">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">SQUAD STRATEGY STATUS</span>
         <span class="text-[10px] text-[#E8D5A3] mt-0.5 font-medium truncate">Risk of your 15 selections</span>
       </div>
-      <div class="w-[145px] flex-shrink-0 flex justify-end">
+      <div class="flex-shrink-0 flex items-center justify-end">
         <div id="team-shield-badge" class="shield-box shield-safe">SHIELD: SAFE (75%)</div>
       </div>
     </div>
