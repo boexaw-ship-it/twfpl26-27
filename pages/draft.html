@@ -32,9 +32,6 @@
     }
     
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
-    .nav-item.active { color:#C9A84C; }
-    
     .segment-btn { flex: 1; text-align: center; padding: 12px 0; font-size: 0.7rem; font-weight: 700; color: #3A9E5F; transition: all 0.2s; border-bottom: 2px solid transparent; letter-spacing: 0.05em; }
     .segment-btn.active { color: #C9A84C; border-color: #C9A84C; background: rgba(201,168,76,0.03); }
     
@@ -45,10 +42,19 @@
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
     
-    /* 🛡️ FIXED AUTO-EXTENDING SHIELD BADGE STYLES */
-    /* Handled formatting limits explicitly to keep longer labels flat and safe inside the block layout */
+    /* 🛡️ 💡 🏆 INDESTRUCTIBLE SHIELD BOUNDARY CSS LAYER */
+    /* JS က စာသား Overwrite လုပ်လိုက်သော်လည်း Flex layout ဘောင်အကွက် မကျိုးပျက်အောင် ထိန်းညှိခြင်း */
+    .shield-outer-wrap {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      width: 145px;
+      min-width: 145px;
+      max-width: 145px;
+      flex-shrink: 0;
+    }
     .shield-box { 
-      padding: 6px 12px; 
+      padding: 6px 10px; 
       border-radius: 6px; 
       font-size: 9px; 
       font-weight: 900; 
@@ -57,9 +63,9 @@
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      white-space: nowrap; /* Forces text to stay on one single horizontal row line */
+      width: 100%;
+      white-space: nowrap;
       box-sizing: border-box;
-      width: auto;         /* Allows it to naturally size up or down based on padding rules */
     }
     .shield-safe { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; }
     .shield-tactical { background: rgba(234,179,8,0.1); border: 1px solid #eab308; color: #eab308; }
@@ -68,6 +74,7 @@
 </head>
 <body>
 
+  <!-- Top Navigation Header Bar -->
   <div style="background:#041e12; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
     <div class="flex items-center">
       <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
@@ -76,9 +83,12 @@
     <span id="gw-header-label" class="ml-auto text-[10px] font-bold px-2 py-1 rounded" style="background:#124c2a; color:#E8D5A3;">GW —</span>
   </div>
 
+  <!-- Analytics & Strategy Interface Container -->
   <div class="p-4 bg-[#041e12] flex flex-col gap-3 flex-shrink-0">
     
+    <!-- Row 1: Dual Grid Dynamic Cards -->
     <div class="grid grid-cols-2 gap-3 w-full">
+      <!-- Draft Template Compare Card -->
       <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">DRAFT TEMPLATE COMPARE</span>
         <div class="flex items-center justify-between text-white text-xs font-bold font-mono mt-0.5">
@@ -92,32 +102,39 @@
         </div>
       </div>
 
+      <!-- Captaincy Risk Radar Card -->
       <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">CAPTAINCY RISK RADAR</span>
         <p id="captain-risk-text" class="text-[10px] font-black text-yellow-500 mt-1 leading-tight">Tactical Move! (Elite Rivals 75% captained Haaland)</p>
       </div>
     </div>
 
-    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-2 overflow-hidden">
+    <!-- 🛡️ 💡 🏆 ROW 2 SYSTEM FIX: INDESTRUCTIBLE DUAL ROW BLOCK FLEX SYSTEM -->
+    <!-- Flex Boundary စနစ်သို့ အပြီးသတ်ပြောင်းလဲလိုက်သဖြင့် ဘယ်ဘက်စာသားနှင့် ညာဘက် Badge မည်သို့မျှ မကျိုးပျက်တော့ပါ -->
+    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-3">
       <div class="flex flex-col min-w-0 flex-1">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">SQUAD STRATEGY STATUS</span>
         <span class="text-[10px] text-[#E8D5A3] mt-0.5 font-medium truncate">Risk of your 15 selections</span>
       </div>
-      <div class="flex-shrink-0 flex items-center justify-end">
+      <!-- Safeguard Outer Wrapper Added -->
+      <div class="shield-outer-wrap">
         <div id="team-shield-badge" class="shield-box shield-safe">SHIELD: SAFE (75%)</div>
       </div>
     </div>
 
   </div>
 
+  <!-- Switch Tabs Controls -->
   <div class="flex bg-[#041e12] border-b border-[#1F5C36]/60 flex-shrink-0 relative z-20">
     <button onclick="switchDraftTab('squad')" id="seg-squad" class="segment-btn active">👕 MY SQUAD (15)</button>
     <button onclick="switchDraftTab('ownership')" id="seg-ownership" class="segment-btn">📊 OWNERSHIP INSIGHTS</button>
     <button onclick="switchDraftTab('fixtures')" id="seg-fixtures" class="segment-btn">🗓️ FIXTURE MATRIX</button>
   </div>
 
+  <!-- Main Scrollable Content Box Area -->
   <div class="flex-1 overflow-y-auto no-scrollbar bg-[#041e12] relative">
     
+    <!-- Tab 1: My Squad Section -->
     <div id="view-squad" class="tab-content p-4 space-y-2">
       <div id="my-squad-list" class="space-y-2">
         <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your 15 players list...</p>
@@ -125,6 +142,7 @@
       <div class="h-24 w-full"></div>
     </div>
     
+    <!-- Tab 2: Ownership Insights Section -->
     <div id="view-ownership" class="tab-content hidden p-4 space-y-3">
       <div class="flex items-center justify-between bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-2 flex-shrink-0">
         <span class="text-[10px] font-bold text-[#E8D5A3] uppercase tracking-wider pl-1">Scout Intelligence Filter</span>
@@ -138,6 +156,7 @@
       <div class="h-24 w-full"></div>
     </div>
 
+    <!-- Tab 3: Fixture Matrix Section -->
     <div id="view-fixtures" class="tab-content hidden p-4 space-y-3">
       <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer flex-shrink-0 w-full bg-[#124c2a] border border-[#1e6a3c] active:scale-[0.99] transition-all">
         <div class="flex items-center gap-1.5 min-w-0">
@@ -173,6 +192,7 @@
             <tr data-team="LIV"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">LIV</td></tr>
             <tr data-team="MCI"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">MCI</td></tr>
             <tr data-team="MUN"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">MUN</td></tr>
+            <tr data-team="MUN"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">MUN</td></tr>
             <tr data-team="NEW"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">NEW</td></tr>
             <tr data-team="NFO"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">NFO</td></tr>
             <tr data-team="SUN"><td class="text-left font-black text-white sticky left-0 z-10 border-r" style="background:#124c2a; border-color:#1e6a3c; padding: 10px 6px;">SUN</td></tr>
@@ -184,6 +204,7 @@
     </div>
   </div>
 
+  <!-- Dropdown Modal -->
   <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
     <div class="w-full max-w-md rounded-t-2xl p-4 flex flex-col" style="background:#041e12; border-top: 2px solid #C9A84C; max-height:75vh;">
       <div class="flex justify-between items-center pb-3 border-b border-gray-800 mb-2">
