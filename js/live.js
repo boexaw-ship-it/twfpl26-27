@@ -44,12 +44,12 @@ onAuthStateChanged(auth, async (user) => {
 
 function jerseyPath(p) {
   const pos = String(p.position || "").toUpperCase().trim();
-  const folder = (pos.startsWith("GK")) ? "gk" : "outfield"; 
+  const folder = (pos === "GK" || pos === "GKP") ? "gk" : "outfield"; 
   const code = String(p.teamCode || "unknown").toLowerCase().trim(); 
   return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
 }
 
-// 📛 Player Card Maker (အန်ကယ်အလိုရှိသည့် မူရင်းအဝိုင်းဒီဇိုင်းစစ်စစ်)
+// 📛 Player Card Maker (အန်ကယ်အလိုရှိသည့် မူရင်းအဝိုင်းဒီဇိုင်းစစ်စစ် - တပြေးညီအရွယ်အစား)
 function playerCard(p, isBench = false) {
   const mult = Number(p.multiplier ?? 1); 
   const displayPoints = (p.livePoints ?? 0) * (mult > 1 ? mult : 1); 
@@ -57,7 +57,7 @@ function playerCard(p, isBench = false) {
   const isCap = p.isCaptain === true || p.isCaptain === "true" || mult > 1;
   const isVc = p.isVice === true || p.isVice === "true";
 
-  // 🎯 💡 🏆 CRITICAL TYPO BUG FIXED HERE (Ext = စာလုံးအပိုအား ဖယ်ရှားရှင်းလင်းပြီးပါပြီ)
+  // 💡 အန်ကယ်ပြောသကဲ့သို့ အရံလူဆိုပါက ရွှေရောင်/ဝါရောင် Border ခတ်မည်၊ ပွဲထွက်ဆိုပါက C/V အလိုက် ခွဲခြားမည်
   const ringColor = isBench ? '#C9A84C' : isCap ? '#F0D060' : isVc ? '#C0C0C0' : '#2A7A47'; 
 
   const badge = mult === 3
@@ -90,10 +90,11 @@ function renderPitch(data) {
   const starters = picks.filter(p => Number(p.multiplier ?? 1) > 0); 
   const subs = picks.filter(p => Number(p.multiplier ?? 1) === 0); 
   
-  const gk = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("GK"); });
-  const def = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("DE"); });
-  const mid = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("MI"); });
-  const fwd = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos.startsWith("FW") || pos.startsWith("FO"); });
+  // 💡 🏆 🎯 UNCLE'S FIREBASE DATA MAPPING FIX: "GK", "DEF", "MID", "FWD" စာလုံးအပြည့်အစုံဖြင့် တိကျစွာ ပြန်လည်စစ်ဆေးခြင်း
+  const gk = starters.filter(p => { const pos = String(p.position || "").toUpperCase().trim(); return pos === "GK" || pos === "GKP"; });
+  const def = starters.filter(p => String(p.position || "").toUpperCase().trim() === "DEF");
+  const mid = starters.filter(p => String(p.position || "").toUpperCase().trim() === "MID");
+  const fwd = starters.filter(p => String(p.position || "").toUpperCase().trim() === "FWD");
 
   const makeRow = (players) => `<div class="field-row"> ${players.map(p => playerCard(p, false)).join("")} </div>`; 
 
@@ -105,6 +106,7 @@ function renderPitch(data) {
   `;
   document.getElementById("pitch").innerHTML = htmlContent;
 
+  // 📥 BENCH CONTAINER (အမည်းနောက်ခံလုံးဝမပါဘဲ First Lineup Size တူ၊ ရွှေရောင်ဘောင်လေးဖြင့် ပြသခြင်း)
   let benchContent = "";
   if (subs.length > 0) {
     benchContent += `
@@ -140,7 +142,6 @@ function updateChatLock() {
   }
 }
 
-// Live Chat Snapshot Listener
 function loadChat() {
   const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(50)); 
   onSnapshot(q, (snapshot) => {
