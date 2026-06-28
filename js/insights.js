@@ -19,25 +19,47 @@ export function initRealtimeInsights(uid) {
     }
   });
 
-  // 👕 🎯 🚀 UNCLE'S TRUE path: 15 SQUAD PLAYERS FROM LIVETEAMS SYNC
-  // အန်ကယ် ပေးပို့ထားသော live.js မူရင်းအလုပ်လုပ်ပုံအတိုင်း users မှတစ်ဆင့် fplTeamId ကိုဖတ်ပြီး 
-  // doc(db, "liveTeams", fplId) အောက်ရှိ picks/players ဒေတာဇယားကို စက္ကန့်ပိုင်းအတွင်း ဖတ်ယူခြင်း
+  // 👕 🎯 🚀 ADVANCED DATA CROSS-REFERENCE ENGINE
+  // liveTeams ထဲတွင် price နှင့် ownership မပါဝင်သဖြင့် players collection ထဲမှ ဒေတာနှင့် လှမ်းဖတ်ချိတ်ဆက်ခြင်း
   if (uid) {
     getDoc(doc(db, "users", uid)).then((userSnap) => {
       if (userSnap.exists() && userSnap.data().fplTeamId) {
-        const fplId = userSnap.data().fplTeamId; // အန်ကယ့် ကိုယ်ပိုင် FPL Team ID ရယူခြင်း
+        const fplId = userSnap.data().fplTeamId;
         
-        // liveTeams collection ကို မူရင်းအတိုင်း တိုက်ရိုက် Watcher လုပ်ခြင်း
-        onSnapshot(doc(db, "liveTeams", fplId), (squadSnap) => {
+        // liveTeams/fplId ကို Watcher လုပ်ခြင်း
+        onSnapshot(doc(db, "liveTeams", fplId), async (squadSnap) => {
           if (squadSnap.exists()) {
             const teamData = squadSnap.data();
+            const rawSquadArray = teamData.picks || teamData.players || [];
             
-            // အန်ကယ့် database တည်ဆောက်ပုံ Flexible ဖြစ်စေရန် picks သို့မဟုတ် players array အား ရွေးချယ်ဖတ်ယူခြင်း
-            const squadArray = teamData.picks || teamData.players || [];
-            
-            if (squadArray.length > 0) {
-              renderUserSquadList(squadArray);
-              calculateTeamShieldTracker(squadArray); // Shield Tracker အား ပိုင်ဆိုင်မှု ပျမ်းမျှတွက်ချက်ခိုင်းခြင်း
+            if (rawSquadArray.length > 0) {
+              // 🔄 ဉာဏ်ရည်မြင့် Cross-mapping စနစ်: ကစားသမားတစ်ယောက်ချင်းစီ၏ ID အား players db မှ price/ownership လှမ်းယူခြင်း
+              const enrichedSquad = await Promise.all(rawSquadArray.map(async (playerItem) => {
+                // အန်ကယ့် database ရှိ playerId (ဥပမာ- 287) အား စာသားပြောင်း၍ doc ID အဖြစ် သတ်မှတ်ခြင်း
+                const pIdStr = String(playerItem.playerId || ""); 
+                
+                if (pIdStr) {
+                  try {
+                    const playerDocSnap = await getDoc(doc(db, "players", pIdStr));
+                    if (playerDocSnap.exists()) {
+                      const masterData = playerDocSnap.data();
+                      // မူရင်း picks ဒေတာထဲသို့ တကယ့် အစစ်အမှန် price နှင့် ownership တန်ဖိုးများကို ပေါင်းစပ်ပေးခြင်း
+                      return {
+                        ...playerItem,
+                        price: masterData.price || playerItem.price || 0,
+                        ownership: masterData.ownership || playerItem.ownership || 0
+                      };
+                    }
+                  } catch (e) {
+                    console.error("Cross ref error for player:", pIdStr, e);
+                  }
+                }
+                return playerItem;
+              }));
+
+              // မျက်နှာပြင်ပေါ်သို့ ချောမွေ့စွာ Render တင်ပေးခြင်း
+              renderUserSquadList(enrichedSquad);
+              calculateTeamShieldTracker(enrichedSquad);
             } else {
               fallbackSquadMessage();
             }
@@ -63,9 +85,6 @@ export function initRealtimeInsights(uid) {
   });
 }
 
-/**
- * Squad Load မအောင်မြင်ပါက fallback ပြသပေးမည့်စာသား
- */
 function fallbackSquadMessage() {
   const el = document.getElementById("my-squad-list");
   if (el) el.innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">No squad data found in database.</p>`;
@@ -139,7 +158,7 @@ function executeInsightsRender() {
 }
 
 /**
- * Modular Row Card HTML Template (Clean English Version Only)
+ * Modular Row Card HTML Template
  */
 function buildHtmlRow(p, index, rightLabel, subText) {
   let posBg = "#9f1239";
