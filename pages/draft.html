@@ -3,18 +3,21 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#1B4D2E" />
-  <title>Insights — TW Fantasy</title>
+  <meta name="theme-color" content="#041e12" />
+  <title>Insights Draft — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
+    /* 💡 🎯 🚀 ABSOLUTE MOBILITY ANTI-GOOGLE SEARCH & TRANSLATE BAR BLOCKER */
     * { 
       -webkit-tap-highlight-color: transparent; 
+      -webkit-user-select: none !important;
+      -moz-user-select: none !important;
+      -ms-user-select: none !important;
+      user-select: none !important;
     }
     
-    /* 💡 🎯 🚀 CRITICAL MOBILE SELECT BLOCK ENGINE */
-    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ ခလုတ်၊ တက်ဘ်နှင့် ဇယားကွက် Cell များကိုမဆို ဖိမိပါက Google Translate / Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
     body { 
       font-family: "Inter", sans-serif; 
       background: #041e12; 
@@ -22,67 +25,102 @@
       overflow: hidden; 
       display: flex; 
       flex-direction: column; 
-      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
-      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
-      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
-      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
     }
     
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
     .nav-item.active { color:#C9A84C; }
-    .tab-btn { border: 1px solid rgba(201,168,76,0.3); color: #E8D5A3; border-radius: 0.5rem; padding: 4px 10px; font-size: 0.7rem; font-weight: 600; cursor: pointer; background: transparent; transition: all 0.2s; white-space: nowrap; }
-    .tab-btn.active { background: rgba(201,168,76,0.2) !important; color: #C9A84C !important; }
+    
+    /* Segment Control Tab Switcher Styles */
+    .segment-btn { flex: 1; text-align: center; padding: 10px 0; font-size: 0.75rem; font-weight: 700; color: #3A9E5F; transition: all 0.25s ease; border-bottom: 2px solid transparent; }
+    .segment-btn.active { color: #C9A84C; border-color: #C9A84C; background: rgba(201,168,76,0.04); }
+    
     .no-scrollbar::-webkit-scrollbar { display: none; }
     .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
+    
+    /* FDR Matrix Multi-Color Legends */
     .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; }
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
+    
+    /* Custom Dynamic Strategy Badges */
+    .shield-badge { padding: 3px 8px; border-radius: 6px; font-size: 10px; font-weight: 900; letter-spacing: 0.05em; text-transform: uppercase; }
+    .shield-safe { background: rgba(34,197,94,0.15); border: 1px solid #22c55e; color: #22c55e; }
+    .shield-tactical { background: rgba(234,179,8,0.15); border: 1px solid #eab308; color: #eab308; }
+    .shield-aggressive { background: rgba(239,68,68,0.15); border: 1px solid #ef4444; color: #ef4444; }
   </style>
 </head>
 <body class="scrollbar-none">
 
-  <!-- Top Navigation Header Panel -->
+  <!-- Top Real-time Strategy Header Panel Linkage -->
   <div style="background:#041e12; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
-    <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
-    <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">TW VIP INSIGHTS</h1>
-    <span id="gw-header-label" class="ml-auto text-xs font-bold px-2 py-0.5 rounded" style="background:#124c2a; color:#E8D5A3;">GW —</span>
-  </div>
-
-  <!-- Insights Horizontal Categories Tabs Switcher -->
-  <div style="padding:10px 16px 6px; flex-shrink:0;">
-    <div style="display:flex; gap:6px; overflow-x:auto;" class="no-scrollbar">
-      <button onclick="switchTab('ownership')" id="btn-ownership" class="tab-btn active">📊 Ownership</button>
-      <button onclick="switchTab('captains')" id="btn-captains" class="tab-btn">👑 Captains</button>
-      <button onclick="switchTab('differentials')" id="btn-differentials" class="tab-btn">⚡ Differentials</button>
-      <button onclick="switchTab('fixtures')" id="btn-fixtures" class="tab-btn">🗓️ Fixture Ease</button>
+    <div class="flex items-center">
+      <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
+      <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">STRATEGY DRAFT</h1>
     </div>
-  </div>
-
-  <div style="padding:6px 16px 10px; flex-shrink:0; border-bottom:1px solid #1F5C36;">
-    <p class="text-xs" style="color:#3A9E5F;">Insights Category Data (Real-time):</p>
-  </div>
-
-  <!-- Main View Component Content Injection Router Box -->
-  <div class="flex-1 overflow-y-auto px-4 py-3 scrollbar-none">
     
-    <div id="view-ownership" class="tab-content space-y-2">
-      <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">🔥 "မင်းမပါရင် template ကနေ ပြတ်ကျမယ်" Players</p>
-      <div id="ownership-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p></div>
+    <!-- 🛡️ 1. Template Shield Tracker UI Badge Badge Component -->
+    <div class="ml-auto flex items-center gap-2">
+      <div id="team-shield-badge" class="shield-badge shield-safe">🛡️ Shield: Safe (75%)</div>
+      <span id="gw-header-label" class="text-[10px] font-bold px-2 py-1 rounded" style="background:#124c2a; color:#E8D5A3;">GW —</span>
+    </div>
+  </div>
+
+  <!-- 📊 Compact Dual Segment Controls Switcher Container (No Scroll, Compact Design) -->
+  <div class="flex bg-[#041e12] border-b border-[#1F5C36]/60 flex-shrink-0">
+    <button onclick="switchDraftTab('ownership')" id="seg-ownership" class="segment-btn active">📊 OWNERSHIP INSIGHTS</button>
+    <button onclick="switchDraftTab('fixtures')" id="seg-fixtures" class="segment-btn">🗓️ 38-GW FIXTURE MATRIX</button>
+  </div>
+
+  <!-- Main View Component Interactive Display Space Router Box -->
+  <div class="flex-1 overflow-y-auto scrollbar-none flex flex-col">
+    
+    <!-- 🟢 Content Layer 1: Ownership Live Insights & Real-time Evaluation Layout -->
+    <div id="view-ownership" class="tab-content p-4 space-y-4 flex flex-col flex-1">
+      
+      <!-- Interactive Analytical Dynamic Widgets (Real-time Evaluation Engine UI) -->
+      <div class="grid grid-cols-2 gap-3 flex-shrink-0">
+        <!-- 📊 3. Real-time Template Compare Box Component -->
+        <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5">
+          <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">🔄 Draft Template Compare</span>
+          <div class="flex items-center justify-between text-white text-xs font-bold font-mono mt-0.5">
+            <span class="text-yellow-500">Out: 45%</span>
+            <span class="text-gray-500">➡️</span>
+            <span class="text-green-400">In: 8%</span>
+          </div>
+          <div class="w-full bg-black/40 rounded-full h-1 mt-1 overflow-hidden flex">
+            <div class="bg-yellow-500 h-full" style="width: 45%"></div>
+            <div class="bg-green-400 h-full" style="width: 8%"></div>
+          </div>
+        </div>
+
+        <!-- 👑 4. Captaincy Risk Evaluator Box Component -->
+        <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between">
+          <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">👑 Captaincy Risk Radar</span>
+          <p id="captain-risk-text" class="text-[11px] font-black text-yellow-500 mt-1 leading-tight">⚠️ Tactical Move! (Elite Rivals 75% captained Haaland)</p>
+        </div>
+      </div>
+
+      <!-- 💎 2. Scout Hidden Gem Filter Toggle Control Header Bar Layer -->
+      <div class="flex items-center justify-between bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-2.5 flex-shrink-0">
+        <div class="flex items-center gap-1.5">
+          <span class="text-xs font-bold text-[#E8D5A3]">💎 Scout Filter Choice:</span>
+          <p class="text-[10px] text-[#3A9E5F] font-semibold">"မင်းမပါရင် template ကနေ ပြတ်ကျမယ်" Players</p>
+        </div>
+        <button id="gem-toggle-btn" onclick="toggleHiddenGemsFilter()" class="text-[10px] font-black px-2.5 py-1 rounded-md border border-[#C9A84C]/30 text-[#E8D5A3] bg-black/20 active:scale-[0.96] transition-all">
+          💎 GEMS (<10%)
+        </button>
+      </div>
+
+      <!-- Live Dynamic Real-time Insights Injection Box Target Area -->
+      <div class="flex-1 overflow-y-auto no-scrollbar">
+        <div id="ownership-list"><p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading draft analytics context...</p></div>
+      </div>
     </div>
 
-    <div id="view-captains" class="tab-content space-y-2 hidden">
-      <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">🎯 HIGH POINTS + GOOD FORM + EASY NEXT FIXTURE (FDR ≤ 3)</p>
-      <div id="captains-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p></div>
-    </div>
-
-    <div id="view-differentials" class="tab-content space-y-2 hidden">
-      <p class="text-[11px] font-medium uppercase tracking-wider mb-2" style="color:#3A9E5F;">💎 OWNERSHIP &lt; 10% "HIDDEN GEMS" CONCEPT</p>
-      <div id="differentials-list"><p class="text-center text-xs py-8" style="color:#3A9E5F;">Loading data...</p></div>
-    </div>
-
-    <div id="view-fixtures" class="tab-content hidden flex flex-col space-y-3">
-      <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer active:scale-[0.99] transition" style="background:#124c2a; border:1px solid #1e6a3c;">
+    <!-- 🗓️ Content Layer 2: Fixture Ease 38-GW Matrix Grid Block Grid -->
+    <div id="view-fixtures" class="tab-content hidden p-4 flex flex-col space-y-3 flex-1">
+      <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer active:scale-[0.99] transition flex-shrink-0" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
         <div class="flex items-center gap-1.5">
           <span id="selected-team-label" class="text-xs font-bold" style="color:#C9A84C;">Show All Teams (အသင်းအားလုံး)</span>
@@ -90,8 +128,8 @@
         </div>
       </div>
 
-      <div class="w-full overflow-x-auto rounded-xl border no-scrollbar" style="background:#124c2a; border-color:#1e6a3c; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
-        <table class="text-center text-[10px] border-collapse table-fixed" style="width: calc(55px + ( (100vw - 87px) / 4 * 38 )); min-width: 2300px;">
+      <div class="w-full flex-1 overflow-x-auto rounded-xl border no-scrollbar" style="background:#124c2a; border-color:#1e6a3c; box-shadow:0 4px 15px rgba(0,0,0,0.3);">
+        <table class="text-center text-[10px] border-collapse table-fixed h-full" style="width: calc(55px + ( (100vw - 87px) / 4 * 38 )); min-width: 2300px;">
           <thead class="text-[9px] uppercase tracking-wider border-b" style="background:#041e12; border-color:#1e6a3c; color:#3A9E5F;">
             <tr id="fixture-header-row">
               <th class="text-left font-bold sticky left-0 z-20 border-r" style="background:#041e12; border-color:#1e6a3c; width: 55px; padding: 10px 6px;">Team</th>
@@ -144,12 +182,11 @@
     </div>
   </div>
 
-  <!-- 💡 🎯 🚀 UNCLE'S SCRIPT ALIGNMENT FIXED HERE -->
-  <!-- draft.html အတွင်း မူရင်းအတိုင်း insights.js နှင့် fixtures.js နှစ်ခုစလုံးကို တိကျစွာ ချိတ်ဆက်မောင်းနှင်ခြင်း -->
   <script type="module">
     import { auth } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     
+    // မူရင်းအပြင်ဖိုင်နှစ်ခုမှ Logic များကို ခေါ်ယူမောင်းနှင်ခြင်း
     import { initRealtimeInsights } from "../js/insights.js";
     import { loadFixturesFromLocalJSON, buildCustomDropdownOptions } from "../js/fixtures.js";
 
@@ -199,14 +236,30 @@
         if (code === 'ALL' || r.getAttribute('data-team') === code) r.classList.remove('hidden'); else r.classList.add('hidden');
       });
     };
+
+    // 💎 2. Hidden Gems Live State Controller Toggle
+    let showGemsOnly = false;
+    window.toggleHiddenGemsFilter = () => {
+      showGemsOnly = !showGemsOnly;
+      const btn = document.getElementById("gem-toggle-btn");
+      if(showGemsOnly) {
+        btn.style.background = "rgba(201,168,76,0.3)";
+        btn.style.color = "#C9A84C";
+        // ဤနေရာတွင် အန်ကယ့် insights.js ထဲရှိ ဒေတာများကို နှိပ်လိုက်သည့်အခါ Ownership < 10% သီးသန့် စစ်ထုတ်ပေးမည့် Logic စတင်လှမ်းခေါ်နိုင်ပါသည်
+      } else {
+        btn.style.background = "rgba(0,0,0,0.2)";
+        btn.style.color = "#E8D5A3";
+      }
+    };
   </script>
 
   <script>
-    function switchTab(tabId) {
-      document.querySelectorAll('.tab-btn').forEach(btn => btn.classList.remove('active'));
+    // Dual Compact Segment Switcher Controller
+    function switchDraftTab(tabId) {
+      document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.className = "tab-content hidden");
-      document.getElementById('btn-' + tabId).classList.add('active');
-      document.getElementById('view-' + tabId).className = tabId === 'fixtures' ? "tab-content flex flex-col space-y-3" : "tab-content space-y-2";
+      document.getElementById('seg-' + tabId).classList.add('active');
+      document.getElementById('view-' + tabId).className = tabId === 'fixtures' ? "tab-content flex flex-col space-y-3 flex-1" : "tab-content p-4 space-y-4 flex flex-col flex-1";
     }
   </script>
 </body>
