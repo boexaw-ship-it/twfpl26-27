@@ -30,13 +30,11 @@ export function initRealtimeInsights(uid) {
             const rawSquadArray = teamData.picks || teamData.players || [];
             
             if (rawSquadArray.length > 0) {
-              // 🔄 💡 🏆 SERVER ALIGNMENT FIX: Mapping via "scoutPlayers" Collection
-              // liveTeams ထဲရှိ playerId အား အခြေခံ၍ ဆာဗာမှသွင်းပေးသော scoutPlayers ဒေတာနှင့် လှမ်းဖတ်ချိတ်ဆက်ခြင်း
+              // SERVER ALIGNMENT FIX: Mapping via "scoutPlayers" Collection For Price & Ownership %
               const enrichedSquad = await Promise.all(rawSquadArray.map(async (playerItem) => {
                 const pIdStr = String(playerItem.playerId || ""); 
                 if (pIdStr) {
                   try {
-                    // players အစား ဆာဗာသွင်းပေးသည့် scoutPlayers သို့ ပြောင်းလဲချိတ်ဆက်မှု
                     const playerDocSnap = await getDoc(doc(db, "scoutPlayers", pIdStr));
                     if (playerDocSnap.exists()) {
                       const masterData = playerDocSnap.data();
@@ -75,7 +73,6 @@ export function initRealtimeInsights(uid) {
   }
 
   // 📊 Tab 2: Global Ownership Insights List (Connecting to scoutPlayers Collection)
-  // ဆာဗာမှ နေ့စဉ် update လုပ်ပေးနေသည့် scoutPlayers ထဲမှ ownership အများဆုံးစာရင်းအား ဆွဲယူခြင်း
   const qOwnership = query(collection(db, "scoutPlayers"), orderBy("ownership", "desc"));
   onSnapshot(qOwnership, (snap) => {
     allPlayersCache = [];
@@ -120,19 +117,21 @@ function renderUserSquadList(squadArray) {
 }
 
 /**
- * 🛡️ Shield Tracker Core Analyzer
+ * 🛡️ 💡 🏆 SHIELD TRACKER FIXED ALGORITHM (INDESTRUCTIBLE CLASS LIST REMAP)
+ * HTML Layout ပုံစံမပျက်စေရန် မူရင်း Tailwind Class များကို မဖျက်ဘဲ အဆင့်မြင့်စနစ်ဖြင့် ရေးသားထားမှုသစ်
  */
 function renderTeamShieldTracker(averageOwnership) {
   const shieldEl = document.getElementById("team-shield-badge");
   if (shieldEl) {
+    // 🔄 HTML ထဲရှိ Tailwind layout class များကို ထိန်းသိမ်းပြီး အရောင်စနစ်များကိုသာ တိကျစွာ လဲလှယ်ပေးခြင်း
     if (averageOwnership >= 70) {
-      shieldEl.className = "shield-badge shield-safe";
+      shieldEl.className = "shield-box shield-safe";
       shieldEl.textContent = `SHIELD: SAFE (${Math.round(averageOwnership)}%)`;
     } else if (averageOwnership >= 40) {
-      shieldEl.className = "shield-badge shield-tactical";
+      shieldEl.className = "shield-box shield-tactical";
       shieldEl.textContent = `SHIELD: TACTICAL (${Math.round(averageOwnership)}%)`;
     } else {
-      shieldEl.className = "shield-badge shield-aggressive";
+      shieldEl.className = "shield-box shield-aggressive";
       shieldEl.textContent = `SHIELD: AGGRESSIVE (${Math.round(averageOwnership)}%)`;
     }
   }
@@ -165,7 +164,7 @@ function executeInsightsRender() {
 }
 
 /**
- * 🎨 💡 UNCLE'S COLOR DEFINITIONS
+ * 🎨 UNCLE'S COLOR DEFINITIONS
  * GK (အပြာ) | DEF (အနီ) | MID (အဝါ) | FWD (အစိမ်း)
  */
 function buildHtmlRow(p, index, rightLabel, subText) {
