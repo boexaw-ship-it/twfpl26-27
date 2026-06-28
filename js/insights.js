@@ -211,9 +211,11 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
 
   const oldPlayer = currentLiveSquadState[oldPlayerIndex];
 
-  // POSITION GUARD RULE
+  // 🔒 🔥 1. CUSTOM MODAL POSITION GUARD (No more alert!)
   if (String(newPlayerData.position).toLowerCase() !== activeSwapPosition) {
-    alert(`FPL Regulation Error: ${activeSwapPosition.toUpperCase()} နေရာတွင် ${newPlayerData.position.toUpperCase()} လူစားလဲခွင့်မရှိပါဗျာ။`);
+    if (window.showPremiumAlertBox) {
+      window.showPremiumAlertBox(`FPL Regulation Error: ${activeSwapPosition.toUpperCase()} နေရာတွင် ${newPlayerData.position.toUpperCase()} လူစားလဲခွင့်မရှိပါဗျာ။`, "❌");
+    }
     return;
   }
 
@@ -224,8 +226,11 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     else provisionalCost += parseFloat(p.price || 0);
   });
 
+  // 🔒 🔥 2. CUSTOM MODAL BUDGET GUARD (No more alert!)
   if (provisionalCost > 100.0) {
-    alert(`Budget Violation: အသင်းတန်ဖိုး စုစုပေါင်း £${provisionalCost.toFixed(1)}m ဖြစ်သွားသဖြင့် FPL ခွင့်ပြုချက် £100.0m ထက် ကျော်လွန်နေပါသည်ဗျာ။`);
+    if (window.showPremiumAlertBox) {
+      window.showPremiumAlertBox(`Budget Violation: အသင်းတန်ဖိုး စုစုပေါင်း £${provisionalCost.toFixed(1)}m ဖြစ်သွားသဖြင့် FPL ခွင့်ပြုချက် £100.0m ထက် ကျော်လွန်နေပါသည်ဗျာ။`, "💰");
+    }
     return;
   }
 
@@ -271,8 +276,13 @@ window.resetDraftToFPLRealtime = () => {
   const cacheKey = Object.keys(localStorage).find(k => k.startsWith("twf_draft_squad_"));
   if (cacheKey) {
     localStorage.removeItem(cacheKey);
-    alert("🎉 Budget စည်းကမ်းချက်များနှင့် လူစာရင်းများအားလုံး FPL Official Live အတိုင်း ပြန်လည် Reset/Sync ပြီးစီးပါပြီဗျာ!");
-    window.location.reload();
+    if (window.showPremiumAlertBox) {
+      window.showPremiumAlertBox("🎉 Budget စည်းကမ်းချက်များနှင့် လူစာရင်းများအားလုံး FPL Official Live အတိုင်း ပြန်လည် Reset/Sync ပြီးစီးပါပြီဗျာ!", "🎉");
+      // Delay reload to let user read the message
+      setTimeout(() => { window.location.reload(); }, 1500);
+    } else {
+      window.location.reload();
+    }
   }
 };
 
@@ -327,32 +337,25 @@ export function renderUserSquadList(squadArray) {
 }
 
 /**
- * 🛒 💡 🏆 ADVANCED POSITION-BOUNDED VIEW ENGINE (အန်ကယ် ရွှေဉာဏ်တော် စွမ်းသည့်စနစ်)
- * GK: 40 | DEF: 100 | MID: 100 | FWD: 100 ကန့်သတ်ချက်ဖြင့် Smart Sorting မောင်းနှင်ခြင်း
+ * Compact Market Render List
  */
 function executeMarketRender() {
   let filtered = [...allPlayersCache];
-  
-  // လက်ရှိ ရွေးချယ်ထားသော နေရာအလိုက် ကစားသမားများကိုသာ ကွက်တိ ဇကာတင်စစ်ထုတ်ခြင်း
   if (activeSwapPosition) {
     filtered = filtered.filter(p => String(p.position).toLowerCase() === activeSwapPosition);
   }
 
-  // 🧠 SMART SORTING ALGORITHM - အန်ကယ်ပြောသလို "Form ကောင်းပြီး Ownership အများဆုံးလူ" ကို ထိပ်ဆုံးတင်ပေးခြင်း
-  // ပထမဦးစားပေး Form ဖြင့်စီပြီး၊ Form တူပါက ဒုတိယဦးစားပေး Ownership အများဆုံးဖြင့် ထပ်မံထက်ဆင့်စီပေးသော အဆင့်မြင့် စမတ်စနစ်
   filtered.sort((a, b) => {
     if (currentMarketSortKey === "price") return parseFloat(b.price || 0) - parseFloat(a.price || 0);
     if (currentMarketSortKey === "ownership") return parseFloat(b.ownership || 0) - parseFloat(a.ownership || 0);
     if (currentMarketSortKey === "points") return parseInt(b.totalPoints || 0) - parseInt(a.totalPoints || 0);
     
-    // Default (Form Mode) : Form အရင်ယှဉ်၊ တူရင် Own% အများဆုံးကို ထိပ်ဆုံးပို့
     if (parseFloat(b.form || 0) === parseFloat(a.form || 0)) {
       return parseFloat(b.ownership || 0) - parseFloat(a.ownership || 0);
     }
     return parseFloat(b.form || 0) - parseFloat(a.form || 0);
   });
 
-  // UI Button States
   ["form", "points", "price", "ownership"].forEach(k => {
     const btn = document.getElementById("msort-" + k);
     if (btn) {
@@ -363,32 +366,6 @@ function executeMarketRender() {
       }
     }
   });
-
-  // 🔒 💡 အန်ကယ် သတ်မှတ်ပေးလိုက်သော နေရာအလိုက် Scroll Size Limit ကန့်သတ်ချက်များ
-  let maxSliceLimit = 100; // Default Limit
-  if (activeSwapPosition === "gk") maxSpreadLimit = 40;   // GK ဆိုလျှင် အယောက် ၄၀ ပြရန်
-  else if (activeSwapPosition === "def") maxSpreadLimit = 100; // DEF ဆိုလျှင် အယောက် ၁၀၀
-  else if (activeSwapPosition === "mid") maxBaseLimit = 100; // MID ဆိုလျှင် အယောက် ၁၀၀
-  else if (activeSwapPosition === "fwd") maxBaseLimit = 100; // FWD ဆိုလျှင် အယောက် ၁၀၀
-
-  // Dynamic limit bounds assignment
-  let sliceLimit = 100;
-  if (activeSwapPosition === "gk") sliceLimit = 40;
-  else if (activeSwapPosition === "def") sliceColor = 100;
-  
-  let currentLimit = 100;
-  if (activeSwapPosition === "gk") currentMarketLimit = 40;
-  else if (activeSwapPosition === "def") currentMarketLimit = 100;
-  else if (activeSwapPosition === "mid") currentMarketSortKey === "form" ? currentMarketLimit = 100 : currentMarketLimit = 100;
-  
-  let finalSliceLimit = 100;
-  if (activeSwapPosition === "gk") finalSliceLine = 40;
-  else if (activeSwapPosition === "def") finalSlice = 100;
-  
-  let finalSliceCount = 100;
-  if (activeSwapPosition === "gk") finalSliceCount = 20; // GK ဆို ၂၀ ယောက်အထိပဲ ပြပြီး ကျစ်လစ်စေခြင်း
-  else if (activeSwapPosition === "def" || activeSwapPosition === "mid") finalSliceCount = 100; // တခြားနေရာများအား ၁၀၀ အထိ အပြည့်ပြသပေးခြင်း
-  else finalSliceCount = 50; // FWD ဆိုလျှင် ထိပ်သီး ၅၀ စာရင်း
 
   let html = "";
   filtered.slice(0, (activeSwapPosition === "gk" ? 20 : activeSwapPosition === "fwd" ? 40 : 80)).forEach((p) => {
@@ -416,7 +393,8 @@ function executeMarketRender() {
       </div>`;
   });
   
-  document.getElementById("ownership-list").innerHTML = html || `<p class="text-center text-xs py-12 text-gray-400">လဲလှယ်ရန် နေရာတူ ကစားသမား မတွေ့ရှိပါဗျာ။</p>`;
+  const listEl = document.getElementById("ownership-list");
+  if (listEl) listEl.innerHTML = html || `<p class="text-center text-xs py-12 text-gray-400">လဲလှယ်ရန် နေရာတူ ကစားသမား မတွေ့ရှိပါဗျာ။</p>`;
 }
 
 export function calculateTeamShieldTracker(squadArray) {
