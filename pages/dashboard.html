@@ -65,8 +65,23 @@
     };
   </script>
   <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #0D2B1A; height: 100vh; overflow: hidden; }
+    * { 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    /* 💡 🎯 🚀 CRITICAL BLOCK ENGINE FIXED HERE */
+    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ ခလုတ်နှင့် ကတ်ကိုမဆို ဖိမိပါက Google Translate/Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
+    body { 
+      font-family: "Inter", sans-serif; 
+      background: #0D2B1A; 
+      height: 100vh; 
+      overflow: hidden; 
+      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
+      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
+      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
+      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
+    }
+    
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; transition:all 0.2s; }
     .nav-item.active, .nav-item:active { color:#C9A84C; }
@@ -77,7 +92,6 @@
   </style>
 </head>
 <body>
-  <!-- Top Bar -->
   <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:50;">
     <div>
       <h1 class="gold-text font-bold text-lg" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
@@ -89,27 +103,22 @@
     </div>
   </div>
 
-  <!-- Content -->
   <div style="padding-top:64px;padding-bottom:70px;height:100vh;overflow-y:auto;" class="px-4 py-4 fade-in">
 
-    <!-- Status Badge -->
     <div class="flex justify-end mb-3">
       <span id="status-badge" class="text-xs font-semibold px-3 py-1.5 rounded-full border" style="background:rgba(201,168,76,0.15);color:#C9A84C;border-color:rgba(201,168,76,0.4);">⏳ Pending Approval</span>
     </div>
 
-    <!-- Pending Info Banner -->
     <div id="pending-banner" class="hidden rounded-xl p-3 mb-4" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);">
       <p class="text-xs" style="color:#E8D5A3;">📋 Account Approve လုပ်ဆေးနေဆဲ — View များ ကြည့်ရှုနိုင်ပြီး၊ Approve ပြီးမှ Chat နှင့် Action များ သုံးနိုင်ပါမည်။</p>
     </div>
 
-    <!-- Welcome Banner -->
     <div class="rounded-2xl p-5 mb-4" style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);border:1px solid rgba(201,168,76,0.3);box-shadow:0 0 20px rgba(201,168,76,0.1);">
       <p class="text-xs uppercase tracking-widest mb-1" style="color:#C9A84C;">Welcome Back</p>
       <h2 id="welcome-name" class="text-white text-xl font-bold">TW Fantasy League</h2>
       <p class="text-xs mt-1" style="color:#3A9E5F;">Season 2026-27 • Official Fantasy League</p>
     </div>
 
-    <!-- Quick Menu Grid -->
     <div class="grid grid-cols-2 gap-3 mb-4">
       <div class="menu-card" onclick="navigate('team')">
         <div class="text-2xl mb-2">👕</div>
@@ -145,7 +154,6 @@
     </div>
   </div>
 
-  <!-- Bottom Nav -->
   <div style="position:fixed;bottom:0;left:0;right:0;background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;z-index:50;">
     <div class="nav-item active"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;font-weight:500;">Home</span></div>
     <div class="nav-item" onclick="navigate('live')"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;font-weight:500;">Live</span></div>
