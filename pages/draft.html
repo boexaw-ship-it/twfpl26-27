@@ -45,8 +45,8 @@
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
     
-    /* 🛡️ 💡 🏆 CRITICAL FRAME FIX: AUTO-FLEXIBLE SHIELD TEXT BOX */
-    /* စာသားရှည်ထွက်လာပါက Frame ပါ အချိုးကျလိုက်ကျယ်ပေးမည့် Padding & Width စနစ်သစ် */
+    /* 🛡️ 💡 🏆 ULTRA SHIELD FRAME SAFE RECONSTRUCTION ENGINE */
+    /* စာသားများ ဘယ်လိုမှ မလျှံထွက်နိုင်စေရန် Width နှင့် Border Padding ကို သေတ္တာအကွက်အတွင်း တင်းကျပ်စွာ ချုပ်ထိန်းထားသော စနစ် */
     .shield-box { 
       padding: 6px 10px; 
       border-radius: 6px; 
@@ -54,11 +54,11 @@
       font-weight: 900; 
       text-transform: uppercase; 
       text-align: center; 
-      display: inline-flex;
+      display: flex;
       align-items: center;
       justify-content: center;
-      min-width: 125px;   /* အနည်းဆုံးအကျယ် သတ်မှတ်ချက် */
-      white-space: nowrap; /* စာသားများ အောက်ကြောင်းဆင်းမသွားစေရန် ထိန်းသိမ်းခြင်း */
+      width: 100%; /* ကတ်ပြားအကွက်ငယ်အတွင်း အပြည့်အဝ နေရာယူစေခြင်း */
+      box-sizing: border-box;
     }
     .shield-safe { background: rgba(34,197,94,0.1); border: 1px solid #22c55e; color: #22c55e; }
     .shield-tactical { background: rgba(234,179,8,0.1); border: 1px solid #eab308; color: #eab308; }
@@ -97,12 +97,12 @@
       </div>
     </div>
 
-    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-4">
-      <div class="flex flex-col min-w-0 flex-1">
+    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 grid grid-cols-12 items-center gap-2">
+      <div class="col-span-7 flex flex-col min-w-0">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">SQUAD STRATEGY STATUS</span>
-        <span class="text-[10px] text-[#E8D5A3] mt-0.5 font-medium truncate">Risk measurement of your 15 selections</span>
+        <span class="text-[10px] text-[#E8D5A3] mt-0.5 font-medium truncate">Risk of your 15 selections</span>
       </div>
-      <div class="flex-shrink-0 flex items-center justify-end">
+      <div class="col-span-5 flex justify-end items-center w-full min-w-0 overflow-hidden">
         <div id="team-shield-badge" class="shield-box shield-safe">SHIELD: SAFE (75%)</div>
       </div>
     </div>
@@ -181,16 +181,6 @@
     </div>
   </div>
 
-  <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
-    <div class="w-full max-w-md rounded-t-2xl p-4 flex flex-col" style="background:#041e12; border-top: 2px solid #C9A84C; max-height:75vh;">
-      <div class="flex justify-between items-center pb-3 border-b border-gray-800 mb-2">
-        <span class="text-xs font-bold tracking-wider" style="color:#3A9E5F;">SELECT TEAM FILTER</span>
-        <button onclick="closeTeamModal()" class="text-sm font-bold w-6 h-6 rounded-full flex items-center justify-center" style="background:#124c2a; color:#E8D5A3;">✕</button>
-      </div>
-      <div class="overflow-y-auto flex-1 space-y-1.5 no-scrollbar pr-0.5" id="team-options-list"></div>
-    </div>
-  </div>
-
   <script type="module">
     import { auth } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -249,4 +239,4 @@
     }
   </script>
 </body>
-</html> 
+</html>
