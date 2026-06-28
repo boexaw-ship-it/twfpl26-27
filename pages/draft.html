@@ -9,82 +9,41 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
-    * { 
-      -webkit-tap-highlight-color: transparent; 
-      -webkit-user-select: none;
-      user-select: none;
-    }
-    
-    button, [onclick], a, .segment-btn {
-      -webkit-user-select: auto !important;
-      user-select: auto !important;
-      pointer-events: auto !important;
-      cursor: pointer;
-    }
-    
-    body { 
-      font-family: "Inter", sans-serif; 
-      background: #041e12; 
-      height: 100vh; 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
-    }
-    
+    * { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+    button, [onclick], a, .segment-btn { -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; cursor: pointer; }
+    body { font-family: "Inter", sans-serif; background: #041e12; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .segment-btn { flex: 1; text-align: center; padding: 12px 0; font-size: 0.7rem; font-weight: 700; color: #3A9E5F; transition: all 0.2s; border-bottom: 2px solid transparent; letter-spacing: 0.05em; }
     .segment-btn.active { color: #C9A84C; border-color: #C9A84C; background: rgba(201,168,76,0.03); }
-    
     .no-scrollbar::-webkit-scrollbar { display: none; }
-    .no-scrollbar { -ms-overflow-style: none; scrollbar-width: none; }
-    
     .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; }
     .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
     .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
     
-    /* INDESTRUCTIBLE CSS BOUNDARY LAYER WITH !IMPORTANT RULES */
     .shield-safe { background: rgba(34,197,94,0.1) !important; border: 1px solid #22c55e !important; color: #22c55e !important; }
     .shield-tactical { background: rgba(234,179,8,0.1) !important; border: 1px solid #eab308 !important; color: #eab308 !important; }
     .shield-aggressive { background: rgba(239,68,68,0.1) !important; border: 1px solid #ef4444 !important; color: #ef4444 !important; }
-
-    .shield-box { 
-      padding: 6px 12px; 
-      border-radius: 6px; 
-      font-size: 9px; 
-      font-weight: 900; 
-      text-transform: uppercase; 
-      text-align: center; 
-      display: inline-flex !important;
-      align-items: center;
-      justify-content: center;
-      white-space: nowrap !important;
-    }
+    .shield-box { padding: 6px 12px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; display: inline-flex !important; align-items: center; justify-content: center; white-space: nowrap !important; }
   </style>
 </head>
 <body>
 
-  <!-- Top Navigation Header Bar with Uncle's Sync Button -->
   <div style="background:#041e12; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
     <div class="flex items-center">
       <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
       <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">STRATEGY DRAFT</h1>
     </div>
     
-    <!-- 🔄 UNCLE'S FPL SYNC BUTTON PANEL -->
     <div class="ml-auto flex items-center gap-2">
-      <button onclick="window.resetDraftToFPLRealtime()" class="flex items-center gap-1 text-[10px] font-black px-2.5 py-1 rounded-md border border-[#ef4444]/30 text-red-400 bg-red-950/20 active:scale-95 transition-all">
+      <button onclick="window.resetDraftToFPLRealtime()" class="text-[10px] font-black px-2.5 py-1 rounded-md border border-[#ef4444]/30 text-red-400 bg-red-950/20 active:scale-95 transition-all">
         🔄 SYNC FPL
       </button>
       <span id="gw-header-label" class="text-[10px] font-bold px-2 py-1 rounded" style="background:#124c2a; color:#E8D5A3;">GW —</span>
     </div>
   </div>
 
-  <!-- Analytics & Strategy Interface Container -->
   <div class="p-4 bg-[#041e12] flex flex-col gap-3 flex-shrink-0">
-    
-    <!-- Row 1: Dual Grid Analytics Cards -->
     <div class="grid grid-cols-2 gap-3 w-full">
-      <!-- Draft Template Compare Card -->
       <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">DRAFT TEMPLATE COMPARE</span>
         <div class="flex items-center justify-between text-white text-xs font-bold font-mono mt-0.5">
@@ -98,66 +57,64 @@
         </div>
       </div>
 
-      <!-- Captaincy Risk Radar Card -->
       <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between">
-        <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">CAPTAINCY RISK RADAR</span>
-        <p id="captain-risk-text" class="text-[10px] font-black text-yellow-500 mt-1 leading-tight">Tactical Move! (Elite Rivals 75% captained Haaland)</p>
+        <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">🔒 BUDGET REGULATION</span>
+        <div class="flex justify-between items-baseline mt-1">
+          <p id="budget-bank-label" class="text-lg font-black text-white font-mono leading-none">£0.0m</p>
+          <span class="text-[9px] font-bold text-gray-400">REMAINING</span>
+        </div>
+        <p id="budget-total-cost" class="text-[9px] font-bold text-[#E8D5A3]/70 mt-1">Squad Cost: £0.0m / £100.0m</p>
       </div>
     </div>
 
-    <!-- 🛡️ Row 2 System: Full Width Horizontal Shield Layout Box -->
-    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-2 overflow-hidden">
+    <div class="w-full rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/30 flex items-center justify-between gap-3">
       <div class="flex flex-col min-w-0 flex-1">
         <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">SQUAD STRATEGY STATUS</span>
-        <span class="text-[10px] text-[#E8D5A3] mt-0.5 font-medium truncate">Risk measurement of your 15 selections</span>
+        <span class="text-[10px] text-[#E8D5A3] mt-0.5 font-medium truncate">Risk of your 15 selections</span>
       </div>
-      
-      <div style="display: block !important; white-space: nowrap !important; flex-shrink: 0 !important; max-width: 60%;">
+      <div class="w-[145px] flex-shrink-0 flex justify-end">
         <div id="team-shield-badge" class="shield-box shield-safe">SHIELD: SAFE (75%)</div>
       </div>
     </div>
-
   </div>
 
-  <!-- Switch Tabs Controls -->
   <div class="flex bg-[#041e12] border-b border-[#1F5C36]/60 flex-shrink-0 relative z-20">
     <button onclick="switchDraftTab('squad')" id="seg-squad" class="segment-btn active">👕 MY SQUAD (15)</button>
     <button onclick="switchDraftTab('ownership')" id="seg-ownership" class="segment-btn">📊 TRANSFER MARKET</button>
     <button onclick="switchDraftTab('fixtures')" id="seg-fixtures" class="segment-btn">🗓️ FIXTURE MATRIX</button>
   </div>
 
-  <!-- Main Scrollable Content Box Area -->
   <div class="flex-1 overflow-y-auto no-scrollbar bg-[#041e12] relative">
     
-    <!-- Tab 1: My Squad Section -->
     <div id="view-squad" class="tab-content p-4 space-y-2">
       <div id="my-squad-list" class="space-y-2">
-        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your 15 players list...</p>
+        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading squad...</p>
       </div>
       <div class="h-4 w-full"></div>
     </div>
     
-    <!-- Tab 2: Ownership Insights Section (Acts as Marketplace) -->
     <div id="view-ownership" class="tab-content hidden p-4 space-y-3">
-      <div class="flex items-center justify-between bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-2 flex-shrink-0">
-        <span id="market-scout-title" class="text-[10px] font-bold text-[#E8D5A3] uppercase tracking-wider pl-1">Scout Intelligence Filter</span>
-        <button id="gem-toggle-btn" onclick="toggleHiddenGemsFilter()" class="text-[9px] font-black px-2.5 py-1 rounded-md border border-[#C9A84C]/30 text-[#E8D5A3] bg-black/20 transition-all">
-          💎 GEMS (<10%)
-        </button>
+      <div class="flex flex-col gap-2 bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-3 flex-shrink-0">
+        <span id="market-scout-title" class="text-[10px] font-bold text-[#E8D5A3] uppercase tracking-wider">Market Filters</span>
+        
+        <div class="grid grid-cols-4 gap-1.5 mt-1">
+          <button id="msort-form" onclick="window.updateMarketSorting('form')" class="text-[9px] font-bold py-1.5 rounded bg-black/20 border border-[#3A9E5F]/30 text-white">FORM</button>
+          <button id="msort-points" onclick="window.updateMarketSorting('points')" class="text-[9px] font-bold py-1.5 rounded bg-black/20 border border-[#3A9E5F]/30 text-white">PTS</button>
+          <button id="msort-price" onclick="window.updateMarketSorting('price')" class="text-[9px] font-bold py-1.5 rounded bg-black/20 border border-[#3A9E5F]/30 text-white">PRICE</button>
+          <button id="msort-ownership" onclick="window.updateMarketSorting('ownership')" class="text-[9px] font-bold py-1.5 rounded bg-black/20 border border-[#3A9E5F]/30 text-white">OWN%</button>
+        </div>
       </div>
+      
       <div id="ownership-list" class="space-y-2">
-        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading insights list...</p>
+        <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading market data...</p>
       </div>
       <div class="h-4 w-full"></div>
     </div>
 
-    <!-- Tab 3: Fixture Matrix Section -->
     <div id="view-fixtures" class="tab-content hidden p-4 space-y-3">
-      <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer flex-shrink-0 w-full bg-[#124c2a] border border-[#1e6a3c] active:scale-[0.99] transition-all">
-        <div class="flex items-center gap-1.5 min-w-0">
-          <span class="text-xs font-semibold text-[#E8D5A3]">🔍 Team Filter:</span>
-        </div>
-        <div class="flex items-center gap-1.5 flex-shrink-0">
+      <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer w-full bg-[#124c2a] border border-[#1e6a3c]">
+        <span class="text-xs font-semibold text-[#E8D5A3]">🔍 Team Filter:</span>
+        <div class="flex items-center gap-1.5">
           <span id="selected-team-label" class="text-xs font-bold text-[#C9A84C]">Show All Teams</span>
           <span class="text-[10px] text-[#C9A84C]">▼</span>
         </div>
@@ -198,7 +155,6 @@
     </div>
   </div>
 
-  <!-- Filter Dropdown Modal -->
   <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
     <div class="w-full max-w-md rounded-t-2xl p-4 flex flex-col" style="background:#041e12; border-top: 2px solid #C9A84C; max-height:75vh;">
       <div class="flex justify-between items-center pb-3 border-b border-gray-800 mb-2">
@@ -261,10 +217,10 @@
     function switchDraftTab(tabId) {
       document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
-      
       document.getElementById('seg-' + tabId).classList.add('active');
       document.getElementById('view-' + tabId).classList.remove('hidden');
     }
   </script>
 </body>
 </html>
+
