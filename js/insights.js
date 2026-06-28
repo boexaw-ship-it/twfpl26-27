@@ -1,17 +1,15 @@
 import { db } from "/twfpl26-27/js/firebase-config.js";
-import { collection, doc, onSnapshot, query, orderBy, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+import { collection, doc, onSnapshot, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
-// Global Variables For Filter Cache Strategy
 let allPlayersCache = [];
 let showGemsOnlyGlobal = false;
 
 /**
- * 📡 Firebase Firestore Database မှ ကစားသမားဒေတာများကို 
- * Real-time ဆွဲပြပေးမည့်အပြင် Draft Strategic တွက်ချက်မှုများကိုပါ တပါတည်းလုပ်ဆောင်မည့် Main Function
+ * Main Dynamic Router Engine Connection
  */
-export function initRealtimeInsights() {
+export function initRealtimeInsights(uid) {
   
-  // 🗓️ Current Gameweek အဝိုင်းတံဆိပ်စာသားကို Firebase ရဲ့ status/current ထဲမှ ဖတ်ယူခြင်း
+  // 🗓️ GW Global Snapshot Listener
   onSnapshot(doc(db, "status", "current"), (d) => {
     if (d.exists()) {
       const gwLabel = document.getElementById("gw-header-label");
@@ -19,122 +17,104 @@ export function initRealtimeInsights() {
     }
   });
 
-  // 🛡️ 1. FPL ID / User Team Shield Tracker Strategy Real-time Simulation
-  // (အန်ကယ့် ယူဆာအသင်းသား ၁၅ ယောက်လုံး၏ ဒေတာပိုင်ဆိုင်မှုကို ပျမ်းမျှရှာဖွေပြီး Shield Badge အား ပြောင်းလဲပေးခြင်း)
-  // လက်ရှိ စမ်းသပ်ချက်အနေဖြင့် ကနဦး Login ဝင်ထားသောအသင်း၏ ဒေတာကို အခြေခံတွက်ချက်ရန် ချိတ်ဆက်မှုပြုလုပ်ထားပါသည်
-  simulateTeamShieldTracker();
+  // 👕 Tab 1 Logic: Fetch Current User 15 Players List and Display immediately
+  if (uid) {
+    onSnapshot(doc(db, "liveTeams", uid), (snapshot) => {
+      if (snapshot.exists()) {
+        const teamData = snapshot.data();
+        const squadArray = teamData.players || [];
+        renderUserSquadList(squadArray);
+      } else {
+        document.getElementById("my-squad-list").innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">No squad data found.</p>`;
+      }
+    });
+  }
 
-  // 📊 ကြီးစဉ်ငယ်လိုက် ပိုင်ဆိုင်မှု ထိပ်သီးကစားသမားများကို Listener ဆွဲယူခြင်း
+  // 📊 Tab 2 Logic: Ownership Matrix Query
   const qOwnership = query(collection(db, "players"), orderBy("ownership", "desc"));
-  
   onSnapshot(qOwnership, (snap) => {
     allPlayersCache = [];
-    snap.forEach(doc => {
-      allPlayersCache.push(doc);
-    });
-    
-    // ပင်မ ဒေတာထုတ်ပေးသည့် စနစ်သို့ လှမ်းပို့ခြင်း (Hidden Gems Filter ကိုပါ တပါတည်း တိုက်စစ်ပါမည်)
+    snap.forEach(doc => { allPlayersCache.push(doc); });
     executeInsightsRender();
   });
 }
 
 /**
- * 🎨 💎 Filter အခြေအနေပေါ်မူတည်၍ အိုင်ဒီယာ ၄ ချက်နှင့်အညီ List ထုတ်ပေးမည့် Engine
+ * Render Engine for User's 15 Squad Players
+ */
+function renderUserSquadList(squadArray) {
+  let html = "";
+  if (squadArray.length === 0) {
+    document.getElementById("my-squad-list").innerHTML = `<p class="text-center text-xs py-12 text-[#3A9E5F]">Squad list empty.</p>`;
+    return;
+  }
+
+  squadArray.forEach((p, idx) => {
+    html += buildHtmlRow(p, idx + 1, `${p.ownership || 0}% owned`, "Current Squad Selection");
+  });
+  document.getElementById("my-squad-list").innerHTML = html;
+}
+
+/**
+ * Filter Engine for Global Ownership Insights
  */
 function executeInsightsRender() {
   let filteredDocs = [...allPlayersCache];
   
-  // 💎 2. Scout Hidden Gem Filter Toggle Active ဖြစ်နေပါက Ownership < 10% သီးသန့်စစ်ထုတ်ခြင်း
   if (showGemsOnlyGlobal) {
     filteredDocs = filteredDocs.filter(d => {
-      const ownerValue = parseFloat(d.data().ownership || 0);
-      return ownerValue < 10;
+      return parseFloat(d.data().ownership || 0) < 10;
     });
   }
 
-  // အန်ကယ့် မူရင်းအတိုင်း အဆင့်အလိုက် #1 မှ #5 ထိသာ ကျစ်လစ်စွာ ကတ်ပြားထုတ်ပေးခြင်း
-  const displayDocs = filteredDocs.slice(0, 5);
-  
   let html = ""; let index = 1;
-  displayDocs.forEach((doc) => {
+  filteredDocs.slice(0, 15).forEach((doc) => {
     const p = doc.data();
-    html += buildHtmlRow(p, index++, (player) => `${player.ownership ?? 0}% owned`, "Template ကစားသမားဗျူဟာစနစ်");
+    html += buildHtmlRow(p, index++, `${p.ownership ?? 0}% owned`, "Scout Matrix Data");
   });
   
   const listEl = document.getElementById("ownership-list");
-  if (listEl) {
-    listEl.innerHTML = html || `<p class="text-center text-xs py-12" style="color:#3A9E5F;">No data matching filter</p>`;
-  }
+  if (listEl) listEl.innerHTML = html;
 }
 
 /**
- * 🛡️ 1. Template Shield Tracker UI Simulator Logic
+ * Modular Standalone Card Renderer (No Myanmar Text Included)
  */
-function simulateTeamShieldTracker() {
-  // ဤနေရာတွင် အန်ကယ် Login ဝင်ထားသော FPL ID ၏ ဒေတာများအပေါ်မူတည်၍ Shield Level ကို ခွဲခြားပြသပါမည်
-  // ဥပမာ - ပျမ်းမျှပိုင်ဆိုင်မှု ၇၅% ရှိပါက Safe၊ ၄၀% အောက်ဖြစ်ပါက Aggressive ဟု Dynamic ပြောင်းလဲပေးမည်
-  const shieldEl = document.getElementById("team-shield-badge");
-  if (shieldEl) {
-    const averageOwnership = 75; // Firebase User Team Team Data မှ တွက်ချက်ရရှိလာမည့် ပျမ်းမျှကိန်း
-    if (averageOwnership >= 70) {
-      shieldEl.className = "shield-badge shield-safe";
-      shieldEl.textContent = `🛡️ Shield: Safe (${averageOwnership}%)`;
-    } else if (averageOwnership >= 40) {
-      shieldEl.className = "shield-badge shield-tactical";
-      shieldEl.textContent = `📊 Shield: Tactical (${averageOwnership}%)`;
-    } else {
-      shieldEl.className = "shield-badge shield-aggressive";
-      shieldEl.textContent = `⚡ Shield: Aggressive (${averageOwnership}%)`;
-    }
-  }
-}
-
-/**
- * 🎨 ကစားသမားတစ်ယောက်ချင်းစီအတွက် သပ်ရပ်လှပသော 
- * Scout Style HTML Card တည်ဆောက်ပေးမည့် Function (မူရင်း Logic အပြည့်အဝ ထိန်းသိမ်းထားပါသည်)
- */
-function buildHtmlRow(p, index, rightLabelCallback, desc) {
-  let posBg = "#9f1239"; // Default For FWD (🔴)
+function buildHtmlRow(p, index, rightLabel, subText) {
+  let posBg = "#9f1239";
   const pos = String(p.position || "").toUpperCase();
-  
-  if (pos === "GK") posBg = "#1d4ed8";       // GK (🔵)
-  else if (pos === "DEF") posBg = "#15803d";  // DEF (🟢)
-  else if (pos === "MID") posBg = "#92400e";  // MID (🟡)
+  if (pos === "GK") posBg = "#1d4ed8";
+  else if (pos === "DEF") posBg = "#15803d";
+  else if (pos === "MID") posBg = "#92400e";
 
   return `
-    <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c; box-shadow:0 2px 8px rgba(0,0,0,0.2);">
+    <div class="rounded-xl p-3 mb-2 flex items-center justify-between" style="background:#124c2a; border:1px solid #1e6a3c;">
       <div class="flex items-center gap-3">
         <span class="text-xs font-black w-5 text-center" style="color:#C9A84C;">#${index}</span>
         <div class="flex items-center gap-2">
           <span class="text-[10px] px-2 py-0.5 rounded-full font-bold text-white" style="background:${posBg};">${p.position || "?"}</span>
           <div>
             <p class="text-white text-sm font-semibold">${p.name || '—'}</p>
-            <p class="text-xs" style="color:#3A9E5F; font-size:0.72rem;">${desc}</p>
+            <p class="text-[10px]" style="color:#3A9E5F;">${subText}</p>
           </div>
         </div>
       </div>
       <div class="text-right">
         <p class="font-bold" style="color:#C9A84C; font-family:'Bebas Neue'; font-size:1.1rem;">£${p.price || 0}m</p>
-        <p class="text-[10px]" style="color:#E8D5A3;">${rightLabelCallback(p)}</p>
+        <p class="text-[10px]" style="color:#E8D5A3;">${rightLabel}</p>
       </div>
     </div>`;
 }
 
 /**
- * 💎 2. draft.html ရှိ Hidden Gems Toggle ခလုတ်နှင့် ချိတ်ဆက်မောင်းနှင်ရန် Global Function
+ * Interactive Filter Switch
  */
 window.toggleHiddenGemsFilter = () => {
   showGemsOnlyGlobal = !showGemsOnlyGlobal;
   const btn = document.getElementById("gem-toggle-btn");
   if (btn) {
-    if (showGemsOnlyGlobal) {
-      btn.style.background = "rgba(201,168,76,0.3)";
-      btn.style.color = "#C9A84C";
-    } else {
-      btn.style.background = "rgba(0,0,0,0.2)";
-      btn.style.color = "#E8D5A3";
-    }
+    btn.style.background = showGemsOnlyGlobal ? "rgba(201,168,76,0.3)" : "rgba(0,0,0,0.2)";
+    btn.style.color = showGemsOnlyGlobal ? "#C9A84C" : "#E8D5A3";
   }
-  // Filter အပြောင်းအလဲဖြစ်သွားသဖြင့် စာရင်းကို Real-time ပြန်လည်စစ်ထုတ် Render လုပ်ခြင်း
   executeInsightsRender();
 };
