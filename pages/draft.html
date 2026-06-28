@@ -9,15 +9,12 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
-    /* 💡 🎯 🚀 PERFECT SELECTION BLOCKER WITHOUT BREAKING LINKS/BUTTONS */
-    /* စာသားများကို ဖိထားပါက Google Menu တက်ခြင်းကိုသာ ပိတ်ပြီး၊ ခလုတ်များနှင့် နှိပ်စနစ်များကို လုံးဝမထိခိုက်စေသော CSS အသစ် */
     * { 
       -webkit-tap-highlight-color: transparent; 
       -webkit-user-select: none;
       user-select: none;
     }
     
-    /* နှိပ်ရမည့် Component တည်နေရာများအား Pointer Active စနစ် ပြန်လည်ပွင့်စေရန် သီးသန့်ပေးခြင်း */
     button, [onclick], a, .segment-btn {
       -webkit-user-select: auto !important;
       user-select: auto !important;
@@ -67,8 +64,8 @@
     </div>
   </div>
 
-  <div class="p-4 grid grid-cols-2 gap-3 flex-shrink-0 bg-[#041e12] relative z-10">
-    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5 cursor-pointer active:scale-[0.99] transition-all" onclick="console.log('Compare clicked')">
+  <div class="p-4 grid grid-cols-2 gap-3 flex-shrink-0 bg-[#041e12]">
+    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col gap-1.5 cursor-pointer active:scale-[0.99] transition-all">
       <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">DRAFT TEMPLATE COMPARE</span>
       <div class="flex items-center justify-between text-white text-xs font-bold font-mono mt-0.5">
         <span class="text-yellow-500">Out: 45%</span>
@@ -81,7 +78,7 @@
       </div>
     </div>
 
-    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between cursor-pointer active:scale-[0.99] transition-all" onclick="console.log('Radar clicked')">
+    <div class="rounded-xl p-3 border border-[#1F5C36] bg-[#124c2a]/40 flex flex-col justify-between cursor-pointer active:scale-[0.99] transition-all">
       <span class="text-[9px] font-bold text-[#3A9E5F] uppercase tracking-wider">CAPTAINCY RISK RADAR</span>
       <p id="captain-risk-text" class="text-[10px] font-black text-yellow-500 mt-1 leading-tight">Tactical Move! (Elite Rivals 75% captained Haaland)</p>
     </div>
@@ -93,27 +90,29 @@
     <button onclick="switchDraftTab('fixtures')" id="seg-fixtures" class="segment-btn">🗓️ FIXTURE MATRIX</button>
   </div>
 
-  <div class="flex-1 overflow-y-auto no-scrollbar relative bg-[#041e12] z-10">
+  <div class="flex-1 overflow-y-auto no-scrollbar bg-[#041e12] relative">
     
-    <div id="view-squad" class="tab-content absolute inset-0 p-4 overflow-y-auto no-scrollbar">
-      <div id="my-squad-list">
+    <div id="view-squad" class="tab-content p-4 space-y-2">
+      <div id="my-squad-list" class="space-y-2">
         <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading your 15 players list...</p>
       </div>
+      <div class="h-24 w-full"></div>
     </div>
     
-    <div id="view-ownership" class="tab-content hidden absolute inset-0 p-4 overflow-y-auto no-scrollbar space-y-3">
+    <div id="view-ownership" class="tab-content hidden p-4 space-y-3">
       <div class="flex items-center justify-between bg-[#124c2a] border border-[#1e6a3c] rounded-xl p-2 flex-shrink-0">
         <span class="text-[10px] font-bold text-[#E8D5A3] uppercase tracking-wider pl-1">Scout Intelligence Filter</span>
         <button id="gem-toggle-btn" onclick="toggleHiddenGemsFilter()" class="text-[9px] font-black px-2.5 py-1 rounded-md border border-[#C9A84C]/30 text-[#E8D5A3] bg-black/20 transition-all">
           💎 GEMS (<10%)
         </button>
       </div>
-      <div id="ownership-list">
+      <div id="ownership-list" class="space-y-2">
         <p class="text-center text-xs py-12" style="color:#3A9E5F;">Loading insights list...</p>
       </div>
+      <div class="h-24 w-full"></div>
     </div>
 
-    <div id="view-fixtures" class="tab-content hidden absolute inset-0 p-4 overflow-y-auto no-scrollbar space-y-3">
+    <div id="view-fixtures" class="tab-content hidden p-4 space-y-3">
       <div onclick="openTeamModal()" class="rounded-xl p-3 flex items-center justify-between cursor-pointer flex-shrink-0" style="background:#124c2a; border:1px solid #1e6a3c;">
         <span class="text-xs font-semibold" style="color:#E8D5A3;">🔍 Team Filter:</span>
         <div class="flex items-center gap-1.5">
@@ -153,6 +152,7 @@
           </tbody>
         </table>
       </div>
+      <div class="h-24 w-full"></div>
     </div>
   </div>
 
@@ -215,7 +215,6 @@
   </script>
 
   <script>
-    // Tab Controller (Absolute Block Layer Fixed)
     function switchDraftTab(tabId) {
       document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
       document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
@@ -226,3 +225,4 @@
   </script>
 </body>
 </html>
+
