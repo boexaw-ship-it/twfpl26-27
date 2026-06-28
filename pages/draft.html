@@ -3,14 +3,31 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#041e12" />
+  <meta name="theme-color" content="#1B4D2E" />
   <title>Insights — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
-    * { -webkit-tap-highlight-color: transparent; }
-    body { font-family: "Inter", sans-serif; background: #041e12; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    * { 
+      -webkit-tap-highlight-color: transparent; 
+    }
+    
+    /* 💡 🎯 🚀 CRITICAL MOBILE SELECT BLOCK ENGINE */
+    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ ခလုတ်၊ တက်ဘ်နှင့် ဇယားကွက် Cell များကိုမဆို ဖိမိပါက Google Translate / Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
+    body { 
+      font-family: "Inter", sans-serif; 
+      background: #041e12; 
+      height: 100vh; 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
+      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
+      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
+      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
+    }
+    
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
     .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; font-size: 0.65rem; font-weight: 500; }
     .nav-item.active { color:#C9A84C; }
@@ -25,12 +42,14 @@
 </head>
 <body class="scrollbar-none">
 
+  <!-- Top Navigation Header Panel -->
   <div style="background:#041e12; border-bottom:1px solid #1F5C36; padding:12px 16px; display:flex; align-items:center; flex-shrink:0;">
     <a href="/twfpl26-27/pages/dashboard.html" style="color:#3A9E5F; font-size:1.2rem; margin-right:8px;">←</a>
     <h1 class="gold-text font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.3rem;">TW VIP INSIGHTS</h1>
     <span id="gw-header-label" class="ml-auto text-xs font-bold px-2 py-0.5 rounded" style="background:#124c2a; color:#E8D5A3;">GW —</span>
   </div>
 
+  <!-- Insights Horizontal Categories Tabs Switcher -->
   <div style="padding:10px 16px 6px; flex-shrink:0;">
     <div style="display:flex; gap:6px; overflow-x:auto;" class="no-scrollbar">
       <button onclick="switchTab('ownership')" id="btn-ownership" class="tab-btn active">📊 Ownership</button>
@@ -44,6 +63,7 @@
     <p class="text-xs" style="color:#3A9E5F;">Insights Category Data (Real-time):</p>
   </div>
 
+  <!-- Main View Component Content Injection Router Box -->
   <div class="flex-1 overflow-y-auto px-4 py-3 scrollbar-none">
     
     <div id="view-ownership" class="tab-content space-y-2">
@@ -104,6 +124,7 @@
     </div>
   </div>
 
+  <!-- Bottom App Tab Menu Global Footer Navigation Bar Menu -->
   <div style="background:#041e12; border-top:1px solid #1F5C36; display:flex; justify-content:space-around; align-items:center; padding:4px 0; flex-shrink:0;">
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/dashboard.html'"><span>🏠</span><span style="font-size:0.6rem;">Home</span></div>
     <div class="nav-item" onclick="window.location.href='/twfpl26-27/pages/live.html'"><span>⚡</span><span style="font-size:0.6rem;">Live</span></div>
@@ -112,6 +133,7 @@
     <div class="nav-item active"><span>🔍</span><span style="font-size:0.6rem;">Scout</span></div>
   </div>
 
+  <!-- Bottom Interactive Custom Dropdown Option Sheet Popover Sheet -->
   <div id="team-modal" class="hidden" style="position:fixed; inset:0; background:rgba(0,0,0,0.7); z-index:100; display:none; align-items:flex-end; justify-content:center;" onclick="if(event.target===this)closeTeamModal()">
     <div class="w-full max-w-md rounded-t-2xl p-4 flex flex-col" style="background:#041e12; border-top: 2px solid #C9A84C; max-height:75vh;">
       <div class="flex justify-between items-center pb-3 border-b border-gray-800 mb-2">
@@ -122,11 +144,12 @@
     </div>
   </div>
 
+  <!-- 💡 🎯 🚀 UNCLE'S SCRIPT ALIGNMENT FIXED HERE -->
+  <!-- draft.html အတွင်း မူရင်းအတိုင်း insights.js နှင့် fixtures.js နှစ်ခုစလုံးကို တိကျစွာ ချိတ်ဆက်မောင်းနှင်ခြင်း -->
   <script type="module">
     import { auth } from "/twfpl26-27/js/firebase-config.js";
     import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     
-    // 💡 အပြင်ဖိုင်နှစ်ခုမှ ခွဲထုတ်လိုက်သော Main Logic များကို လှမ်းယူချိတ်ဆက်ခြင်း
     import { initRealtimeInsights } from "../js/insights.js";
     import { loadFixturesFromLocalJSON, buildCustomDropdownOptions } from "../js/fixtures.js";
 
@@ -146,16 +169,14 @@
       row.innerHTML += cellsHtml;
     });
 
-    // User Login ဖြစ်မဖြစ်စစ်ဆေးပြီး Logic အသစ်များကို စတင်မောင်းနှင်ခြင်း
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
       
-      initRealtimeInsights();       // Real-time Scout List မောင်းနှင်ရန်
-      loadFixturesFromLocalJSON();  // ဒေါင်လိုက် JSON ပွဲစဉ်ဇယားဆွဲရန်
-      buildCustomDropdownOptions(plTeams); // Dropdown Filter ဆောက်ရန်
+      initRealtimeInsights();       
+      loadFixturesFromLocalJSON();  
+      buildCustomDropdownOptions(plTeams); 
     });
 
-    // EPL Teams Data List
     const plTeams = [
       { code: "ALL", name: "Show All Teams (အသင်းအားလုံး)" },
       { code: "ARS", name: "Arsenal (ARS)" }, { code: "AVL", name: "Aston Villa (AVL)" },
@@ -170,7 +191,6 @@
       { code: "SUN", name: "Sunderland (SUN)" }, { code: "TOT", name: "Tottenham (TOT)" }
     ];
 
-    // Filter Sheet ဖွင့်/ပိတ်နှင့် အသင်းရွေးချယ်မှု Logic များ
     window.openTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.remove("hidden"); m.style.display = "flex"; };
     window.closeTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.add("hidden"); m.style.display = "none"; };
     window.selectTeamFilter = (code, label) => {
