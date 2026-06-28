@@ -9,13 +9,25 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
   <style>
+    /* 💡 🎯 🚀 UNCLE'S ABSOLUTE NO-TOUCH SYSTEM (EVERYWHERE) */
+    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်နေရာ (ကွင်းပြင်၊ Player ကတ်၊ Chat) ကိုမဆို ဖိထားပါက */
+    /* Google Search Bar, Translate, Copy Menu များ လုံးဝ (လုံးဝ) မတက်လာစေရန် Root အဆင့်မှ ပိတ်ဆို့ခြင်း */
     * { 
-      -webkit-tap-highlight-color: transparent; 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none !important;  /* Safari & Android Chrome Bar ပိတ်ရန် */
+      -moz-user-select: none !important;     /* Firefox browser အတွက် */
+      -ms-user-select: none !important;      /* IE အတွက် */
+      user-select: none !important;          /* Standard စနစ်အပြင် အားလုံးကို Absolute ပိတ်ဆို့ခြင်း */
     }
-    
-    /* 💡 🎯 🚀 UNCLE'S TRUE INTENT: PAGE-WIDE ANTI-GOOGLE BLOCK SYSTEM */
-    /* စာမျက်နှာတစ်ခုလုံးရှိ Chat Box ရော၊ ကွင်းပြင်လူစာရင်း (Player Cards)၊ အရံခုံ (Bench) နှင့် မည်သည့်နေရာကိုပဲ ဖိမိဖိမိ */
-    /* Google Translate / Search Bar / Copy Actions များ လုံးဝ (၁လုံးဝ) မတက်လာစေရန် တစ်မျက်နှာလုံးအား အမိန့်ပေးပိတ်ဆို့သည့် မာစတာ CSS */
+
+    /* Input Box ထဲတွင် စာရိုက်နိုင်ရန် Selection ကို ပြန်ခွင့်ပြုခြင်း */
+    input, textarea {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+    }
+
     body { 
       font-family: "Inter", sans-serif; 
       background: #0D2B1A; 
@@ -23,10 +35,6 @@
       overflow: hidden; 
       display: flex; 
       flex-direction: column; 
-      -webkit-user-select: none;  /* iOS & Android Chrome select ပြုလုပ်မှုအားလုံးကို ပိတ်ဆို့ခြင်း */
-      -moz-user-select: none;     /* Firefox browser selection ပိတ်ခြင်း */
-      -ms-user-select: none;      /* IE select ပိတ်ခြင်း */
-      user-select: none;          /* စာသားနှင့် အစိတ်အပိုင်းအားလုံးအား ဖိနှိပ်မှုဘေးမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
     }
 
     .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
@@ -127,7 +135,7 @@
     </div>
   </div>
 
-  <div class="flex-1 flex flex-col overflow-hidden">
+  <div class="flex-1 flex flex-col overflow-hidden" style="height: 60vh;">
     <div style="padding:4px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;">
       <p class="text-xs font-semibold uppercase tracking-widest" style="color:#C9A84C;">💬 Live Chat</p>
     </div>
