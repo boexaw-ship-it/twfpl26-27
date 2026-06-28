@@ -211,7 +211,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
 
   const oldPlayer = currentLiveSquadState[oldPlayerIndex];
 
-  // 🔒 🔥 1. CUSTOM MODAL POSITION GUARD (No more alert!)
+  // 🔒 CUSTOM MODAL POSITION GUARD (No Browser Alert!)
   if (String(newPlayerData.position).toLowerCase() !== activeSwapPosition) {
     if (window.showPremiumAlertBox) {
       window.showPremiumAlertBox(`FPL Regulation Error: ${activeSwapPosition.toUpperCase()} နေရာတွင် ${newPlayerData.position.toUpperCase()} လူစားလဲခွင့်မရှိပါဗျာ။`, "❌");
@@ -226,7 +226,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     else provisionalCost += parseFloat(p.price || 0);
   });
 
-  // 🔒 🔥 2. CUSTOM MODAL BUDGET GUARD (No more alert!)
+  // 🔒 CUSTOM MODAL BUDGET GUARD (No Browser Alert!)
   if (provisionalCost > 100.0) {
     if (window.showPremiumAlertBox) {
       window.showPremiumAlertBox(`Budget Violation: အသင်းတန်ဖိုး စုစုပေါင်း £${provisionalCost.toFixed(1)}m ဖြစ်သွားသဖြင့် FPL ခွင့်ပြုချက် £100.0m ထက် ကျော်လွန်နေပါသည်ဗျာ။`, "💰");
@@ -234,7 +234,7 @@ window.executeMarketPlaceSelection = (newPlayerDocId) => {
     return;
   }
 
-  // Swap Approved
+  // Swap Approved -> Commit Data
   currentLiveSquadState[oldPlayerIndex] = {
     ...oldPlayer,
     playerId: newPlayerData.playerId,
@@ -277,9 +277,8 @@ window.resetDraftToFPLRealtime = () => {
   if (cacheKey) {
     localStorage.removeItem(cacheKey);
     if (window.showPremiumAlertBox) {
-      window.showPremiumAlertBox("🎉 Budget စည်းကမ်းချက်များနှင့် လူစာရင်းများအားလုံး FPL Official Live အတိုင်း ပြန်လည် Reset/Sync ပြီးစီးပါပြီဗျာ!", "🎉");
-      // Delay reload to let user read the message
-      setTimeout(() => { window.location.reload(); }, 1500);
+      window.showPremiumAlertBox("🎉 Budget Сည်းကမ်းချက်များနှင့် လူစာရင်းများအားလုံး FPL Official Live အတိုင်း ပြန်လည် Reset/Sync ပြီးစီးပါပြီဗျာ!", "🎉");
+      setTimeout(() => { window.location.reload(); }, 1200);
     } else {
       window.location.reload();
     }
@@ -337,14 +336,17 @@ export function renderUserSquadList(squadArray) {
 }
 
 /**
- * Compact Market Render List
+ * 🛒 💡 🏆 PERFECT FIX POSITION SCROLL SIZE LIMIT ENGINE
+ * ကုဒ်လုံးဝမပွဘဲ သတ်မှတ်အရေအတွက်အတိုင်း တိတိကျကျ စစ်ထုတ်ပေးသော Logic စစ်စစ်
  */
 function executeMarketRender() {
   let filtered = [...allPlayersCache];
+  
   if (activeSwapPosition) {
     filtered = filtered.filter(p => String(p.position).toLowerCase() === activeSwapPosition);
   }
 
+  // Smart Multi-Sorting Engine
   filtered.sort((a, b) => {
     if (currentMarketSortKey === "price") return parseFloat(b.price || 0) - parseFloat(a.price || 0);
     if (currentMarketSortKey === "ownership") return parseFloat(b.ownership || 0) - parseFloat(a.ownership || 0);
@@ -356,6 +358,7 @@ function executeMarketRender() {
     return parseFloat(b.form || 0) - parseFloat(a.form || 0);
   });
 
+  // UI Button Active indicators update
   ["form", "points", "price", "ownership"].forEach(k => {
     const btn = document.getElementById("msort-" + k);
     if (btn) {
@@ -367,8 +370,16 @@ function executeMarketRender() {
     }
   });
 
+  // 🔒 🏆 အန်ကယ် သတ်မှတ်ပေးလိုက်သော နေရာအလိုက် ကွက်တိ Slice Limits များ (GK: 40, DEF/MID/FWD: 100)
+  let finalSliceCount = 100;
+  if (activeSwapPosition === "gk") {
+    finalSliceCount = 40;
+  } else {
+    finalSliceCount = 100;
+  }
+
   let html = "";
-  filtered.slice(0, (activeSwapPosition === "gk" ? 20 : activeSwapPosition === "fwd" ? 40 : 80)).forEach((p) => {
+  filtered.slice(0, finalSliceCount).forEach((p) => {
     let posBg = "#15803d"; const pos = String(p.position || "").toUpperCase().trim();
     if (pos === "GK") posBg = "#1d4ed8"; else if (pos === "DEF") posBg = "#9f1239"; else if (pos === "MID") posBg = "#b45309";
 
