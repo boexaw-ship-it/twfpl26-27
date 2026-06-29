@@ -5,14 +5,12 @@
     {
       "src": "/twfpl26-27/public/icons/icon-192x192.png",
       "type": "image/png",
-      "sizes": "192x192",
-      "purpose": "any maskable"
+      "sizes": "192x192"
     },
     {
       "src": "/twfpl26-27/public/icons/icon-512x512.png",
       "type": "image/png",
-      "sizes": "512x512",
-      "purpose": "any maskable"
+      "sizes": "512x512"
     }
   ],
   "start_url": "/twfpl26-27/index.html",
@@ -21,4 +19,3 @@
   "display": "standalone",
   "orientation": "portrait"
 }
-
