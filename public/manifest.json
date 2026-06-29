@@ -3,19 +3,22 @@
   "name": "TW Fantasy League",
   "icons": [
     {
-      "src": "/twfpl26-27/public/icons/icon-192x192.png",
+      "src": "./public/icons/icon-192x192.png",
       "type": "image/png",
-      "sizes": "192x192"
+      "sizes": "192x192",
+      "purpose": "any maskable"
     },
     {
-      "src": "/twfpl26-27/public/icons/icon-512x512.png",
+      "src": "./public/icons/icon-512x512.png",
       "type": "image/png",
-      "sizes": "512x512"
+      "sizes": "512x512",
+      "purpose": "any maskable"
     }
   ],
-  "start_url": "/twfpl26-27/index.html",
+  "start_url": "./index.html",
   "background_color": "#0D2B1A",
   "theme_color": "#0D2B1A",
   "display": "standalone",
   "orientation": "portrait"
 }
+
