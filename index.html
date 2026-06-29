@@ -69,7 +69,6 @@
     }
     
     /* 💡 🎯 🚀 ABSOLUTE ANTI-GOOGLE SELECTION SAFE SYSTEM */
-    /* စာသားများကို ဖိထားပါက Google Search / Translate Menu များ မတက်လာစေရန် ကာကွယ်ခြင်း */
     body { 
       font-family: "Inter", sans-serif; 
       background: #0D2B1A; 
@@ -80,8 +79,8 @@
       user-select: none;          
     }
     
-    /* Input အကွက်များ၊ ခလုတ်များနှင့် လင့်ခ်များကို နှိပ်ရလွယ်ကူပြီး စာရိုက်ခွင့်ပြုရန် သီးသန့်ပြုပြင်ခြင်း */
-    input, button, a {
+    /* Input အကွက်များ၊ ခလုတ်များနှင့် လင့်ခ်များကို ပုံမှန်အတိုင်း အလုပ်လုပ်စေခြင်း */
+    input, button, a, span {
       -webkit-user-select: auto !important;
       -moz-user-select: auto !important;
       -ms-user-select: auto !important;
@@ -109,13 +108,12 @@
 
   <div class="fade-in w-full max-w-sm">
     <div class="flex flex-col items-center mb-8">
-      <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold mb-4"
-           style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
-        <img src="/twfpl26-27/public/icons/icon-192x192.png"
-             onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';"
-             class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
-        <div id="logo-text" style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">TW</div>
+      
+      <div class="w-24 h-24 rounded-full flex items-center justify-center glow-gold mb-4 bg-[#0d2116]"
+           style="border: 2px solid #C9A84C;">
+        <span class="gold-text font-black text-4xl tracking-tighter" style="font-family: 'Bebas Neue', sans-serif;">TW</span>
       </div>
+      
       <h1 class="gold-text text-3xl font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em;">TW FANTASY</h1>
       <p class="text-green-400 text-xs tracking-widest uppercase mt-1">Official Fantasy League</p>
     </div>
@@ -130,7 +128,7 @@
         <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">Password</label>
         <div class="relative">
           <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" class="tw-input w-full rounded-xl px-4 py-3 text-sm pr-12" />
-          <button onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">👁</button>
+          <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg p-1 active:scale-90 transition-all">👁</button>
         </div>
       </div>
       <div id="error-msg" class="hidden bg-red-900 bg-opacity-50 border border-red-700 text-red-300 text-xs rounded-lg px-3 py-2 mb-4"></div>
@@ -158,7 +156,7 @@
       pwd.type = pwd.type === "password" ? "text" : "password";
     }
 
-    // 💡 🎯 🚀 PWA AUTO INSTALL SERVICE WORKER SYSTEM
+    // PWA SERVICE WORKER SYSTEM
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
         navigator.serviceWorker.register('/twfpl26-27/sw.js')
