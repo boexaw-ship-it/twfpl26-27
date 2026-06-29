@@ -7,16 +7,13 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>TW Fantasy League</title>
-  
   <link rel="manifest" href="/twfpl26-27/public/manifest.json" />
   <link rel="apple-touch-icon" href="/twfpl26-27/public/icons/icon-192x192.png" />
-  
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
 
   <script type="module">
-    // 🛠️ GitHub Pages (twfpl26-27) အတွက် Firebase Config နှင့် လမ်းကြောင်းများ ပြင်ဆင်ခြင်း
     import { auth, db } from "/twfpl26-27/js/firebase-config.js";
     import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
@@ -72,6 +69,7 @@
     }
     
     /* 💡 🎯 🚀 ABSOLUTE ANTI-GOOGLE SELECTION SAFE SYSTEM */
+    /* စာသားများကို ဖိထားပါက Google Search / Translate Menu များ မတက်လာစေရန် ကာကွယ်ခြင်း */
     body { 
       font-family: "Inter", sans-serif; 
       background: #0D2B1A; 
@@ -82,7 +80,8 @@
       user-select: none;          
     }
     
-    input, button, a, span {
+    /* Input အကွက်များ၊ ခလုတ်များနှင့် လင့်ခ်များကို နှိပ်ရလွယ်ကူပြီး စာရိုက်ခွင့်ပြုရန် သီးသန့်ပြုပြင်ခြင်း */
+    input, button, a {
       -webkit-user-select: auto !important;
       -moz-user-select: auto !important;
       -ms-user-select: auto !important;
@@ -110,12 +109,13 @@
 
   <div class="fade-in w-full max-w-sm">
     <div class="flex flex-col items-center mb-8">
-      
-      <div class="w-24 h-24 rounded-full flex items-center justify-center glow-gold mb-4 bg-[#0d2116]"
-           style="border: 2px solid #C9A84C;">
-        <span class="gold-text font-black text-4xl tracking-tighter" style="font-family: 'Bebas Neue', sans-serif;">TW</span>
+      <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold mb-4"
+           style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
+        <img src="/twfpl26-27/public/icons/icon-192x192.png"
+             onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';"
+             class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
+        <div id="logo-text" style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">TW</div>
       </div>
-      
       <h1 class="gold-text text-3xl font-bold" style="font-family:'Bebas Neue'; letter-spacing:0.1em;">TW FANTASY</h1>
       <p class="text-green-400 text-xs tracking-widest uppercase mt-1">Official Fantasy League</p>
     </div>
@@ -130,7 +130,7 @@
         <label class="text-xs font-medium uppercase tracking-widest mb-1.5 block" style="color:#E8D5A3;">Password</label>
         <div class="relative">
           <input id="password" type="password" placeholder="••••••••" autocomplete="current-password" class="tw-input w-full rounded-xl px-4 py-3 text-sm pr-12" />
-          <button type="button" onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg p-1 active:scale-90 transition-all">👁</button>
+          <button onclick="togglePassword()" class="absolute right-3 top-1/2 -translate-y-1/2 text-green-500 text-lg">👁</button>
         </div>
       </div>
       <div id="error-msg" class="hidden bg-red-900 bg-opacity-50 border border-red-700 text-red-300 text-xs rounded-lg px-3 py-2 mb-4"></div>
@@ -158,12 +158,11 @@
       pwd.type = pwd.type === "password" ? "text" : "password";
     }
 
-    // 🌟 🏆 PWA SERVICE WORKER LIVE ON GITHUB PAGES
+    // 💡 🎯 🚀 PWA AUTO INSTALL SERVICE WORKER SYSTEM
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        // 🛠️ Service Worker ကို Repo ဟောင်းလမ်းကြောင်းအတိုင်း လှမ်းခေါ်ခြင်း
         navigator.serviceWorker.register('/twfpl26-27/sw.js')
-          .then(reg => console.log('Service Worker Live on GitHub Pages!', reg))
+          .then(reg => console.log('Service Worker Live!', reg))
           .catch(err => console.log('Service Worker Failed!', err));
       });
     }
