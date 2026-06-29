@@ -16,7 +16,8 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
 
   <script type="module">
-    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    // 🌟 🏆 FIREBASE CONFIG PATH FIXED FOR VERCEL (RELATIVE PATH)
+    import { auth, db } from "./js/firebase-config.js";
     import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
