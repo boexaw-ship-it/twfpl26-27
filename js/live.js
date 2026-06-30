@@ -1,4 +1,4 @@
-import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+import { auth, db } from "../js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, onSnapshot, collection, addDoc, deleteDoc, orderBy, query, serverTimestamp, limit } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -11,7 +11,7 @@ let activeReplyId = null;
 let selectedMessageData = null; 
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = "/twfpl26-27/index.html"; return; } 
+  if (!user) { window.location.href = "../index.html"; return; } 
   currentUser = user; 
 
   onSnapshot(doc(db, "users", user.uid), (snap) => {
@@ -50,7 +50,7 @@ function jerseyPath(p) {
   const pos = String(p.position || "").toUpperCase().trim();
   const folder = (pos === "GK" || pos === "GKP") ? "gk" : "outfield"; 
   const code = String(p.teamCode || "unknown").toLowerCase().trim(); 
-  return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
+  return `../public/jerseys/${folder}/${code}.png`; 
 }
 
 function playerCard(p, isBench = false) {

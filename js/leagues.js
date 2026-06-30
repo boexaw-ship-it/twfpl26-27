@@ -1,4 +1,4 @@
-import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+import { auth, db } from "../js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, collection, onSnapshot, query } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -11,9 +11,9 @@ const CHIP_LABELS = { "3xc": "TC", "bboost": "BB", "wildcard": "WC", "freehit": 
 
 // 📡 Firebase Standings Listeners
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+  if (!user) { window.location.href = "../index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
+  if (!snap.exists()) { window.location.href = "../index.html"; return; }
 
   onSnapshot(query(collection(db, "leagues", "league1", "standings")), (snapshot) => {
     league1Data = [];
@@ -124,7 +124,7 @@ window.closeTeamPopup = () => {
 function jerseyPath(p) {
   const folder = (p.position || "").toLowerCase() === "gk" ? "gk" : "outfield"; 
   const code = (p.teamCode || "unknown").toLowerCase(); 
-  return `/twfpl26-27/public/jerseys/${folder}/${code}.png`; 
+  return `../public/jerseys/${folder}/${code}.png`; 
 }
 
 // 💡 🏆 FIXED DESIGN: နာမည်ပြားအား လုံးဝသွားမဖုံးစေမည့် Official Square Name Plate စနစ်သစ်

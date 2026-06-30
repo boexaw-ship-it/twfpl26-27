@@ -1,4 +1,4 @@
-import { db } from "/twfpl26-27/js/firebase-config.js";
+import { db } from "../js/firebase-config.js";
 import { collection, doc, onSnapshot, query, orderBy, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
 // Global Variables For Filter & Live Engine Cache

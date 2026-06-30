@@ -1,4 +1,4 @@
-import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+import { auth, db } from "../js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -7,9 +7,9 @@ let currentFilter = "all";
 let currentSort = null;
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+  if (!user) { window.location.href = "../index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
+  if (!snap.exists()) { window.location.href = "../index.html"; return; }
   loadPlayers();
 });
 

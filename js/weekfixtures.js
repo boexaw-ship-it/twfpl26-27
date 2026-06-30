@@ -1,4 +1,4 @@
-import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+import { auth, db } from "../js/firebase-config.js";
 import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
 import { doc, getDoc, collection, getDocs } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -30,9 +30,9 @@ let selectedGameweek = 1;
 let currentFilterMode = "all";
 
 onAuthStateChanged(auth, async (user) => {
-  if (!user) { window.location.href = "/twfpl26-27/index.html"; return; }
+  if (!user) { window.location.href = "../index.html"; return; }
   const snap = await getDoc(doc(db, "users", user.uid));
-  if (!snap.exists()) { window.location.href = "/twfpl26-27/index.html"; return; }
+  if (!snap.exists()) { window.location.href = "../index.html"; return; }
   buildMatchCenterSystem();
 });
 
@@ -133,7 +133,7 @@ function teamBadgeHtml(teamId) {
   
   return `
     <div class="flex items-center gap-1.5">
-      <img src="/twfpl26-27/assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.style.display='none'; this.onerror=null;" />
+      <img src="../assets/badges/${teamId}.${t.code}.png" class="w-6 h-6 object-contain drop-shadow" onerror="this.style.display='none'; this.onerror=null;" />
       <span class="text-white text-sm font-bold tracking-wide">${t.short}</span>
     </div>
   `;
