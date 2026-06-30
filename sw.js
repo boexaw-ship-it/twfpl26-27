@@ -1,11 +1,12 @@
 const CACHE_NAME = 'twfpl-safe-v3';
 
-// Clean assets list targeting explicitly scoped project files
+// 🛠️ [DOMAIN-AGNOSTIC ROUTING] နေရာမရွေး အလုပ်လုပ်ရန် လမ်းကြောင်းများကို တည့်မတ်ခြင်း
+// ရှေ့က /twfpl26-27/ ကို ဖြုတ်ပြီး Relative Path အဖြစ် ပြောင်းလဲလိုက်သဖြင့် Vercel တွင်ရော GitHub တွင်ပါ အမှားကင်းစင်သွားပါပြီ
 const ASSETS = [
-  '/twfpl26-27/index.html',
-  '/twfpl26-27/public/manifest.json',
-  '/twfpl26-27/public/icons/icon-192x192.png',
-  '/twfpl26-27/public/icons/icon-512x512.png'
+  'index.html',
+  'public/manifest.json',
+  'public/icons/icon-192x192.png',
+  'public/icons/icon-512x512.png'
 ];
 
 // Install Event - Cache application shell assets securely
@@ -13,7 +14,6 @@ self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
       console.log('SW: Caching App Shell Assets');
-      // Safely catch individual asset failures so one missing asset doesn't break the entire install step
       return Promise.all(
         ASSETS.map(url => {
           return cache.add(url).catch(err => {
@@ -45,24 +45,22 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const requestUrl = e.request.url;
 
-  // 🚨 CRITICAL BYPASS: Do NOT intercept or cache dynamic Firebase/Google backend API traffic.
-  // This blocks infinitely compounding request loops that rapidly drain your Firebase Quota Limits.
+  // 🚨 CRITICAL BYPASS: Firebase API Requests များကို ကြားဖြတ်မဖမ်းဘဲ တိုက်ရိုက် လွှတ်ပေးခြင်း
+  // ၎င်းစနစ်သည် ဒေတာများ ထပ်ခါထပ်ခါ လည်ပြီး Firebase Quota Limit ကုန်ဆုံးခြင်းမှ ရာနှုန်းပြည့် လုံခြုံစေပါသည်
   if (
     requestUrl.includes('firebase') || 
     requestUrl.includes('firestore') || 
     requestUrl.includes('google') ||
-    e.request.method !== 'GET' // Only cache standard GET requests
+    e.request.method !== 'GET'
   ) {
-    return; // Pass control straight through to the real live network connection
+    return; // Live Network ဆီ တိုက်ရိုက် လွှတ်ပေးလိုက်ပါသည်
   }
 
   e.respondWith(
     caches.match(e.request)
       .then(cachedResponse => {
-        // Fixes the 'cachedResult is not defined' crash bug. 
-        // Falls back seamlessly to a clean network fetch if the resource is uncached.
+        // cachedResult variable အမှားအား cachedResponse အဖြစ် အပြီးတိုင် တည့်မတ်ထားပါသည်
         return cachedResponse || fetch(e.request).then(networkResponse => {
-          // Optional: Dynamically cache static non-firebase assets as they are requested
           if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
             const responseToCache = networkResponse.clone();
             caches.open(CACHE_NAME).then(cache => {
@@ -74,7 +72,6 @@ self.addEventListener('fetch', e => {
       })
       .catch(err => {
         console.error('SW: Fetch intercepted an unhandled routing error:', err);
-        // Fallback execution to live server network if the cache parsing pipeline errors out
         return fetch(e.request);
       })
   );
