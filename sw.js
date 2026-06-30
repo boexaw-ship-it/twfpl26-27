@@ -1,7 +1,6 @@
-const CACHE_NAME = 'twfpl-safe-v1';
+const CACHE_NAME = 'twfpl-safe-v2';
 
-// 🛠️ မူရင်း Assets စာရင်းအား အန်ကယ့် Repo (twfpl26-27) လမ်းကြောင်းအတိုင်း အတိအကျ ထိန်းသိမ်းထားပါသည်
-// 💡 PWA လမ်းကြောင်းလွဲတတ်သဖြင့် '/' (Root Cache) အစား 'index.html' ကိုသာ အဓိက ထားထားပါသည်
+// Clean assets list targeting explicitly scoped project files
 const ASSETS = [
   '/twfpl26-27/index.html',
   '/twfpl26-27/public/manifest.json',
@@ -9,27 +8,31 @@ const ASSETS = [
   '/twfpl26-27/public/icons/icon-512x512.png'
 ];
 
-// Install Event
+// Install Event - Cache application shell assets securely
 self.addEventListener('install', e => {
   e.waitUntil(
     caches.open(CACHE_NAME).then(cache => {
-      // ဖိုင်တစ်ခုခု Error တက်လျှင်လည်း တစ်ခုလုံး Fail မဖြစ်စေရန် စိတ်ချရသော Promise.all ဖြင့် သိမ်းဆည်းခြင်း
+      console.log('SW: Caching App Shell Assets');
+      // Safely catch individual asset failures so one missing asset doesn't break the entire install step
       return Promise.all(
         ASSETS.map(url => {
-          return cache.add(url).catch(err => console.log('PWA Asset cache skip:', url));
+          return cache.add(url).catch(err => {
+            console.warn(`SW: Failed to cache core asset: ${url}`, err);
+          });
         })
       );
     }).then(() => self.skipWaiting())
   );
 });
 
-// Activate Event
+// Activate Event - Clean up deprecated legacy caches immediately
 self.addEventListener('activate', e => {
   e.waitUntil(
     caches.keys().then(keys => {
       return Promise.all(
         keys.map(key => {
           if (key !== CACHE_NAME) {
+            console.log('SW: Removing Outdated Cache Pool:', key);
             return caches.delete(key);
           }
         })
@@ -38,25 +41,41 @@ self.addEventListener('activate', e => {
   );
 });
 
-// Fetch Event (🛑 Firebase Limit မစားရန်နှင့် Loop အပြီးတိုင် ကာကွယ်ရန် တည့်မတ်ထားသော စနစ်)
+// Fetch Event - Handle resource requests with robust route bypassing & error handling
 self.addEventListener('fetch', e => {
-  
-  // 💡 [CRITICAL CACHE LOCK] Firebase, Firestore သို့မဟုတ် Google Auth နှင့် ပတ်သက်သော API တောင်းဆိုမှုများ ဖြစ်ပါက
-  // ကြားဖြတ်မဖမ်းဘဲ Network (Server) ဆီ တိုက်ရိုက် လွှတ်ပေးလိုက်ခြင်းဖြင့် Loop ပတ်ခြင်းမှ ရာနှုန်းပြည့် ကာကွယ်ပါသည်
+  const requestUrl = e.request.url;
+
+  // 🚨 CRITICAL BYPASS: Do NOT intercept or cache dynamic Firebase/Google backend API traffic.
+  // This blocks infinitely compounding request loops that rapidly drain your Firebase Quota Limits.
   if (
-    e.request.url.includes('firebase') || 
-    e.request.url.includes('firestore') || 
-    e.request.url.includes('google')
+    requestUrl.includes('firebase') || 
+    requestUrl.includes('firestore') || 
+    requestUrl.includes('google') ||
+    e.request.method !== 'GET' // Only cache standard GET requests
   ) {
-    return; // Service Worker ကို ဒီနေရာတင် ချက်ချင်း ရပ်တန့်ပြီး Cache မလုပ်စေရန် Bypass လုပ်လိုက်ပါသည်
+    return; // Pass control straight through to the real live network connection
   }
-  
+
   e.respondWith(
-    caches.match(e.request).then(cachedResponse => {
-      // 🛠️ မူရင်းကုဒ်မှ စာလုံးပေါင်းအမှား (cachedResult) ကို (cachedResponse) အဖြစ် အမှန်ကန်ဆုံး ပြင်ဆင်ထားပါသည်
-      return cachedResponse || fetch(e.request);
-    }).catch(() => {
-      return fetch(e.request);
-    })
+    caches.match(e.request)
+      .then(cachedResponse => {
+        // Fixes the 'cachedResult is not defined' crash bug. 
+        // Falls back seamlessly to a clean network fetch if the resource is uncached.
+        return cachedResponse || fetch(e.request).then(networkResponse => {
+          // Optional: Dynamically cache static non-firebase assets as they are requested
+          if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
+            const responseToCache = networkResponse.clone();
+            caches.open(CACHE_NAME).then(cache => {
+              cache.put(e.request, responseToCache);
+            });
+          }
+          return networkResponse;
+        });
+      })
+      .catch(err => {
+        console.error('SW: Fetch intercepted an unhandled routing error:', err);
+        // Fallback execution to live server network if the cache parsing pipeline errors out
+        return fetch(e.request);
+      })
   );
 });
