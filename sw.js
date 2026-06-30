@@ -1,4 +1,4 @@
-const CACHE_NAME = 'twfpl-safe-v2';
+const CACHE_NAME = 'twfpl-safe-v3';
 
 // Clean assets list targeting explicitly scoped project files
 const ASSETS = [
