@@ -6,32 +6,24 @@
       "destination": "/index.html"
     },
     {
-      "source": "/twfpl26-27",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/twfpl26-27/",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/twfpl26-27/index.html",
-      "destination": "/index.html"
-    },
-    {
-      "source": "/twfpl26-27/pages/:path*",
+      "source": "/pages/:path*",
       "destination": "/pages/:path*"
     },
     {
-      "source": "/twfpl26-27/js/:path*",
+      "source": "/js/:path*",
       "destination": "/js/:path*"
     },
     {
-      "source": "/twfpl26-27/public/:path*",
+      "source": "/public/:path*",
       "destination": "/public/:path*"
     },
     {
-      "source": "/twfpl26-27/css/:path*",
+      "source": "/css/:path*",
       "destination": "/css/:path*"
+    },
+    {
+      "source": "/((?!css/|js/|public/|pages/|assets/).*)",
+      "destination": "/index.html"
     }
   ]
 }
