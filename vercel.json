@@ -1,8 +1,8 @@
 {
   "rewrites": [
     {
-      "source": "/twfpl26-27/(.*)",
-      "destination": "/$1"
+      "source": "/twfpl26-27/:path*",
+      "destination": "/:path*"
     }
   ]
 }
