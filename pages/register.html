@@ -6,10 +6,10 @@
   <meta name="theme-color" content="#1B4D2E" />
   <title>Register — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/twfpl26-27/css/style.css" />
+  <link rel="stylesheet" href="../css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script type="module">
-    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { auth, db } from "../js/firebase-config.js";
     import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { doc, setDoc, serverTimestamp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
@@ -41,7 +41,7 @@
           status: "pending", createdAt: serverTimestamp()
         });
         // Approve မရသေးလည်း Dashboard တန်းပို့ (View only access)
-        window.location.href = "/twfpl26-27/pages/dashboard.html";
+        window.location.href = "../pages/dashboard.html";
       } catch (err) {
         let msg = "Register မအောင်မြင်ပါ။";
         if (err.code === "auth/email-already-in-use") msg = "ဒီ Email နှင့် Account ရှိပြီးသား။";
@@ -85,7 +85,7 @@
 <body class="flex items-center justify-center min-h-screen px-6 py-10">
   <div class="fade-in w-full max-w-sm">
     <div class="flex items-center mb-6">
-      <a href="/twfpl26-27/index.html" class="text-green-400 mr-3 text-xl">←</a>
+      <a href="../index.html" class="text-green-400 mr-3 text-xl">←</a>
       <div>
         <h1 class="gold-text text-2xl font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
         <p class="text-green-400 text-xs tracking-widest uppercase">Account Register</p>
@@ -113,7 +113,7 @@
       <div id="error-msg" class="hidden bg-red-900 bg-opacity-50 border border-red-700 text-red-300 text-xs rounded-lg px-3 py-2 mb-4"></div>
       <button id="register-btn" onclick="handleRegister()" class="btn-gold w-full rounded-xl py-3.5 text-sm mb-4">Register လုပ်ရန်</button>
       <p class="text-center text-xs" style="color:#E8D5A3;">Account ရှိပြီးသားလား?
-        <a href="/twfpl26-27/index.html" style="color:#C9A84C;" class="font-semibold"> Login ဝင်ရန်</a>
+        <a href="../index.html" style="color:#C9A84C;" class="font-semibold"> Login ဝင်ရန်</a>
       </p>
     </div>
     <p class="text-center text-xs mt-6" style="color:#3A9E5F;">TW Fantasy Official League © 2026-27</p>
