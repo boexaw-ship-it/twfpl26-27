@@ -7,22 +7,22 @@
   <meta name="apple-mobile-web-app-capable" content="yes" />
   <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
   <title>TW Fantasy League</title>
-  <link rel="manifest" href="/twfpl26-27/public/manifest.json" />
-  <link rel="apple-touch-icon" href="/twfpl26-27/public/icons/icon-192x192.png" />
+  <link rel="manifest" href="./public/manifest.json" />
+  <link rel="apple-touch-icon" href="./public/icons/icon-192x192.png" />
   <script src="https://cdn.tailwindcss.com"></script>
-  <link rel="stylesheet" href="/twfpl26-27/css/style.css" />
+  <link rel="stylesheet" href="./css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
 
   <script type="module">
-    import { auth, db } from "/twfpl26-27/js/firebase-config.js";
+    import { auth, db } from "./js/firebase-config.js";
     import { signInWithEmailAndPassword, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
     import { doc, getDoc } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 
     // Login ဝင်ပြီးသားဆိုရင် dashboard တန်းပို့
     onAuthStateChanged(auth, async (user) => {
       if (user) {
-        window.location.href = "/twfpl26-27/pages/dashboard.html";
+        window.location.href = "./pages/dashboard.html";
       }
     });
 
@@ -44,7 +44,7 @@
 
       try {
         await signInWithEmailAndPassword(auth, email, password);
-        window.location.href = "/twfpl26-27/pages/dashboard.html";
+        window.location.href = "./pages/dashboard.html";
       } catch (err) {
         let msg = "Login မအောင်မြင်ပါ။ ထပ်ကြိုးစားပါ။";
         if (err.code === "auth/user-not-found") msg = "Account မရှိပါ။ Register လုပ်ပါ။";
@@ -112,7 +112,7 @@
     <div class="flex flex-col items-center mb-8">
       <div class="w-28 h-28 rounded-full flex items-center justify-center glow-gold mb-4"
            style="background: linear-gradient(145deg, #1F5C36, #0D2B1A); border: 2px solid #C9A84C;">
-        <img src="/twfpl26-27/public/icons/icon-192x192.png"
+        <img src="./public/icons/icon-192x192.png"
              onerror="this.style.display='none'; document.getElementById('logo-text').style.display='block';"
              class="w-20 h-20 rounded-full object-cover" alt="TW FPL Logo" />
         <div id="logo-text" style="display:none; font-family:'Bebas Neue'; font-size:2.5rem; background: linear-gradient(135deg, #C9A84C, #F0D060); -webkit-background-clip:text; -webkit-text-fill-color:transparent;">TW</div>
@@ -144,7 +144,7 @@
         <div class="flex-1 border-t" style="border-color:rgba(201,168,76,0.2)"></div>
       </div>
       
-      <a href="/twfpl26-27/pages/register.html"
+      <a href="./pages/register.html"
          class="block text-center border rounded-xl py-3.5 text-sm font-semibold transition-all"
          style="border-color:#C9A84C; color:#C9A84C;">
         Register လုပ်ရန်
@@ -162,7 +162,7 @@
     // 💡 🎯 🚀 PWA AUTO INSTALL SERVICE WORKER SYSTEM
     if ('serviceWorker' in navigator) {
       window.addEventListener('load', () => {
-        navigator.serviceWorker.register('/twfpl26-27/sw.js')
+        navigator.serviceWorker.register('./sw.js')
           .then(reg => console.log('Service Worker Live!', reg))
           .catch(err => console.log('Service Worker Failed!', err));
       });
