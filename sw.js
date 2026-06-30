@@ -1,4 +1,4 @@
-const CACHE_NAME = 'twfpl-safe-v3';
+const CACHE_NAME = 'twfpl-safe-v4';
 
 // 🛠️ [DOMAIN-AGNOSTIC ROUTING] နေရာမရွေး အလုပ်လုပ်ရန် လမ်းကြောင်းများကို တည့်မတ်ခြင်း
 // ရှေ့က /twfpl26-27/ ကို ဖြုတ်ပြီး Relative Path အဖြစ် ပြောင်းလဲလိုက်သဖြင့် Vercel တွင်ရော GitHub တွင်ပါ အမှားကင်းစင်သွားပါပြီ
