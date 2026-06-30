@@ -28,6 +28,10 @@
     {
       "source": "/twfpl26-27/public/:path*",
       "destination": "/public/:path*"
+    },
+    {
+      "source": "/twfpl26-27/css/:path*",
+      "destination": "/css/:path*"
     }
   ]
 }
