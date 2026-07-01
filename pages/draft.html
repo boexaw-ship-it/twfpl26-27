@@ -9,7 +9,23 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
-  <link rel="stylesheet" href="../css/draft.css" />
+  <style>
+    * { -webkit-tap-highlight-color: transparent; -webkit-user-select: none; user-select: none; }
+    button, [onclick], a, .segment-btn { -webkit-user-select: auto !important; user-select: auto !important; pointer-events: auto !important; cursor: pointer; }
+    body { font-family: "Inter", sans-serif; background: #041e12; height: 100vh; overflow: hidden; display: flex; flex-direction: column; }
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .segment-btn { flex: 1; text-align: center; padding: 12px 0; font-size: 0.7rem; font-weight: 700; color: #3A9E5F; transition: all 0.2s; border-bottom: 2px solid transparent; letter-spacing: 0.05em; }
+    .segment-btn.active { color: #C9A84C; border-color: #C9A84C; background: rgba(201,168,76,0.03); }
+    .no-scrollbar::-webkit-scrollbar { display: none; }
+    .fdr-1, .fdr-2 { background-color: #22c55e; color: white; font-weight: bold; }
+    .fdr-3 { background-color: #eab308; color: #041e12; font-weight: bold; }
+    .fdr-4, .fdr-5 { background-color: #ef4444; color: white; font-weight: bold; }
+    
+    .shield-safe { background: rgba(34,197,94,0.1) !important; border: 1px solid #22c55e !important; color: #22c55e !important; }
+    .shield-tactical { background: rgba(234,179,8,0.1) !important; border: 1px solid #eab308 !important; color: #eab308 !important; }
+    .shield-aggressive { background: rgba(239,68,68,0.1) !important; border: 1px solid #ef4444 !important; color: #ef4444 !important; }
+    .shield-box { padding: 6px 12px; border-radius: 6px; font-size: 9px; font-weight: 900; text-transform: uppercase; display: inline-flex !important; align-items: center; justify-content: center; white-space: nowrap !important; }
+  </style>
 </head>
 <body>
 
@@ -161,6 +177,73 @@
     </div>
   </div>
 
-  <script type="module" src="../js/draft.js"></script>
+  <script type="module">
+    import { auth } from "../js/firebase-config.js";
+    import { onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+    
+    import { initRealtimeInsights } from "../js/insights.js";
+    import { loadFixturesFromLocalJSON, buildCustomDropdownOptions } from "../js/fixtures.js";
+
+    // Global Modal Trigger functions for script access
+    window.showPremiumAlertBox = (message, icon = "⚠️") => {
+      document.getElementById("premium-alert-icon").textContent = icon;
+      document.getElementById("premium-alert-message").textContent = message;
+      const m = document.getElementById("premium-alert-modal");
+      m.classList.remove("hidden"); m.style.display = "flex";
+    };
+    window.closePremiumAlertBox = () => {
+      const m = document.getElementById("premium-alert-modal");
+      m.classList.add("hidden"); m.style.display = "none";
+    };
+
+    const headerRow = document.getElementById("fixture-header-row");
+    for (let gw = 1; gw <= 38; gw++) { 
+      headerRow.innerHTML += `<th style="border-color:rgba(30,106,60,0.15); padding:10px 4px; text-align:center;" class="border-r">GW${gw}</th>`; 
+    }
+
+    document.querySelectorAll("#fixture-table-body tr").forEach(row => {
+      const team = row.getAttribute("data-team");
+      let cellsHtml = "";
+      for (let gw = 1; gw <= 38; gw++) { 
+        cellsHtml += `<td id="${team}-gw${gw}" style="border-color:rgba(30,106,60,0.15); text-align:center;" class="border-r">—</td>`; 
+      }
+      row.innerHTML += cellsHtml;
+    });
+
+    onAuthStateChanged(auth, async (user) => {
+      if (!user) { window.location.href = "../index.html"; return; }
+      initRealtimeInsights(user.uid);       
+      loadFixturesFromLocalJSON();  
+      buildCustomDropdownOptions(plTeams); 
+    });
+
+    const plTeams = [
+      { code: "ALL", name: "Show All Teams" }, { code: "ARS", name: "Arsenal" }, { code: "AVL", name: "Aston Villa" },
+      { code: "BHA", name: "Brighton" }, { code: "BOU", name: "Bournemouth" }, { code: "BRE", name: "Brentford" }, 
+      { code: "CHE", name: "Chelsea" }, { code: "COV", name: "Coventry City" }, { code: "CRY", name: "Crystal Palace" },
+      { code: "EVE", name: "Everton" }, { code: "FUL", name: "Fulham" }, { code: "HUL", name: "Hull City" }, 
+      { code: "IPS", name: "Ipswich Town" }, { code: "LEE", name: "Leeds United" }, { code: "LIV", name: "Liverpool" },
+      { code: "MCI", name: "Man City" }, { code: "MUN", name: "Man United" }, { code: "NEW", name: "Newcastle" }, 
+      { code: "NFO", name: "Nottm Forest" }, { code: "SUN", name: "Sunderland" }, { code: "TOT", name: "Tottenham" }
+    ];
+
+    window.openTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.remove("hidden"); m.style.display = "flex"; };
+    window.closeTeamModal = () => { const m = document.getElementById("team-modal"); m.classList.add("hidden"); m.style.display = "none"; };
+    window.selectTeamFilter = (code, label) => {
+      document.getElementById("selected-team-label").textContent = label; closeTeamModal();
+      document.querySelectorAll('#fixture-table-body tr').forEach(r => {
+        if (code === 'ALL' || r.getAttribute('data-team') === code) r.classList.remove('hidden'); else r.classList.add('hidden');
+      });
+    };
+  </script>
+
+  <script>
+    function switchDraftTab(tabId) {
+      document.querySelectorAll('.segment-btn').forEach(btn => btn.classList.remove('active'));
+      document.querySelectorAll('.tab-content').forEach(content => content.classList.add('hidden'));
+      document.getElementById('seg-' + tabId).classList.add('active');
+      document.getElementById('view-' + tabId).classList.remove('hidden');
+    }
+  </script>
 </body>
 </html>

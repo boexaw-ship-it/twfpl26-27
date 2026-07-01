@@ -3,72 +3,105 @@
 <head>
   <meta charset="UTF-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
-  <meta name="theme-color" content="#1B4D2E" />
+  <meta name="theme-color" content="#0D2B1A" />
   <title>Live — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
-  <link rel="stylesheet" href="../css/live.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  
+  <style>
+    /* 💡 🎯 🚀 UNCLE'S ABSOLUTE NO-TOUCH SYSTEM (EVERYWHERE) */
+    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်နေရာ (ကွင်းပြင်၊ Player ကတ်၊ Chat) ကိုမဆို ဖိထားပါက */
+    /* Google Search Bar, Translate, Copy Menu များ လုံးဝ (လုံးဝ) မတက်လာစေရန် Root အဆင့်မှ ပိတ်ဆို့ခြင်း */
+    * { 
+      -webkit-tap-highlight-color: transparent;
+      -webkit-user-select: none !important;  /* Safari & Android Chrome Bar ပိတ်ရန် */
+      -moz-user-select: none !important;     /* Firefox browser အတွက် */
+      -ms-user-select: none !important;      /* IE အတွက် */
+      user-select: none !important;          /* Standard စနစ်အပြင် အားလုံးကို Absolute ပိတ်ဆို့ခြင်း */
+    }
+
+    /* Input Box ထဲတွင် စာရိုက်နိုင်ရန် Selection ကို ပြန်ခွင့်ပြုခြင်း */
+    input, textarea {
+      -webkit-user-select: text !important;
+      -moz-user-select: text !important;
+      -ms-user-select: text !important;
+      user-select: text !important;
+    }
+
+    body { 
+      font-family: "Inter", sans-serif; 
+      background: #0D2B1A; 
+      height: 100vh; 
+      overflow: hidden; 
+      display: flex; 
+      flex-direction: column; 
+    }
+
+    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
+    .nav-item.active { color:#C9A84C; }
+    
+    /* Scrollbars Controls */
+    #chat-messages::-webkit-scrollbar, #pitch-scroll-wrapper::-webkit-scrollbar { width:3px; }
+    #chat-messages::-webkit-scrollbar-thumb, #pitch-scroll-wrapper::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
+    
+    /* Stat Cards Flexible non-scroll system */
+    .stat-card { background:#1F5C36; border:1px solid #2A7A47; border-radius:0.75rem; padding:6px 4px; text-align:center; flex: 1; display: flex; flex-direction: column; justify-content: center; }
+
+    /* 🏟️ UNCLE'S GLOBAL SCROLLING FIELD CANVAS */
+    .main-scroll-pitch-canvas {
+      position: relative;
+      width: 100%;
+      height: 390px; 
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      padding: 12px 0;
+      flex-shrink: 0;
+    }
+    .field-row {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      width: 100%;
+      z-index: 2;
+    }
+  </style>
+
   <script type="module" src="../js/live.js"></script>
 </head>
 <body>
-
-  <div class="top-bar flex-shrink-0">
-    <div style="padding:10px 16px 4px 16px; display:flex; align-items:center; justify-content:space-between;">
-      <div class="flex items-center gap-1.5">
-        <a href="../pages/dashboard.html" style="color:#fff; font-size:1.2rem; font-weight:bold;">←</a>
-        <h1 class="font-bold text-white" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.2rem;">LIVE</h1>
-        <span class="text-[9px] px-1.5 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626; color:#ffffff;">LIVE</span>
-      </div>
-
-      <div class="flex items-center gap-2">
-        <div class="rank-pill flex items-center gap-1">
-          <span class="text-[9px] font-bold uppercase tracking-wider text-white/70">Overall Rank</span>
-          <span id="overall-rank" class="text-xs font-black text-white">—</span>
-        </div>
-        <span id="user-team" class="team-name-frame text-xs font-black tracking-wide text-white"></span>
-      </div>
+  
+  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:10px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;">
+    <div class="flex items-center gap-1.5">
+      <a href="../pages/dashboard.html" style="color:#3A9E5F;font-size:1.2rem;font-weight:bold;">←</a>
+      <h1 class="gold-text font-bold" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.2rem;">LIVE</h1>
+      <span class="text-[9px] px-1.5 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626;color:#ffffff;">LIVE</span>
     </div>
 
-    <div class="upper-info-frame">
-      <div class="upper-frame-cell">
-        <span class="frame-label">GW PTS</span>
-        <span id="gw-points" class="frame-value">—</span>
+    <div class="flex items-center gap-2">
+      <div class="rounded-md px-2 py-0.5 flex items-center gap-1 border border-[#C9A84C]/30 bg-black/20">
+        <span class="text-[9px] font-bold uppercase tracking-wider text-[#E8D5A3]">Overall Rank:</span>
+        <span id="overall-rank" class="text-xs font-black text-[#F0D060]">—</span>
       </div>
-      <div class="upper-frame-cell">
-        <span class="frame-label">GW RANK</span>
-        <span id="gw-rank" class="frame-value">—</span>
-      </div>
-      <div class="upper-frame-cell">
-        <span class="frame-label">OVERALL PTS</span>
-        <span id="overall-pts" class="frame-value">—</span>
-      </div>
+      <span id="user-team" class="text-xs font-black tracking-wide text-[#E8D5A3]"></span>
     </div>
   </div>
 
-  <div class="content-split">
+  <div style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);padding:8px 16px;display:flex;align-items:center;justify-content:space-between;flex-shrink:0;border-bottom:1px solid rgba(201,168,76,0.2);">
+    <span id="hit-label" class="text-xs font-semibold" style="color:#f87171;">Hit: -0</span>
+    <span id="chip-badge" class="text-xs font-bold px-3 py-0.5 rounded-full" style="background:rgba(201,168,76,0.15);border:1px solid rgba(201,168,76,0.4);color:#C9A84C;">NO CHIP</span>
+  </div>
 
-    <div id="pitch-wrap" class="pitch-pane px-2.5 py-1.5">
+  <div id="pitch-wrap" style="height: 40vh; overflow:hidden; border-bottom:2px solid rgba(201,168,76,0.3); display:flex; flex-shrink:0;" class="px-2.5 py-1.5">
+    <div class="flex gap-2 w-full h-full min-width:0;">
       
-      <div class="pitch-side-hud">
-        <div class="hud-card border-red">
-          <span class="hud-label">HIT</span>
-          <span id="hit-label" class="hud-value text-red-600">-0</span>
-        </div>
-        <div class="hud-card border-gold">
-          <span class="hud-label">CAPTAIN</span>
-          <span id="captain-pts" class="hud-value text-[#8A6D22]">—</span>
-        </div>
-        <div class="hud-card border-gold">
-          <span class="hud-label">CHIP</span>
-          <span id="chip-badge" class="hud-value text-[#8A6D22] text-[9px] leading-tight">NO CHIP</span>
-        </div>
-      </div>
-
-      <div class="pitch-scaled-container">
+      <div style="flex:1; position:relative; border-radius:1rem; overflow:hidden; border:1.5px solid rgba(255,255,255,0.2); min-width:0; height:100%; background:linear-gradient(180deg,#144622,#09230e);">
         <div id="pitch-scroll-wrapper" style="width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px; display:flex; flex-direction:column; gap:6px;">
+          
           <div class="main-scroll-pitch-canvas">
-            <svg style="position:absolute; top:0; left:0; width:100%; height:390px; opacity:0.25; pointer-events:none; z-index:0;" viewBox="0 0 200 390" preserveAspectRatio="none">
+            <svg style="position:absolute;top:0;left:0;width:100%;height:390px;opacity:0.25;pointer-events:none;z-index:0;" viewBox="0 0 200 390" preserveAspectRatio="none">
               <rect x="6" y="6" width="188" height="378" fill="none" stroke="white" stroke-width="1.2"/>
               <line x1="6" y1="195" x2="194" y2="195" stroke="white" stroke-width="1.2"/>
               <circle cx="100" cy="195" r="24" fill="none" stroke="white" stroke-width="1.2"/>
@@ -77,61 +110,74 @@
               <rect x="66" y="6" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
               <rect x="66" y="370" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
             </svg>
+
             <div id="pitch" style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
-              <p class="text-center text-xs py-8" style="color:#88b89b;">Team loading...</p>
+              <p class="text-center text-xs py-8" style="color:#3A9E5F;">Team loading...</p>
             </div>
           </div>
+
           <div id="bench-container" style="width:100%; flex-shrink:0; padding-bottom:4px;"></div>
         </div>
       </div>
 
-    </div>
-
-    <div class="chat-pane">
-      <div style="padding:8px 16px; border-bottom:1px solid #E7ECE7; flex-shrink:0; background:#fff;">
-        <p class="text-xs font-semibold uppercase tracking-widest" style="color:var(--tw-green-800);">💬 Live Chat</p>
-      </div>
-
-      <div id="chat-lock-banner" class="hidden" style="padding:6px 16px; background:rgba(201,168,76,0.08); border-bottom:1px solid rgba(201,168,76,0.25); flex-shrink:0;">
-        <p class="text-xs" style="color:#8A6D22;">🔒 Chat unlocks once your account is approved — you can browse messages now.</p>
-      </div>
-
-      <div id="chat-messages" style="flex:1; overflow-y:auto; padding:10px 16px; background:#fff;"></div>
-
-      <div id="reply-preview-bar" class="hidden px-4 py-2 flex items-center justify-between border-t" style="background: #FAFCFA; border-color:#E7ECE7;">
-        <div class="flex flex-col min-w-0 flex-1">
-          <span id="reply-target-name" class="text-[10px] font-bold" style="color:#8A6D22;">Reply to user</span>
-          <span id="reply-target-text" class="text-xs truncate" style="color:var(--tw-text-dim);">Message text...</span>
+      <div style="width:96px;flex-shrink:0;height:100%;overflow:hidden;" class="flex flex-col gap-1 justify-between">
+        <div class="rounded-xl p-2 flex flex-col justify-center" style="background:linear-gradient(145deg,#1F5C36,#162F20);border:1px solid rgba(201,168,76,0.25);flex:1.2;">
+          <p class="text-xs uppercase tracking-wide mb-0.5" style="color:#C9A84C;font-size:0.55rem;">Gameweek</p>
+          <div class="flex items-end gap-0.5">
+            <span id="gw-points" class="font-bold" style="font-family:'Bebas Neue';font-size:1.5rem;line-height:1;color:#C9A84C;">—</span>
+            <span style="font-size:0.55rem;color:#E8D5A3;">pts</span>
+          </div>
         </div>
-        <button onclick="window.cancelReply()" class="text-xs font-bold px-2 py-1 text-red-600 bg-red-50 rounded-md ml-2">✖</button>
+        <div class="stat-card"><p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">GW Rank</p><p id="gw-rank" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;margin-top:2px;">—</p></div>
+        <div class="stat-card"><p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">Overall Pts</p><p id="overall-pts" class="font-bold text-white" style="font-family:'Bebas Neue';font-size:0.95rem;margin-top:2px;">—</p></div>
+        <div class="stat-card"><p style="font-size:0.52rem;color:#3A9E5F;line-height:1.2;">Captain</p><p id="captain-pts" class="font-bold" style="font-family:'Bebas Neue';font-size:0.95rem;color:#C9A84C;margin-top:2px;">—</p></div>
       </div>
 
-      <div style="padding:8px 12px; border-top:1px solid #E7ECE7; display:flex; gap:8px; align-items:center; flex-shrink:0; background:#fff;">
-        <input id="chat-input" type="text" placeholder="Type a message..." onkeydown="window.handleKeydown(event)" disabled
-          style="flex:1; background:#F4F7F2; border:1px solid #E7ECE7; color:var(--tw-green-900); border-radius:0.75rem; padding:10px 14px; font-size:0.85rem; outline:none;"
-          onfocus="this.style.borderColor='#2F7A4F'" onblur="this.style.borderColor='#E7ECE7'" />
-        <button id="send-btn" onclick="window.sendMessage()" disabled style="opacity:0.4; background:linear-gradient(135deg,#1B4D2E,#2F7A4F); color:#fff; border-radius:0.75rem; padding:10px 16px; font-weight:700; font-size:0.85rem;">Send</button>
-      </div>
     </div>
-
   </div>
 
-  <div class="bottom-nav">
-    <div class="nav-item" onclick="window.location.href='../pages/dashboard.html'"><span style="font-size:1.2rem;">🏠</span><span>Home</span></div>
-    <div class="nav-item active"><span style="font-size:1.2rem;">⚡</span><span>Live</span></div>
-    <div class="nav-item" onclick="window.location.href='../pages/leagues.html'"><span style="font-size:1.2rem;">🏆</span><span>League</span></div>
-    <div class="nav-item" onclick="window.location.href='../pages/fixtures.html'"><span style="font-size:1.2rem;">⚽</span><span>Fixtures</span></div>
-    <div class="nav-item" onclick="window.location.href='../pages/scout.html'"><span style="font-size:1.2rem;">🔍</span><span>Scout</span></div>
+  <div class="flex-1 flex flex-col overflow-hidden" style="height: 60vh;">
+    <div style="padding:4px 16px;border-bottom:1px solid #1F5C36;flex-shrink:0;">
+      <p class="text-xs font-semibold uppercase tracking-widest" style="color:#C9A84C;">💬 Live Chat</p>
+    </div>
+
+    <div id="chat-lock-banner" class="hidden" style="padding:6px 16px;background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.2);flex-shrink:0;">
+      <p class="text-xs" style="color:#E8D5A3;">🔒 Approve ပြီးမှ Chat ရေးနိုင်ပါမည် — View ကိုတော့ ကြည့်ရှုနိုင်ပါသည်</p>
+    </div>
+
+    <div id="chat-messages" style="flex:1;overflow-y:auto;padding:10px 16px;"></div>
+
+    <div id="reply-preview-bar" class="hidden px-4 py-2 flex items-center justify-between border-t border-[#1F5C36]" style="background: rgba(201,168,76,0.05);">
+      <div class="flex flex-col min-w-0 flex-1">
+        <span id="reply-target-name" class="text-[10px] font-bold text-[#C9A84C]">Reply to zaw moe</span>
+        <span id="reply-target-text" class="text-xs text-white/60 truncate">Message text...</span>
+      </div>
+      <button onclick="window.cancelReply()" class="text-xs font-bold px-2 py-1 text-red-400 bg-red-500/10 rounded-md ml-2">✖</button>
+    </div>
+
+    <div style="padding:8px 12px;border-top:1px solid #1F5C36;display:flex;gap:8px;align-items:center;flex-shrink:0;background:#0D2B1A;">
+      <input id="chat-input" type="text" placeholder="Message ရိုက်ပါ..." onkeydown="window.handleKeydown(event)" disabled
+        style="flex:1;background:#1F5C36;border:1px solid #2A7A47;color:white;border-radius:0.75rem;padding:10px 14px;font-size:0.85rem;outline:none;"
+        onfocus="this.style.borderColor='#C9A84C'" onblur="this.style.borderColor='#2A7A47'" />
+      <button id="send-btn" onclick="window.sendMessage()" disabled style="opacity:0.4;background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;border-radius:0.75rem;padding:10px 16px;font-weight:700;font-size:0.85rem;">Send</button>
+    </div>
   </div>
 
   <div id="message-options-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-    <div class="w-full max-w-xs rounded-xl p-4 flex flex-col gap-3 shadow-2xl" style="background:#fff; border:1px solid #E7ECE7;">
-      <p id="modal-msg-preview" class="text-xs truncate border-b pb-2" style="color:var(--tw-text-dim); border-color:#E7ECE7;"></p>
-      <button id="modal-reply-btn" class="w-full text-white font-bold py-2.5 rounded-lg text-sm transition-all" style="background:var(--tw-green-800);">💬 Reply</button>
-      <button id="modal-delete-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition-all hidden">🗑️ Delete message</button>
-      <button onclick="window.closeOptionsModal()" class="w-full text-xs py-1 mt-1 font-medium" style="color:var(--tw-text-dim);">Cancel</button>
+    <div class="w-full max-w-xs rounded-xl border border-[#1F5C36] p-4 flex flex-col gap-3 shadow-2xl" style="background:#0D2B1A;">
+      <p id="modal-msg-preview" class="text-xs text-white/50 truncate border-b border-white/10 pb-2"></p>
+      <button id="modal-reply-btn" class="w-full bg-[#1F5C36] hover:bg-[#2A7A47] text-white font-bold py-2.5 rounded-lg text-sm transition-all">💬 Reply (ပြန်စာရေးရန်)</button>
+      <button id="modal-delete-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition-all hidden">🗑️ Delete Message (ဖျက်ပစ်ရန်)</button>
+      <button onclick="window.closeOptionsModal()" class="w-full text-white/60 text-xs py-1 mt-1 font-medium">Cancel (ပယ်ဖျက်ရန်)</button>
     </div>
   </div>
 
+  <div style="background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;flex-shrink:0;">
+    <div class="nav-item" onclick="window.location.href='../pages/dashboard.html'"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;">Home</span></div>
+    <div class="nav-item active"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;">Live</span></div>
+    <div class="nav-item" onclick="window.location.href='../pages/leagues.html'"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;">League</span></div>
+    <div class="nav-item" onclick="window.location.href='../pages/fixtures.html'"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;">Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='../pages/scout.html'"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;">Scout</span></div>
+  </div>
 </body>
 </html>
