@@ -91,7 +91,7 @@
 
     <!-- Chat pane — 60%, white background -->
     <div class="chat-pane">
-      <div style="padding:10px 16px;background:rgba(27,77,46,0.07);border-top:1px solid var(--tw-border-green);border-bottom:1px solid var(--tw-border-green);flex-shrink:0;">
+      <div style="padding:10px 16px;background:#E8F2EB;border:1.5px solid var(--tw-border-green);flex-shrink:0;">
         <p class="text-xs font-semibold uppercase tracking-widest" style="color:var(--tw-green-800);">💬 Live Chat</p>
       </div>
 
@@ -109,7 +109,7 @@
         <button onclick="window.cancelReply()" class="text-xs font-bold px-2 py-1 text-red-600 bg-red-50 rounded-md ml-2">✖</button>
       </div>
 
-      <div style="padding:10px 12px;background:rgba(27,77,46,0.07);border-top:1px solid var(--tw-border-green);display:flex;gap:8px;align-items:center;flex-shrink:0;">
+      <div style="padding:10px 12px;background:#E8F2EB;border:1.5px solid var(--tw-border-green);display:flex;gap:8px;align-items:center;flex-shrink:0;">
         <input id="chat-input" type="text" placeholder="Type a message..." onkeydown="window.handleKeydown(event)" disabled
           style="flex:1;background:#F4F7F2;border:1px solid #E7ECE7;color:var(--tw-green-900);border-radius:0.75rem;padding:10px 14px;font-size:0.85rem;outline:none;"
           onfocus="this.style.borderColor='#2F7A4F'" onblur="this.style.borderColor='#E7ECE7'" />
