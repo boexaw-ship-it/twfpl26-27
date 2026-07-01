@@ -9,34 +9,7 @@
   <link rel="stylesheet" href="../css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
   
-  <style>
-    #team-popup-modal.hidden { display: none !important; }
-    * { -webkit-tap-highlight-color: transparent; }
-    
-    /* 💡 🎯 🚀 CRITICAL MOBILE SELECT BLOCK ENGINE */
-    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ ခလုတ်၊ စာရင်းဇယားနှင့် Popup အတွင်းရှိ ဂျာစီများကိုမဆို ဖိမိပါက Google Translate / Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
-    body { 
-      font-family: "Inter", sans-serif; 
-      background: #0D2B1A; 
-      height: 100vh; 
-      overflow: hidden; 
-      display: flex; 
-      flex-direction: column; 
-      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
-      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
-      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
-      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
-    }
-    
-    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; }
-    .nav-item.active { color:#C9A84C; }
-    
-    .player-point-circle { width:22px; height:22px; background:black; color:white; border-radius:9999px; display:flex; align-items:center; justify-content:center; font-size:9px; font-weight:900; margin-top:-8px; z-index:10; border:1px solid rgba(255,255,255,0.2); box-shadow:0 2px 4px rgba(0,0,0,0.4); }
-    
-    #league-scroll-container::-webkit-scrollbar { width: 3px; }
-    #league-scroll-container::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
-  </style>
+  <link rel="stylesheet" href="../css/leagues.css" />
 
   <script type="module" src="../js/leagues.js"></script>
 </head>
