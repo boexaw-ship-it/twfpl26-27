@@ -1,86 +1,275 @@
-    * {
-      -webkit-tap-highlight-color: transparent;
-      -webkit-user-select: none !important;
-      -moz-user-select: none !important;
-      -ms-user-select: none !important;
-      user-select: none !important;
-    }
-    input, textarea {
-      -webkit-user-select: text !important;
-      -moz-user-select: text !important;
-      -ms-user-select: text !important;
-      user-select: text !important;
-    }
+/* ==========================================================================
+   1. GLOBAL RESET & BASE STYLES
+   ========================================================================== */
+* {
+  -webkit-tap-highlight-color: transparent;
+  -webkit-user-select: none !important;
+  -moz-user-select: none !important;
+  -ms-user-select: none !important;
+  user-select: none !important;
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
 
-    :root {
-      --tw-green-900: #0F2E1C;
-      --tw-green-800: #1B4D2E;
-      --tw-green-600: #2F7A4F;
-      --tw-gold: #C9A84C;
-      --tw-text-dim: #7A8B82;
-      --tw-border-green: rgba(27,77,46,0.35);
-    }
+input, textarea {
+  -webkit-user-select: text !important;
+  -moz-user-select: text !important;
+  -ms-user-select: text !important;
+  user-select: text !important;
+}
 
-    body {
-      font-family: "Inter", sans-serif;
-      background: #FFFFFF;
-      height: 100vh;
-      overflow: hidden;
-      display: flex;
-      flex-direction: column;
-    }
+:root {
+  --tw-green-900: #0F2E1C;
+  --tw-green-800: #1B4D2E;
+  --tw-green-600: #2F7A4F;
+  --tw-gold: #C9A84C;
+  --tw-text-dim: #7A8B82;
+  --tw-border-green: rgba(27,77,46,0.35);
+}
 
-    .gold-text { background: linear-gradient(135deg, #A98330, #C9A84C, #E8C878); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; padding:8px 12px; color:#B9C4BC; cursor:pointer; font-size:0.6rem; font-weight:600; }
-    .nav-item.active { color: var(--tw-green-800); }
+body {
+  font-family: "Inter", sans-serif;
+  background: #FFFFFF;
+  height: 100vh;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+  padding-bottom: 60px; /* Accounts for bottom-nav bar height */
+}
 
-    #chat-messages::-webkit-scrollbar, #pitch-scroll-wrapper::-webkit-scrollbar { width:3px; }
-    #chat-messages::-webkit-scrollbar-thumb, #pitch-scroll-wrapper::-webkit-scrollbar-thumb { background:#C9A84C; border-radius:2px; }
+/* ==========================================================================
+   2. TOP HEADER & UPPER FRAME GRID (DOCK AT TOP)
+   ========================================================================== */
+.top-bar { 
+  background: var(--tw-green-800); 
+  width: 100%; 
+  flex-shrink: 0;
+  display: flex;
+  flex-direction: column;
+}
 
-    .top-bar { background: var(--tw-green-800); }
-    .team-name-frame {
-      border: 1px solid rgba(255,255,255,0.4);
-      border-radius: 9999px;
-      padding: 3px 12px;
-      background: rgba(255,255,255,0.08);
-    }
-    .rank-pill {
-      background: rgba(255,255,255,0.12);
-      border: 1px solid rgba(255,255,255,0.25);
-      border-radius: 0.5rem;
-      padding: 2px 8px;
-    }
+.team-name-frame {
+  border: 1px solid rgba(255,255,255,0.4);
+  border-radius: 9999px;
+  padding: 3px 12px;
+  background: rgba(255,255,255,0.08);
+}
 
-    /* Stat chip strip — same pattern as team.html */
-    .stat-chip {
-      background: #FFFFFF;
-      border: 2px solid var(--tw-border-green);
-      border-radius: 12px;
-      padding: 6px 10px;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      min-width: 58px;
-      flex-shrink: 0;
-    }
-    .stat-chip .stat-label { font-size: 0.55rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em; color: var(--tw-text-dim); margin-bottom: 2px; }
-    .stat-chip .stat-value { font-size: 0.8rem; font-weight: 800; }
+.rank-pill {
+  background: rgba(255,255,255,0.12);
+  border: 1px solid rgba(255,255,255,0.25);
+  border-radius: 0.5rem;
+  padding: 2px 8px;
+}
 
-    /* Main content: pitch 40% / chat 60% of remaining space */
-    .content-split { flex: 1; display: flex; flex-direction: column; overflow: hidden; min-height: 0; }
-    .pitch-pane { flex: 0 0 40%; min-height: 0; }
-    .chat-pane { flex: 1 1 60%; min-height: 0; display: flex; flex-direction: column; overflow: hidden; }
+/* Three columns layout grid directly mirroring dashboard.html card structures */
+.upper-info-frame {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 4px 16px 12px 16px;
+  width: 100%;
+  background: var(--tw-green-800);
+}
 
-    .main-scroll-pitch-canvas {
-      position: relative;
-      width: 100%;
-      height: 390px;
-      display: flex;
-      flex-direction: column;
-      justify-content: space-between;
-      padding: 12px 0;
-      flex-shrink: 0;
-    }
-    .field-row { display: flex; justify-content: center; align-items: center; width: 100%; z-index: 2; }
-  
+.upper-frame-cell {
+  background: #FFFFFF !important;
+  border: 1.5px solid var(--tw-border-green) !important;
+  border-radius: 12px !important;
+  padding: 6px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.upper-frame-cell .frame-label {
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--tw-text-dim);
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+
+.upper-frame-cell .frame-value {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--tw-green-800);
+}
+
+/* ==========================================================================
+   3. MIDDLE SPLIT MAIN CONTAINER (PITCH 40% / CHAT 60%)
+   ========================================================================== */
+.content-split { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  min-height: 0; 
+  background: #FFFFFF;
+}
+
+.pitch-pane { 
+  flex: 0 0 40%; 
+  min-height: 0; 
+  display: flex !important; 
+  flex-direction: row !important;
+  gap: 8px; 
+  background: #FFFFFF;
+}
+
+/* ==========================================================================
+   4. SIDE HUD CARD CONTAINER MATRIX (LEFT COLUMN OF PITCH PANE)
+   ========================================================================== */
+.pitch-side-hud {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  width: 72px !important;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.hud-card {
+  background: #FFFFFF !important;
+  border-radius: 12px !important;
+  padding: 8px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1;
+  margin-bottom: 6px;
+  text-align: center;
+}
+
+.hud-card:last-child { 
+  margin-bottom: 0; 
+}
+
+.border-red { 
+  border: 1.5px solid rgba(220,38,38,0.3) !important; 
+}
+
+.border-gold { 
+  border: 1.5px solid rgba(201,168,76,0.4) !important; 
+}
+
+.hud-card .hud-label {
+  font-size: 0.52rem;
+  font-weight: 800;
+  color: var(--tw-text-dim);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.hud-card .hud-value {
+  font-size: 0.8rem;
+  font-weight: 900;
+}
+
+/* ==========================================================================
+   5. FOOTBALL FORMATION FIELD GRAPHICS (RIGHT COLUMN OF PITCH PANE)
+   ========================================================================== */
+.pitch-scaled-container {
+  flex: 1;
+  position: relative;
+  border-radius: 1rem;
+  overflow: hidden;
+  border: 1.5px solid rgba(255,255,255,0.2);
+  min-width: 0;
+  height: 100%;
+  background: linear-gradient(180deg, #144622, #09230e);
+}
+
+.main-scroll-pitch-canvas {
+  position: relative;
+  width: 100%;
+  height: 390px;
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 12px 0;
+  flex-shrink: 0;
+}
+
+.field-row { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  width: 100%; 
+  z-index: 2; 
+}
+
+/* ==========================================================================
+   6. LIVE CHAT STREAM ENGINE (BOTTOM 60% RUNTIME FOOTPRINT)
+   ========================================================================== */
+.chat-pane { 
+  flex: 1 1 60%; 
+  min-height: 0; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  background: #FFFFFF;
+}
+
+/* 💬 LIVE CHAT စာသားခေါင်းစဉ်ရှိသည့် Box နေရာ */
+.chat-pane > div:first-child {
+  padding: 8px 16px !important;
+  background: #ffffff !important;
+  width: 100% !important;
+  /* ⚡ [ပြင်ဆင်ချက် ၁] LIVE CHAT စာသားရဲ့ အောက်ခြေမှာ အစိမ်းရောင် Bar လိုင်းကြီးကို ဘယ်ညာအပြည့် ဆွဲလိုက်ခြင်း */
+  border-bottom: 4.5px solid var(--tw-green-800) !important; 
+  flex-shrink: 0;
+}
+
+/* ⚙️ Message ရိုက်ပြီးပို့သည့် အောက်ခြေ Input Area နေရာ */
+.chat-pane > div:last-child {
+  padding: 6px 12px 8px 12px !important; /* Send messages နား ကပ်သွားအောင် padding ညှိထားပါသည် */
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-shrink: 0;
+  background: #ffffff !important;
+  /* ⚡ [ပြင်ဆင်ချက် ၂] Input အပေါ်ဘက်တွင် လိုင်းစိမ်း ပါးပါးလေး (1px) တပ်ဆင်ခြင်း */
+  border-top: 1px solid var(--tw-green-800) !important; 
+}
+
+/* ==========================================================================
+   7. STABLE FIXED POSITION APPLICATION FOOTER NAVBAR
+   ========================================================================== */
+.bottom-nav {
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 60px !important;
+  background-color: #ffffff !important;
+  border-top: 1px solid #E7ECE7 !important;
+  display: flex !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+  z-index: 9999 !important;
+}
+
+.nav-item { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 3px; 
+  padding: 8px 12px; 
+  color: #B9C4BC; 
+  cursor: pointer; 
+  font-size: 0.6rem; 
+  font-weight: 600; 
+}
+
+.nav-item.active { 
+  color: var(--tw-green-800); 
+}
+
+/* Scrollbar layout config rules */
+#chat-messages::-webkit-scrollbar, #pitch-scroll-wrapper::-webkit-scrollbar { width: 3px; }
+#chat-messages::-webkit-scrollbar-thumb, #pitch-scroll-wrapper::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
