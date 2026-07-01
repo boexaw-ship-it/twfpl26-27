@@ -213,14 +213,28 @@ body {
   flex-direction: column; 
   overflow: hidden; 
   background: #FFFFFF;
-  /* ✨ ခြားနားပေးမည့် Bar လိုင်းလေး ထည့်သွင်းထားပါသည် */
-  border-top: 4px solid #F4F7F2 !important; 
 }
 
-/* ⚙️ Message ရိုက်ပြီးပို့သည့် Input Area ၏ အပေါ်ဘက်တွင် လိုင်းစိမ်းလေး ထည့်ခြင်း */
+/* 💬 LIVE CHAT စာသားခေါင်းစဉ်ရှိသည့် Box နေရာ */
+.chat-pane > div:first-child {
+  padding: 8px 16px !important;
+  background: #ffffff !important;
+  width: 100% !important;
+  /* ⚡ [ပြင်ဆင်ချက် ၁] LIVE CHAT စာသားရဲ့ အောက်ခြေမှာ အစိမ်းရောင် Bar လိုင်းကြီးကို ဘယ်ညာအပြည့် ဆွဲလိုက်ခြင်း */
+  border-bottom: 4.5px solid var(--tw-green-800) !important; 
+  flex-shrink: 0;
+}
+
+/* ⚙️ Message ရိုက်ပြီးပို့သည့် အောက်ခြေ Input Area နေရာ */
 .chat-pane > div:last-child {
-  /* ✨ Message ရိုက်သည့်နေရာ၏ အပေါ်ဘက်ကို လိုင်းစိမ်း (Green Line) လေး ကွက်တိ ဖြစ်စေရန် */
-  border-top: 2px solid var(--tw-green-800) !important;
+  padding: 6px 12px 8px 12px !important; /* Send messages နား ကပ်သွားအောင် padding ညှိထားပါသည် */
+  display: flex !important;
+  gap: 8px !important;
+  align-items: center !important;
+  flex-shrink: 0;
+  background: #ffffff !important;
+  /* ⚡ [ပြင်ဆင်ချက် ၂] Input အပေါ်ဘက်တွင် လိုင်းစိမ်း ပါးပါးလေး (1px) တပ်ဆင်ခြင်း */
+  border-top: 1px solid var(--tw-green-800) !important; 
 }
 
 /* ==========================================================================
