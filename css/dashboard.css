@@ -1,0 +1,144 @@
+    * { -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --tw-green-900: #0F2E1C;
+      --tw-green-800: #1B4D2E;
+      --tw-green-700: #234F32;
+      --tw-green-600: #2F7A4F;
+      --tw-gold: #C9A84C;
+      --tw-text-dim: #7A8B82;
+      --tw-border: #E7ECE7;
+      --tw-border-green: rgba(27,77,46,0.28);
+      --tw-page-bg: #FFFFFF;
+    }
+
+    html, body {
+      font-family: "Inter", sans-serif;
+      background: var(--tw-page-bg);
+      height: 100vh;
+      overflow: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
+    }
+
+    /* Top bar — solid green, matches marked-up request */
+    .top-bar {
+      background: var(--tw-green-800);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(15,46,28,0.12);
+    }
+
+    .green-text { color: var(--tw-green-800); }
+    .gold-text { color: var(--tw-gold); }
+
+    .hero-card {
+      background: linear-gradient(135deg, var(--tw-green-800), var(--tw-green-700));
+      border-radius: 20px;
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .action-card {
+      background: var(--tw-green-800);
+      border-radius: 18px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      min-height: 92px;
+    }
+    .action-card:active { transform: scale(0.96); background: var(--tw-green-700); }
+    .action-card .icon-circle {
+      width: 40px; height: 40px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.14);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    /* List rows — small green frame border, as marked up */
+    .list-row {
+      background: #FFFFFF;
+      border: 1.5px solid var(--tw-border-green);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .list-row:active { border-color: var(--tw-green-600); background: #FAFCFA; }
+    .list-row .icon-box {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(27,77,46,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .list-row .chevron { color: #B9C4BC; font-size: 1.1rem; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid var(--tw-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+      z-index: 50;
+    }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; color:#B9C4BC; cursor:pointer; }
+    .nav-item.active { color: var(--tw-green-800); }
+    .nav-item span:first-child { font-size: 1.2rem; }
+    .nav-item span:last-child { font-size: 0.6rem; font-weight: 600; }
+
+    .nav-fab {
+      width: 52px; height: 52px;
+      border-radius: 9999px;
+      background: var(--tw-green-800);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      margin-top: -30px;
+      box-shadow: 0 6px 16px rgba(27,77,46,0.35);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      position: relative;
+    }
+    .nav-fab:active { transform: scale(0.94); }
+    .nav-fab .pulse-dot {
+      position: absolute;
+      top: -2px; right: -2px;
+      width: 12px; height: 12px;
+      border-radius: 9999px;
+      background: #dc2626;
+      border: 2px solid #fff;
+    }
+
+    .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1); }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+  
