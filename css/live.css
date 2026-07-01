@@ -1,3 +1,6 @@
+/* ==========================================================================
+   1. GLOBAL RESET & BASE STYLES
+   ========================================================================== */
 * {
   -webkit-tap-highlight-color: transparent;
   -webkit-user-select: none !important;
@@ -5,6 +8,8 @@
   -ms-user-select: none !important;
   user-select: none !important;
   box-sizing: border-box;
+  margin: 0;
+  padding: 0;
 }
 
 input, textarea {
@@ -30,28 +35,18 @@ body {
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  padding-bottom: 65px; /* Safely accounts for bottom-nav footprint */
+  padding-bottom: 60px; /* Accounts for bottom-nav bar height */
 }
 
-/* Header Grid Formatting Rules */
-.top-bar {
-  background: var(--tw-green-800);
+/* ==========================================================================
+   2. TOP HEADER & UPPER FRAME GRID (DOCK AT TOP)
+   ========================================================================== */
+.top-bar { 
+  background: var(--tw-green-800); 
+  width: 100%; 
+  flex-shrink: 0;
   display: flex;
   flex-direction: column;
-  width: 100%;
-}
-
-.header-main-row {
-  padding: 10px 16px 6px 16px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.back-arrow-btn {
-  color: #ffffff;
-  font-size: 1.2rem;
-  font-weight: bold;
 }
 
 .team-name-frame {
@@ -68,61 +63,117 @@ body {
   padding: 2px 8px;
 }
 
-/* 4-Column Balanced Static Parameter Grid Matrix */
-.static-stat-grid {
+/* Three columns layout grid directly mirroring dashboard.html card structures */
+.upper-info-frame {
   display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 6px;
-  padding: 0 16px 10px 16px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 8px;
+  padding: 4px 16px 12px 16px;
   width: 100%;
+  background: var(--tw-green-800);
 }
 
-.stat-box-cell {
+.upper-frame-cell {
+  background: #FFFFFF !important;
+  border: 1.5px solid var(--tw-border-green) !important;
+  border-radius: 12px !important;
+  padding: 6px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+}
+
+.upper-frame-cell .frame-label {
+  font-size: 0.55rem;
+  font-weight: 800;
+  text-transform: uppercase;
+  color: var(--tw-text-dim);
+  margin-bottom: 2px;
+  letter-spacing: 0.02em;
+}
+
+.upper-frame-cell .frame-value {
+  font-size: 0.85rem;
+  font-weight: 900;
+  color: var(--tw-green-800);
+}
+
+/* ==========================================================================
+   3. MIDDLE SPLIT MAIN CONTAINER (PITCH 40% / CHAT 60%)
+   ========================================================================== */
+.content-split { 
+  flex: 1; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  min-height: 0; 
   background: #FFFFFF;
-  border: 1.5px solid var(--tw-border-green);
-  border-radius: 10px;
-  padding: 4px 2px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
+}
+
+.pitch-pane { 
+  flex: 0 0 40%; 
+  min-height: 0; 
+  display: flex !important; 
+  flex-direction: row !important;
+  gap: 8px; 
+  background: #FFFFFF;
+}
+
+/* ==========================================================================
+   4. SIDE HUD CARD CONTAINER MATRIX (LEFT COLUMN OF PITCH PANE)
+   ========================================================================== */
+.pitch-side-hud {
+  display: flex !important;
+  flex-direction: column !important;
+  justify-content: space-between !important;
+  width: 72px !important;
+  flex-shrink: 0;
+  height: 100%;
+}
+
+.hud-card {
+  background: #FFFFFF !important;
+  border-radius: 12px !important;
+  padding: 8px 4px !important;
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important;
+  justify-content: center !important;
+  flex: 1;
+  margin-bottom: 6px;
   text-align: center;
 }
 
-.stat-box-cell .cell-label {
-  font-size: 0.52rem;
-  font-weight: 800;
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--tw-text-dim);
-  margin-bottom: 1px;
+.hud-card:last-child { 
+  margin-bottom: 0; 
 }
 
-.stat-box-cell .cell-value {
-  font-size: 0.78rem;
+.border-red { 
+  border: 1.5px solid rgba(220,38,38,0.3) !important; 
+}
+
+.border-gold { 
+  border: 1.5px solid rgba(201,168,76,0.4) !important; 
+}
+
+.hud-card .hud-label {
+  font-size: 0.52rem;
+  font-weight: 800;
+  color: var(--tw-text-dim);
+  margin-bottom: 2px;
+  text-transform: uppercase;
+}
+
+.hud-card .hud-value {
+  font-size: 0.8rem;
   font-weight: 900;
 }
 
-.color-green { color: var(--tw-green-800); }
-.color-gold { color: #8A6D22; }
-.color-red { color: #DC2626; }
-
-/* Main Split Viewport System */
-.content-split {
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-  min-height: 0;
-}
-
-.pitch-pane {
-  flex: 0 0 40%;
-  min-height: 0;
-  display: flex;
-}
-
-.pitch-container-frame {
+/* ==========================================================================
+   5. FOOTBALL FORMATION FIELD GRAPHICS (RIGHT COLUMN OF PITCH PANE)
+   ========================================================================== */
+.pitch-scaled-container {
   flex: 1;
   position: relative;
   border-radius: 1rem;
@@ -131,17 +182,6 @@ body {
   min-width: 0;
   height: 100%;
   background: linear-gradient(180deg, #144622, #09230e);
-}
-
-.pitch-scroll-layer {
-  width: 100%;
-  height: 100%;
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  padding: 4px;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
 }
 
 .main-scroll-pitch-canvas {
@@ -155,125 +195,60 @@ body {
   flex-shrink: 0;
 }
 
-.pitch-vector-lines {
-  position: absolute;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 390px;
-  opacity: 0.25;
-  pointer-events: none;
-  z-index: 0;
+.field-row { 
+  display: flex; 
+  justify-content: center; 
+  align-items: center; 
+  width: 100%; 
+  z-index: 2; 
 }
 
-.pitch-roster-canvas {
-  width: 100%;
-  height: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: space-between;
+/* ==========================================================================
+   6. LIVE CHAT STREAM ENGINE (BOTTOM 60% RUNTIME FOOTPRINT)
+   ========================================================================== */
+.chat-pane { 
+  flex: 1 1 60%; 
+  min-height: 0; 
+  display: flex; 
+  flex-direction: column; 
+  overflow: hidden; 
+  background: #FFFFFF;
 }
 
-.field-row {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  width: 100%;
-  z-index: 2;
-}
-
-/* Chat Engine Container Definitions */
-.chat-pane {
-  flex: 1 1 60%;
-  min-height: 0;
-  display: flex;
-  flex-direction: column;
-  overflow: hidden;
-}
-
-.chat-header-row {
-  padding: 8px 16px;
-  border-bottom: 1px solid #E7ECE7;
-  flex-shrink: 0;
-  background: #ffffff;
-}
-
-.chat-banner-alert {
-  padding: 6px 16px;
-  background: rgba(201,168,76,0.08);
-  border-bottom: 1px solid rgba(201,168,76,0.25);
-  flex-shrink: 0;
-}
-
-.chat-body-viewport {
-  flex: 1;
-  overflow-y: auto;
-  padding: 10px 16px;
-  background: #ffffff;
-}
-
-.chat-input-dock {
-  padding: 8px 12px;
-  border-top: 1px solid #E7ECE7;
-  display: flex;
-  gap: 8px;
-  align-items: center;
-  flex-shrink: 0;
-  background: #ffffff;
-}
-
-.chat-input-dock input {
-  flex: 1;
-  background: #F4F7F2;
-  border: 1px solid #E7ECE7;
-  color: var(--tw-green-900);
-  border-radius: 0.75rem;
-  padding: 10px 14px;
-  font-size: 0.85rem;
-  outline: none;
-}
-
-.chat-input-dock input:focus { border-color: #2F7A4F; }
-
-.chat-input-dock button {
-  background: linear-gradient(135deg, #1B4D2E, #2F7A4F);
-  color: #ffffff;
-  border-radius: 0.75rem;
-  padding: 10px 16px;
-  font-weight: 700;
-  font-size: 0.85rem;
-}
-
-/* Persistent Docked Fixed Bottom Bar System */
+/* ==========================================================================
+   7. STABLE FIXED POSITION APPLICATION FOOTER NAVBAR
+   ========================================================================== */
 .bottom-nav {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  width: 100%;
-  height: 60px;
-  background-color: #ffffff;
-  border-top: 1px solid #E7ECE7;
-  display: flex;
-  justify-content: space-around;
-  align-items: center;
-  z-index: 9999;
+  position: fixed !important;
+  bottom: 0 !important;
+  left: 0 !important;
+  width: 100% !important;
+  height: 60px !important;
+  background-color: #ffffff !important;
+  border-top: 1px solid #E7ECE7 !important;
+  display: flex !important;
+  justify-content: space-around !important;
+  align-items: center !important;
+  z-index: 9999 !important;
 }
 
-.nav-item {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 3px;
-  padding: 8px 12px;
-  color: #B9C4BC;
-  cursor: pointer;
-  font-size: 0.6rem;
-  font-weight: 600;
+.nav-item { 
+  display: flex; 
+  flex-direction: column; 
+  align-items: center; 
+  gap: 3px; 
+  padding: 8px 12px; 
+  color: #B9C4BC; 
+  cursor: pointer; 
+  font-size: 0.6rem; 
+  font-weight: 600; 
 }
 
-.nav-item.active {
-  color: var(--tw-green-800);
+.nav-item.active { 
+  color: var(--tw-green-800); 
 }
 
+/* Scrollbar layout config rules */
 #chat-messages::-webkit-scrollbar, #pitch-scroll-wrapper::-webkit-scrollbar { width: 3px; }
 #chat-messages::-webkit-scrollbar-thumb, #pitch-scroll-wrapper::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
+
