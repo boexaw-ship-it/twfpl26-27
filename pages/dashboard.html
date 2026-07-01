@@ -7,7 +7,7 @@
   <title>Dashboard — TW Fantasy</title>
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bebas+Neue&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=Bebas+Neue&display=swap" rel="stylesheet" />
   <script type="module">
     import { auth, db } from "../js/firebase-config.js";
     import { onAuthStateChanged, signOut } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
@@ -16,7 +16,6 @@
     onAuthStateChanged(auth, async (user) => {
       if (!user) { window.location.href = "../index.html"; return; }
 
-      // Real-time status listener — Admin Approve လုပ်ချက်ချင်း badge ပြောင်းမယ်
       onSnapshot(doc(db, "users", user.uid), (snap) => {
         if (!snap.exists()) return;
         const data = snap.data();
@@ -26,23 +25,22 @@
 
         const badge = document.getElementById("status-badge");
         if (data.status === "approved") {
-          badge.textContent = "✅ Approved";
-          badge.style.background = "rgba(34,197,94,0.15)";
-          badge.style.color = "#4ade80";
-          badge.style.borderColor = "rgba(34,197,94,0.4)";
+          badge.textContent = "Approved";
+          badge.style.background = "rgba(27,77,46,0.1)";
+          badge.style.color = "#1B4D2E";
+          badge.style.borderColor = "rgba(27,77,46,0.3)";
         } else if (data.status === "rejected") {
-          badge.textContent = "❌ Rejected";
-          badge.style.background = "rgba(220,38,38,0.15)";
-          badge.style.color = "#f87171";
-          badge.style.borderColor = "rgba(220,38,38,0.4)";
+          badge.textContent = "Rejected";
+          badge.style.background = "rgba(220,38,38,0.08)";
+          badge.style.color = "#B91C1C";
+          badge.style.borderColor = "rgba(220,38,38,0.25)";
         } else {
-          badge.textContent = "⏳ Pending Approval";
-          badge.style.background = "rgba(201,168,76,0.15)";
-          badge.style.color = "#C9A84C";
-          badge.style.borderColor = "rgba(201,168,76,0.4)";
+          badge.textContent = "Pending approval";
+          badge.style.background = "rgba(201,168,76,0.14)";
+          badge.style.color = "#8A6D22";
+          badge.style.borderColor = "rgba(201,168,76,0.35)";
         }
 
-        // Pending user အတွက် info banner ပြ
         const infoBanner = document.getElementById("pending-banner");
         if (data.status !== "approved") {
           infoBanner.classList.remove("hidden");
@@ -66,101 +64,224 @@
     };
   </script>
   <style>
-    * { 
-      -webkit-tap-highlight-color: transparent; 
+    * { -webkit-tap-highlight-color: transparent; }
+
+    :root {
+      --tw-green-900: #0F2E1C;
+      --tw-green-800: #1B4D2E;
+      --tw-green-700: #234F32;
+      --tw-green-600: #2F7A4F;
+      --tw-gold: #C9A84C;
+      --tw-text-dim: #7A8B82;
+      --tw-border: #E7ECE7;
+      --tw-border-green: rgba(27,77,46,0.28);
+      --tw-page-bg: #FFFFFF;
     }
-    
-    /* 💡 🎯 🚀 CRITICAL BLOCK ENGINE FIXED HERE */
-    /* စာမျက်နှာတစ်ခုလုံးရှိ မည်သည့်စာသား၊ ခလုတ်နှင့် ကတ်ကိုမဆို ဖိမိပါက Google Translate/Search Bar များ လုံးဝမတက်စေရန် ပိတ်ဆို့ခြင်း */
-    body { 
-      font-family: "Inter", sans-serif; 
-      background: #0D2B1A; 
-      height: 100vh; 
-      overflow: hidden; 
-      -webkit-user-select: none;  /* iOS & Android Chrome select ပိတ်ဆို့ခြင်း */
-      -moz-user-select: none;     /* Firefox browser selection ပိတ်ဆို့ခြင်း */
-      -ms-user-select: none;      /* IE select ပိတ်ဆို့ခြင်း */
-      user-select: none;          /* စာသားတစ်ခုလုံးအား ဖိနှိပ်မှုမှ ရာနှုန်းပြည့် ကာကွယ်ခြင်း */
+
+    html, body {
+      font-family: "Inter", sans-serif;
+      background: var(--tw-page-bg);
+      height: 100vh;
+      overflow: hidden;
+      -webkit-user-select: none;
+      -moz-user-select: none;
+      -ms-user-select: none;
+      user-select: none;
     }
-    
-    .gold-text { background: linear-gradient(135deg, #C9A84C, #F0D060, #A07830); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
-    .nav-item { display:flex; flex-direction:column; align-items:center; gap:2px; padding:8px 12px; color:#3A9E5F; cursor:pointer; transition:all 0.2s; }
-    .nav-item.active, .nav-item:active { color:#C9A84C; }
-    .menu-card { background:linear-gradient(145deg,#1F5C36,#162F20); border:1px solid rgba(201,168,76,0.2); border-radius:1rem; padding:1.25rem; cursor:pointer; transition:all 0.2s; }
-    .menu-card:active { transform:scale(0.97); border-color:#C9A84C; }
-    .fade-in { animation: fadeIn 0.5s ease-out; }
+
+    /* Top bar — solid green, matches marked-up request */
+    .top-bar {
+      background: var(--tw-green-800);
+      position: fixed;
+      top: 0; left: 0; right: 0;
+      z-index: 50;
+      padding: 14px 18px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      box-shadow: 0 2px 10px rgba(15,46,28,0.12);
+    }
+
+    .green-text { color: var(--tw-green-800); }
+    .gold-text { color: var(--tw-gold); }
+
+    .hero-card {
+      background: linear-gradient(135deg, var(--tw-green-800), var(--tw-green-700));
+      border-radius: 20px;
+      padding: 22px 20px;
+      position: relative;
+      overflow: hidden;
+    }
+    .hero-card::after {
+      content: "";
+      position: absolute;
+      top: -40px; right: -40px;
+      width: 140px; height: 140px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.06);
+    }
+
+    .action-card {
+      background: var(--tw-green-800);
+      border-radius: 18px;
+      padding: 18px 14px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      cursor: pointer;
+      transition: transform 0.15s ease, background 0.15s ease;
+      min-height: 92px;
+    }
+    .action-card:active { transform: scale(0.96); background: var(--tw-green-700); }
+    .action-card .icon-circle {
+      width: 40px; height: 40px;
+      border-radius: 9999px;
+      background: rgba(255,255,255,0.14);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.15rem;
+    }
+
+    /* List rows — small green frame border, as marked up */
+    .list-row {
+      background: #FFFFFF;
+      border: 1.5px solid var(--tw-border-green);
+      border-radius: 16px;
+      padding: 14px 16px;
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease;
+    }
+    .list-row:active { border-color: var(--tw-green-600); background: #FAFCFA; }
+    .list-row .icon-box {
+      width: 40px; height: 40px;
+      border-radius: 12px;
+      background: rgba(27,77,46,0.08);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.1rem;
+      flex-shrink: 0;
+    }
+    .list-row .chevron { color: #B9C4BC; font-size: 1.1rem; }
+
+    .bottom-nav {
+      position: fixed;
+      bottom: 0; left: 0; right: 0;
+      background: #FFFFFF;
+      border-top: 1px solid var(--tw-border);
+      display: flex;
+      align-items: center;
+      justify-content: space-around;
+      padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0px));
+      z-index: 50;
+    }
+    .nav-item { display:flex; flex-direction:column; align-items:center; gap:3px; color:#B9C4BC; cursor:pointer; }
+    .nav-item.active { color: var(--tw-green-800); }
+    .nav-item span:first-child { font-size: 1.2rem; }
+    .nav-item span:last-child { font-size: 0.6rem; font-weight: 600; }
+
+    .nav-fab {
+      width: 52px; height: 52px;
+      border-radius: 9999px;
+      background: var(--tw-green-800);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.3rem;
+      color: white;
+      margin-top: -30px;
+      box-shadow: 0 6px 16px rgba(27,77,46,0.35);
+      cursor: pointer;
+      transition: transform 0.15s ease;
+      position: relative;
+    }
+    .nav-fab:active { transform: scale(0.94); }
+    .nav-fab .pulse-dot {
+      position: absolute;
+      top: -2px; right: -2px;
+      width: 12px; height: 12px;
+      border-radius: 9999px;
+      background: #dc2626;
+      border: 2px solid #fff;
+    }
+
+    .fade-in { animation: fadeIn 0.5s cubic-bezier(0.16,1,0.3,1); }
     @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
   </style>
 </head>
 <body>
-  <div style="background:#0D2B1A;border-bottom:1px solid #1F5C36;padding:12px 16px;display:flex;align-items:center;justify-content:space-between;position:fixed;top:0;left:0;right:0;z-index:50;">
+
+  <div class="top-bar">
     <div>
-      <h1 class="gold-text font-bold text-lg" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
-      <p id="fpl-id" class="text-xs" style="color:#3A9E5F;"></p>
+      <h1 class="font-bold text-lg text-white" style="font-family:'Bebas Neue';letter-spacing:0.1em;">TW FANTASY</h1>
+      <p id="fpl-id" class="text-xs" style="color:rgba(255,255,255,0.55);"></p>
     </div>
     <div class="flex items-center gap-2">
       <span id="team-name" class="text-sm font-semibold" style="color:#E8D5A3;"></span>
-      <button onclick="handleLogout()" class="text-xs px-3 py-1.5 rounded-lg" style="border:1px solid #2A7A47;color:#3A9E5F;">Logout</button>
+      <button onclick="handleLogout()" class="text-xs px-3 py-1.5 rounded-lg bg-white" style="color:var(--tw-green-800);font-weight:600;">Logout</button>
     </div>
   </div>
 
-  <div style="padding-top:64px;padding-bottom:70px;height:100vh;overflow-y:auto;" class="px-4 py-4 fade-in">
+  <div style="padding-top:70px;padding-bottom:82px;height:100vh;overflow-y:auto;" class="px-4 py-4 fade-in">
 
     <div class="flex justify-end mb-3">
-      <span id="status-badge" class="text-xs font-semibold px-3 py-1.5 rounded-full border" style="background:rgba(201,168,76,0.15);color:#C9A84C;border-color:rgba(201,168,76,0.4);">⏳ Pending Approval</span>
+      <span id="status-badge" class="text-xs font-semibold px-3 py-1.5 rounded-full border">Pending approval</span>
     </div>
 
-    <div id="pending-banner" class="hidden rounded-xl p-3 mb-4" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.3);">
-      <p class="text-xs" style="color:#E8D5A3;">📋 Account Approve လုပ်ဆေးနေဆဲ — View များ ကြည့်ရှုနိုင်ပြီး၊ Approve ပြီးမှ Chat နှင့် Action များ သုံးနိုင်ပါမည်။</p>
+    <div id="pending-banner" class="hidden rounded-xl p-3 mb-4" style="background:rgba(201,168,76,0.08);border:1px solid rgba(201,168,76,0.25);">
+      <p class="text-xs" style="color:#8A6D22;">Your account is pending approval. Browsing is open now — chat and actions unlock once approved.</p>
     </div>
 
-    <div class="rounded-2xl p-5 mb-4" style="background:linear-gradient(135deg,#1B4D2E,#0D2B1A);border:1px solid rgba(201,168,76,0.3);box-shadow:0 0 20px rgba(201,168,76,0.1);">
-      <p class="text-xs uppercase tracking-widest mb-1" style="color:#C9A84C;">Welcome Back</p>
-      <h2 id="welcome-name" class="text-white text-xl font-bold">TW Fantasy League</h2>
-      <p class="text-xs mt-1" style="color:#3A9E5F;">Season 2026-27 • Official Fantasy League</p>
+    <div class="hero-card mb-5">
+      <p class="text-xs uppercase tracking-widest mb-1 font-semibold" style="color:#E8C878;position:relative;z-index:1;">Welcome back</p>
+      <h2 id="welcome-name" class="text-xl font-bold text-white" style="position:relative;z-index:1;">TW Fantasy League</h2>
+      <p class="text-xs mt-1" style="color:rgba(255,255,255,0.65);position:relative;z-index:1;">Season 2026-27 · Official Fantasy League</p>
     </div>
 
-    <div class="grid grid-cols-2 gap-3 mb-4">
-      <div class="menu-card" onclick="navigate('team')">
-        <div class="text-2xl mb-2">👕</div>
-        <p class="text-white text-sm font-semibold">My Team</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Live Pitch View</p>
+    <div class="grid grid-cols-2 gap-3 mb-5">
+      <div class="action-card" onclick="navigate('team')">
+        <div class="icon-circle">👕</div>
+        <p class="text-sm font-semibold text-white">My Team</p>
       </div>
-      <div class="menu-card" onclick="navigate('live')">
-        <div class="text-2xl mb-2">⚡</div>
-        <p class="text-white text-sm font-semibold">Live</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Points + Chat</p>
-        <span class="inline-block mt-1 text-xs px-2 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626;color:white;">LIVE</span>
+      <div class="action-card" onclick="navigate('live')">
+        <div class="icon-circle">⚡</div>
+        <p class="text-sm font-semibold text-white">Live</p>
       </div>
-      <div class="menu-card" onclick="navigate('leagues')">
-        <div class="text-2xl mb-2">🏆</div>
-        <p class="text-white text-sm font-semibold">Leagues</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Private Leagues</p>
+    </div>
+
+    <div class="flex flex-col gap-2.5">
+      <div class="list-row" onclick="navigate('leagues')">
+        <div class="icon-box">🏆</div>
+        <p class="text-sm font-semibold flex-1" style="color:var(--tw-green-900);">Leagues</p>
+        <span class="chevron">›</span>
       </div>
-      <div class="menu-card" onclick="navigate('fixtures')">
-        <div class="text-2xl mb-2">⚽</div>
-        <p class="text-white text-sm font-semibold">Fixtures</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Premier League</p>
+      <div class="list-row" onclick="navigate('fixtures')">
+        <div class="icon-box">⚽</div>
+        <p class="text-sm font-semibold flex-1" style="color:var(--tw-green-900);">Fixtures</p>
+        <span class="chevron">›</span>
       </div>
-      <div class="menu-card" onclick="navigate('scout')">
-        <div class="text-2xl mb-2">🔍</div>
-        <p class="text-white text-sm font-semibold">Player Scout</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Price & Ownership</p>
+      <div class="list-row" onclick="navigate('scout')">
+        <div class="icon-box">🔍</div>
+        <p class="text-sm font-semibold flex-1" style="color:var(--tw-green-900);">Player Scout</p>
+        <span class="chevron">›</span>
       </div>
-      <div class="menu-card" onclick="navigate('draft')">
-        <div class="text-2xl mb-2">📋</div>
-        <p class="text-white text-sm font-semibold">Draft</p>
-        <p class="text-xs mt-0.5" style="color:#3A9E5F;">Transfer Draft</p>
+      <div class="list-row" onclick="navigate('draft')">
+        <div class="icon-box">📋</div>
+        <p class="text-sm font-semibold flex-1" style="color:var(--tw-green-900);">Draft</p>
+        <span class="chevron">›</span>
       </div>
     </div>
   </div>
 
-  <div style="position:fixed;bottom:0;left:0;right:0;background:#0D2B1A;border-top:1px solid #1F5C36;display:flex;justify-content:space-around;align-items:center;padding:4px 0;z-index:50;">
-    <div class="nav-item active"><span style="font-size:1.3rem;">🏠</span><span style="font-size:0.6rem;font-weight:500;">Home</span></div>
-    <div class="nav-item" onclick="navigate('live')"><span style="font-size:1.3rem;">⚡</span><span style="font-size:0.6rem;font-weight:500;">Live</span></div>
-    <div class="nav-item" onclick="navigate('leagues')"><span style="font-size:1.3rem;">🏆</span><span style="font-size:0.6rem;font-weight:500;">League</span></div>
-    <div class="nav-item" onclick="navigate('fixtures')"><span style="font-size:1.3rem;">⚽</span><span style="font-size:0.6rem;font-weight:500;">Fixtures</span></div>
-    <div class="nav-item" onclick="navigate('scout')"><span style="font-size:1.3rem;">🔍</span><span style="font-size:0.6rem;font-weight:500;">Scout</span></div>
+  <div class="bottom-nav">
+    <div class="nav-item active" onclick="navigate('team')"><span>🏠</span><span>Home</span></div>
+    <div class="nav-item" onclick="navigate('leagues')"><span>🏆</span><span>League</span></div>
+    <div class="nav-fab" onclick="navigate('live')">
+      <span class="pulse-dot"></span>
+      ⚡
+    </div>
+    <div class="nav-item" onclick="navigate('fixtures')"><span>⚽</span><span>Fixtures</span></div>
+    <div class="nav-item" onclick="navigate('scout')"><span>🔍</span><span>Scout</span></div>
   </div>
 </body>
 </html>
