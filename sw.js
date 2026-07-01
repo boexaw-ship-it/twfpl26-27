@@ -1,4 +1,4 @@
-const CACHE_NAME = 'twfpl-safe-v5';
+const CACHE_NAME = 'twfpl-safe-v3';
 
 // 🛠️ [DOMAIN-AGNOSTIC ROUTING] နေရာမရွေး အလုပ်လုပ်ရန် လမ်းကြောင်းများကို တည့်မတ်ခြင်း
 // ရှေ့က /twfpl26-27/ ကို ဖြုတ်ပြီး Relative Path အဖြစ် ပြောင်းလဲလိုက်သဖြင့် Vercel တွင်ရော GitHub တွင်ပါ အမှားကင်းစင်သွားပါပြီ
@@ -45,14 +45,12 @@ self.addEventListener('activate', e => {
 self.addEventListener('fetch', e => {
   const requestUrl = e.request.url;
 
-  // 🚨 CRITICAL BYPASS: Firebase / Navigation Requests များကို ကြားဖြတ်မဖမ်းဘဲ တိုက်ရိုက် လွှတ်ပေးခြင်း
-  // Navigation (page-to-page link, back/forward button, logout redirect) တွေကို SW မဖမ်းအောင် ကာကွယ်ထားခြင်းဖြင့်
-  // ERR_FAILED / bfcache conflict ပြသနာများကို ရှောင်ရှားနိုင်ပါသည်
+  // 🚨 CRITICAL BYPASS: Firebase API Requests များကို ကြားဖြတ်မဖမ်းဘဲ တိုက်ရိုက် လွှတ်ပေးခြင်း
+  // ၎င်းစနစ်သည် ဒေတာများ ထပ်ခါထပ်ခါ လည်ပြီး Firebase Quota Limit ကုန်ဆုံးခြင်းမှ ရာနှုန်းပြည့် လုံခြုံစေပါသည်
   if (
     requestUrl.includes('firebase') || 
     requestUrl.includes('firestore') || 
     requestUrl.includes('google') ||
-    e.request.mode === 'navigate' ||
     e.request.method !== 'GET'
   ) {
     return; // Live Network ဆီ တိုက်ရိုက် လွှတ်ပေးလိုက်ပါသည်
@@ -61,6 +59,7 @@ self.addEventListener('fetch', e => {
   e.respondWith(
     caches.match(e.request)
       .then(cachedResponse => {
+        // cachedResult variable အမှားအား cachedResponse အဖြစ် အပြီးတိုင် တည့်မတ်ထားပါသည်
         return cachedResponse || fetch(e.request).then(networkResponse => {
           if (networkResponse && networkResponse.status === 200 && networkResponse.type === 'basic') {
             const responseToCache = networkResponse.clone();
