@@ -24,8 +24,8 @@
       <span id="team-name" class="team-name-frame text-sm font-black tracking-wide text-white">——</span>
     </div>
 
-    <!-- Stat strip: each stat is its own thicker-bordered green chip -->
-    <div class="flex items-center gap-2 px-4 pb-3 overflow-x-auto scrollbar-none">
+    <!-- Stat strip: fixed 5-col grid, always fits without sliding -->
+    <div class="stat-grid">
       <div class="stat-chip">
         <span class="stat-label">Hit</span>
         <span id="hit-label" class="stat-value" style="color:#DC2626;">-0</span>
@@ -39,12 +39,12 @@
         <span id="gw-pts" class="stat-value" style="color:#8A6D22;">—</span>
       </div>
       <div class="stat-chip">
-        <span class="stat-label">Overall rank</span>
+        <span class="stat-label">Rank</span>
         <span id="overall-rank-box" class="stat-value" style="color:var(--tw-green-800);">——</span>
       </div>
       <div class="stat-chip">
         <span class="stat-label">Chip</span>
-        <span id="chip-badge" class="stat-value" style="color:#8A6D22;font-size:0.65rem;">NO CHIP</span>
+        <span id="chip-badge" class="stat-value" style="color:#8A6D22;">NO CHIP</span>
       </div>
     </div>
   </div>
