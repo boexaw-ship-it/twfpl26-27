@@ -6,7 +6,7 @@ let currentUser = null;
 let currentTeamName = ""; 
 let isApproved = false; 
 
-// 💡 Reply/Delete State Variables
+// Reply/Delete State Variables
 let activeReplyId = null; 
 let selectedMessageData = null; 
 
@@ -25,15 +25,21 @@ onAuthStateChanged(auth, async (user) => {
     if (data.fplTeamId) {
       onSnapshot(doc(db, "livePoints", data.fplTeamId), (d) => {
         if (d.exists()) {
-          document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—"; 
-          document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—"; 
-          document.getElementById("overall-rank").textContent = d.data().overallRank ?? "—"; 
-          document.getElementById("captain-pts").textContent = d.data().captainPoints ?? "—"; 
-          document.getElementById("gw-rank").textContent = d.data().gwRank ?? "—"; 
-          const hit = d.data().transferCost || 0; 
-          document.getElementById("hit-label").textContent = "Hit: -" + hit; 
-          const chip = d.data().activeChip; 
-          document.getElementById("chip-badge").textContent = chip ? chip : "NO CHIP"; 
+          // Robust checking for real-time Firebase Data Injection
+          if(document.getElementById("gw-points")) document.getElementById("gw-points").textContent = d.data().gwPoints ?? "—"; 
+          if(document.getElementById("overall-pts")) document.getElementById("overall-pts").textContent = d.data().totalPoints ?? "—"; 
+          if(document.getElementById("overall-rank")) document.getElementById("overall-rank").textContent = d.data().overallRank ?? "—"; 
+          if(document.getElementById("captain-pts")) document.getElementById("captain-pts").textContent = d.data().captainPoints ?? "—"; 
+          if(document.getElementById("gw-rank")) document.getElementById("gw-rank").textContent = d.data().gwRank ?? "—"; 
+          
+          if(document.getElementById("hit-label")) {
+            const hit = d.data().transferCost || 0; 
+            document.getElementById("hit-label").textContent = "Hit: -" + hit; 
+          }
+          if(document.getElementById("chip-badge")) {
+            const chip = d.data().activeChip; 
+            document.getElementById("chip-badge").textContent = chip ? chip : "NO CHIP"; 
+          }
         }
       });
       
@@ -101,7 +107,7 @@ function renderPitch(data) {
     ${makeRow(mid)}
     ${makeRow(fwd)}
   `;
-  document.getElementById("pitch").innerHTML = htmlContent;
+  if(document.getElementById("pitch")) document.getElementById("pitch").innerHTML = htmlContent;
 
   let benchContent = "";
   if (subs.length > 0) {
@@ -116,14 +122,15 @@ function renderPitch(data) {
       </div>
     `;
   }
-  document.getElementById("bench-container").innerHTML = benchContent;
+  if(document.getElementById("bench-container")) document.getElementById("bench-container").innerHTML = benchContent;
 }
 
-// 🔒 Chat Box Status Listener
 function updateChatLock() {
   const input = document.getElementById("chat-input"); 
   const sendBtn = document.getElementById("send-btn"); 
   const lockBanner = document.getElementById("chat-lock-banner"); 
+  if (!input || !sendBtn || !lockBanner) return;
+
   if (isApproved) {
     input.disabled = false; 
     input.placeholder = "Type a message..."; 
@@ -139,36 +146,34 @@ function updateChatLock() {
   }
 }
 
-// 💬 💡 Real-time Chat Listener (Reply UI ပေါင်းစပ်ထားသော ဗားရှင်း)
 function loadChat() {
   const q = query(collection(db, "chat"), orderBy("createdAt", "desc"), limit(55)); 
   onSnapshot(q, (snapshot) => {
     const msgs = []; 
     snapshot.forEach(d => msgs.unshift({ id: d.id, ...d.data() })); 
     const chatEl = document.getElementById("chat-messages"); 
+    if (!chatEl) return;
+
     if (msgs.length === 0) {
       chatEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#7A8B82;">No messages yet — send the first one</p>`; 
       return;
     }
 
-    // 💡 window အောက်သို့ Message ဒေတာအား စုစည်းသိမ်းဆည်းခြင်း (Modal မှ လှမ်းခေါ်ရန်)
     window.chatMessagesCache = msgs; 
 
     chatEl.innerHTML = msgs.map(m => {
       const isSelf = m.uid === currentUser?.uid; 
       const time = m.createdAt?.toDate ? m.createdAt.toDate().toLocaleTimeString("en", { hour: "2-digit", minute: "2-digit" }) : ""; 
       
-      // Reply ဖြစ်ပါက အပေါ်တွင် ပြသမည့် Reply Box ဒီဇိုင်းလေး တည်ဆောက်ခြင်း
       let replyBoxHtml = "";
       if (m.replyToName && m.replyToText) {
         replyBoxHtml = `
           <div class="text-[10px] bg-[#F4F7F2] rounded px-2 py-1 mb-1 border-l-2 border-[#C9A84C] max-w-xs text-left truncate" style="color: #5B7566;">
-             ↩️ <b>${m.replyToName}</b>: ${m.textEscape ? m.replyToText : m.replyToText}
+             ↩️ <b>${m.replyToName}</b>: ${m.replyToText}
           </div>
         `;
       }
 
-      // Clicking a message opens the reply/delete modal
       return isSelf
         ? `<div class="flex flex-col items-end mb-3 cursor-pointer" onclick="window.openOptionsModal('${m.id}')">
             <div class="text-xs mb-1 font-semibold" style="color:#8A6D22;">${m.teamName}</div>
@@ -187,10 +192,10 @@ function loadChat() {
   });
 }
 
-// 📥 Message ส่ง Trigger (Reply ဒေတာများပါ တစ်ပါတည်း သိမ်းဆည်းရန် ပြင်ဆင်ခြင်း)
 window.sendMessage = async () => {
   if (!isApproved) return; 
   const input = document.getElementById("chat-input"); 
+  if (!input) return;
   const text = input.value.trim(); 
   if (!text || !currentUser) return; 
 
@@ -201,7 +206,6 @@ window.sendMessage = async () => {
     createdAt: serverTimestamp()
   };
 
-  // Reply Mode တက်နေပါက Payload ထဲသို့ သတ်သတ်မှတ်မှတ် ပေါင်းထည့်မည်
   if (activeReplyId && selectedMessageData) {
     payload.replyToId = activeReplyId;
     payload.replyToName = selectedMessageData.teamName;
@@ -209,64 +213,69 @@ window.sendMessage = async () => {
   }
 
   input.value = ""; 
-  window.cancelReply(); // Send ပြီးပါက Reply Mode ပြန်ပိတ်မည်
+  window.cancelReply(); 
   await addDoc(collection(db, "chat"), payload); 
 };
 
-// 💡 Options Modal Functions
 window.openOptionsModal = (msgId) => {
   if (!isApproved) return;
   const found = window.chatMessagesCache?.find(m => m.id === msgId);
   if (!found) return;
 
   selectedMessageData = found;
-  document.getElementById("modal-msg-preview").textContent = `"${found.text}"`;
+  const previewEl = document.getElementById("modal-msg-preview");
+  if(previewEl) previewEl.textContent = `"${found.text}"`;
   
-  // မိမိရေးခဲ့သော Message ဖြစ်ပါက Delete Button အား ပြသမည်
   const deleteBtn = document.getElementById("modal-delete-btn");
-  if (found.uid === currentUser?.uid) {
-    deleteBtn.classList.remove("hidden");
-  } else {
-    deleteBtn.classList.add("hidden");
+  if(deleteBtn) {
+    if (found.uid === currentUser?.uid) {
+      deleteBtn.classList.remove("hidden");
+    } else {
+      deleteBtn.classList.add("hidden");
+    }
   }
 
-  document.getElementById("message-options-modal").classList.remove("hidden");
+  const modal = document.getElementById("message-options-modal");
+  if(modal) modal.classList.remove("hidden");
 };
 
 window.closeOptionsModal = () => {
-  document.getElementById("message-options-modal").classList.add("hidden");
+  const modal = document.getElementById("message-options-modal");
+  if(modal) modal.classList.add("hidden");
 };
 
-// 💬 Trigger Reply System
-document.getElementById("modal-reply-btn").onclick = () => {
-  if (!selectedMessageData) return;
-  activeReplyId = selectedMessageData.id;
+if(document.getElementById("modal-reply-btn")) {
+  document.getElementById("modal-reply-btn").onclick = () => {
+    if (!selectedMessageData) return;
+    activeReplyId = selectedMessageData.id;
 
-  document.getElementById("reply-target-name").textContent = `Reply to ${selectedMessageData.teamName}`;
-  document.getElementById("reply-target-text").textContent = selectedMessageData.text;
-  document.getElementById("reply-preview-bar").classList.remove("hidden");
-  
-  window.closeOptionsModal();
-  document.getElementById("chat-input").focus();
-};
+    if(document.getElementById("reply-target-name")) document.getElementById("reply-target-name").textContent = `Reply to ${selectedMessageData.teamName}`;
+    if(document.getElementById("reply-target-text")) document.getElementById("reply-target-text").textContent = selectedMessageData.text;
+    if(document.getElementById("reply-preview-bar")) document.getElementById("reply-preview-bar").classList.remove("hidden");
+    
+    window.closeOptionsModal();
+    if(document.getElementById("chat-input")) document.getElementById("chat-input").focus();
+  };
+}
 
 window.cancelReply = () => {
   activeReplyId = null;
-  document.getElementById("reply-preview-bar").classList.add("hidden");
+  if(document.getElementById("reply-preview-bar")) document.getElementById("reply-preview-bar").classList.add("hidden");
 };
 
-// 🗑️ Delete Message Action
-document.getElementById("modal-delete-btn").onclick = async () => {
-  if (!selectedMessageData) return;
-  window.closeOptionsModal();
-  try {
-    // Firebase Firestore ထဲက message id အတိုင်း တိုက်ရိုက်ဖျက်ချခြင်း
-    await deleteDoc(doc(db, "chat", selectedMessageData.id));
-  } catch (error) {
-    console.error("Error deleting message: ", error);
-  }
-};
+if(document.getElementById("modal-delete-btn")) {
+  document.getElementById("modal-delete-btn").onclick = async () => {
+    if (!selectedMessageData) return;
+    window.closeOptionsModal();
+    try {
+      await deleteDoc(doc(db, "chat", selectedMessageData.id));
+    } catch (error) {
+      console.error("Error deleting message: ", error);
+    }
+  };
+}
 
 window.handleKeydown = (e) => { 
   if (e.key === "Enter" && isApproved) window.sendMessage(); 
 };
+
