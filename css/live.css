@@ -213,6 +213,14 @@ body {
   flex-direction: column; 
   overflow: hidden; 
   background: #FFFFFF;
+  /* ✨ ခြားနားပေးမည့် Bar လိုင်းလေး ထည့်သွင်းထားပါသည် */
+  border-top: 4px solid #F4F7F2 !important; 
+}
+
+/* ⚙️ Message ရိုက်ပြီးပို့သည့် Input Area ၏ အပေါ်ဘက်တွင် လိုင်းစိမ်းလေး ထည့်ခြင်း */
+.chat-pane > div:last-child {
+  /* ✨ Message ရိုက်သည့်နေရာ၏ အပေါ်ဘက်ကို လိုင်းစိမ်း (Green Line) လေး ကွက်တိ ဖြစ်စေရန် */
+  border-top: 2px solid var(--tw-green-800) !important;
 }
 
 /* ==========================================================================
@@ -251,4 +259,3 @@ body {
 /* Scrollbar layout config rules */
 #chat-messages::-webkit-scrollbar, #pitch-scroll-wrapper::-webkit-scrollbar { width: 3px; }
 #chat-messages::-webkit-scrollbar-thumb, #pitch-scroll-wrapper::-webkit-scrollbar-thumb { background: #C9A84C; border-radius: 2px; }
-
