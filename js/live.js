@@ -108,7 +108,7 @@ function renderPitch(data) {
     benchContent += `
       <div class="w-full px-2 py-1.5 rounded-xl border border-[#C9A84C]/30" style="background: rgba(0,0,0,0.15);">
         <p class="text-center font-black tracking-wide text-[#C9A84C]/70 uppercase mb-1" style="font-size: 0.5rem; letter-spacing: 0.05em;">
-          📋 BENCH (အရံလူစာရင်း)
+          📋 BENCH
         </p>
         <div class="flex justify-around items-center w-full">
           ${subs.map(p => playerCard(p, true)).join("")}
@@ -126,13 +126,13 @@ function updateChatLock() {
   const lockBanner = document.getElementById("chat-lock-banner"); 
   if (isApproved) {
     input.disabled = false; 
-    input.placeholder = "Message ရိုက်ပါ..."; 
+    input.placeholder = "Type a message..."; 
     sendBtn.disabled = false; 
     sendBtn.style.opacity = "1"; 
     lockBanner.classList.add("hidden"); 
   } else {
     input.disabled = true; 
-    input.placeholder = "Approve ပြီးမှ Chat ရေးနိုင်သည်"; 
+    input.placeholder = "Chat unlocks once approved"; 
     sendBtn.disabled = true; 
     sendBtn.style.opacity = "0.4"; 
     lockBanner.classList.remove("hidden"); 
@@ -147,7 +147,7 @@ function loadChat() {
     snapshot.forEach(d => msgs.unshift({ id: d.id, ...d.data() })); 
     const chatEl = document.getElementById("chat-messages"); 
     if (msgs.length === 0) {
-      chatEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#3A9E5F;">Chat မစသေးပါ — ပထမဆုံး Message ရေးလိုက်ပါ</p>`; 
+      chatEl.innerHTML = `<p class="text-center text-xs py-8" style="color:#7A8B82;">No messages yet — send the first one</p>`; 
       return;
     }
 
@@ -162,25 +162,25 @@ function loadChat() {
       let replyBoxHtml = "";
       if (m.replyToName && m.replyToText) {
         replyBoxHtml = `
-          <div class="text-[10px] bg-black/20 rounded px-2 py-1 mb-1 border-l-2 border-[#C9A84C] max-w-xs text-left truncate opacity-70" style="color: #E8D5A3;">
+          <div class="text-[10px] bg-[#F4F7F2] rounded px-2 py-1 mb-1 border-l-2 border-[#C9A84C] max-w-xs text-left truncate" style="color: #5B7566;">
              ↩️ <b>${m.replyToName}</b>: ${m.textEscape ? m.replyToText : m.replyToText}
           </div>
         `;
       }
 
-      // 💡 m.id အား Event ထဲသို့ ထည့်သွင်းထားသဖြင့် နှိပ်လိုက်လျှင် Modal ပွင့်လာမည်
+      // Clicking a message opens the reply/delete modal
       return isSelf
         ? `<div class="flex flex-col items-end mb-3 cursor-pointer" onclick="window.openOptionsModal('${m.id}')">
-            <div class="text-xs mb-1" style="color:#C9A84C;">${m.teamName}</div>
+            <div class="text-xs mb-1 font-semibold" style="color:#8A6D22;">${m.teamName}</div>
             ${replyBoxHtml}
             <div class="rounded-2xl rounded-br-sm px-4 py-2 text-sm max-w-xs" style="background:linear-gradient(135deg,#C9A84C,#F0D060);color:#0D2B1A;font-weight:500; text-align:left;">${m.text}</div>
-            <div class="text-[9px] mt-1" style="color:#3A9E5F;">${time}</div>
+            <div class="text-[9px] mt-1" style="color:#9AA8A0;">${time}</div>
            </div>` 
         : `<div class="flex flex-col items-start mb-3 cursor-pointer" onclick="window.openOptionsModal('${m.id}')">
-            <div class="text-xs mb-1" style="color:#E8D5A3;">${m.teamName}</div>
+            <div class="text-xs mb-1 font-semibold" style="color:#1B4D2E;">${m.teamName}</div>
             ${replyBoxHtml}
             <div class="rounded-2xl rounded-bl-sm px-4 py-2 text-sm max-w-xs" style="background:#1F5C36;color:white; text-align:left;">${m.text}</div>
-            <div class="text-[9px] mt-1" style="color:#3A9E5F;">${time}</div>
+            <div class="text-[9px] mt-1" style="color:#9AA8A0;">${time}</div>
            </div>`; 
     }).join("");
     chatEl.scrollTop = chatEl.scrollHeight; 
