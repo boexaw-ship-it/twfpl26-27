@@ -8,17 +8,19 @@
   <script src="https://cdn.tailwindcss.com"></script>
   <link rel="stylesheet" href="../css/style.css" />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=Bebas+Neue&display=swap" rel="stylesheet" />
+
   <link rel="stylesheet" href="../css/live.css" />
+
   <script type="module" src="../js/live.js"></script>
 </head>
 <body>
 
   <div class="top-bar flex-shrink-0">
-    <div style="padding:10px 16px 4px 16px; display:flex; align-items:center; justify-content:space-between;">
+    <div style="padding:10px 16px;display:flex;align-items:center;justify-content:space-between;">
       <div class="flex items-center gap-1.5">
-        <a href="../pages/dashboard.html" style="color:#fff; font-size:1.2rem; font-weight:bold;">←</a>
-        <h1 class="font-bold text-white" style="font-family:'Bebas Neue'; letter-spacing:0.1em; font-size:1.2rem;">LIVE</h1>
-        <span class="text-[9px] px-1.5 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626; color:#ffffff;">LIVE</span>
+        <a href="../pages/dashboard.html" style="color:#fff;font-size:1.2rem;font-weight:bold;">←</a>
+        <h1 class="font-bold text-white" style="font-family:'Bebas Neue';letter-spacing:0.1em;font-size:1.2rem;">LIVE</h1>
+        <span class="text-[9px] px-1.5 py-0.5 rounded-full font-bold animate-pulse" style="background:#dc2626;color:#ffffff;">LIVE</span>
       </div>
 
       <div class="flex items-center gap-2">
@@ -30,45 +32,44 @@
       </div>
     </div>
 
-    <div class="upper-info-frame">
-      <div class="upper-frame-cell">
-        <span class="frame-label">GW PTS</span>
-        <span id="gw-points" class="frame-value">—</span>
+    <!-- Stat strip: Hit / GW Points / GW Rank / Overall Pts / Captain / Chip -->
+    <div class="flex items-center gap-2 px-4 pb-3 overflow-x-auto" style="scrollbar-width:none;">
+      <div class="stat-chip">
+        <span class="stat-label">Hit</span>
+        <span id="hit-label" class="stat-value" style="color:#DC2626;">-0</span>
       </div>
-      <div class="upper-frame-cell">
-        <span class="frame-label">GW RANK</span>
-        <span id="gw-rank" class="frame-value">—</span>
+      <div class="stat-chip">
+        <span class="stat-label">GW pts</span>
+        <span id="gw-points" class="stat-value" style="color:var(--tw-green-800);">—</span>
       </div>
-      <div class="upper-frame-cell">
-        <span class="frame-label">OVERALL PTS</span>
-        <span id="overall-pts" class="frame-value">—</span>
+      <div class="stat-chip">
+        <span class="stat-label">GW rank</span>
+        <span id="gw-rank" class="stat-value" style="color:var(--tw-green-800);">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Overall pts</span>
+        <span id="overall-pts" class="stat-value" style="color:var(--tw-green-800);">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Captain</span>
+        <span id="captain-pts" class="stat-value" style="color:#8A6D22;">—</span>
+      </div>
+      <div class="stat-chip">
+        <span class="stat-label">Chip</span>
+        <span id="chip-badge" class="stat-value" style="color:#8A6D22;font-size:0.62rem;">NO CHIP</span>
       </div>
     </div>
   </div>
 
   <div class="content-split">
 
-    <div id="pitch-wrap" class="pitch-pane px-2.5 py-1.5">
-      
-      <div class="pitch-side-hud">
-        <div class="hud-card border-red">
-          <span class="hud-label">HIT</span>
-          <span id="hit-label" class="hud-value text-red-600">-0</span>
-        </div>
-        <div class="hud-card border-gold">
-          <span class="hud-label">CAPTAIN</span>
-          <span id="captain-pts" class="hud-value text-[#8A6D22]">—</span>
-        </div>
-        <div class="hud-card border-gold">
-          <span class="hud-label">CHIP</span>
-          <span id="chip-badge" class="hud-value text-[#8A6D22] text-[9px] leading-tight">NO CHIP</span>
-        </div>
-      </div>
-
-      <div class="pitch-scaled-container">
+    <!-- Pitch pane — 40%, field stays green -->
+    <div id="pitch-wrap" class="pitch-pane px-2.5 py-1.5" style="overflow:hidden; display:flex;">
+      <div style="flex:1; position:relative; border-radius:1rem; overflow:hidden; border:1.5px solid rgba(255,255,255,0.2); min-width:0; height:100%; background:linear-gradient(180deg,#144622,#09230e);">
         <div id="pitch-scroll-wrapper" style="width:100%; height:100%; overflow-y:auto; -webkit-overflow-scrolling:touch; padding:4px; display:flex; flex-direction:column; gap:6px;">
+
           <div class="main-scroll-pitch-canvas">
-            <svg style="position:absolute; top:0; left:0; width:100%; height:390px; opacity:0.25; pointer-events:none; z-index:0;" viewBox="0 0 200 390" preserveAspectRatio="none">
+            <svg style="position:absolute;top:0;left:0;width:100%;height:390px;opacity:0.25;pointer-events:none;z-index:0;" viewBox="0 0 200 390" preserveAspectRatio="none">
               <rect x="6" y="6" width="188" height="378" fill="none" stroke="white" stroke-width="1.2"/>
               <line x1="6" y1="195" x2="194" y2="195" stroke="white" stroke-width="1.2"/>
               <circle cx="100" cy="195" r="24" fill="none" stroke="white" stroke-width="1.2"/>
@@ -77,61 +78,62 @@
               <rect x="66" y="6" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
               <rect x="66" y="370" width="68" height="14" fill="none" stroke="white" stroke-width="1.2"/>
             </svg>
+
             <div id="pitch" style="width:100%; height:100%; display:flex; flex-direction:column; justify-content:space-between;">
               <p class="text-center text-xs py-8" style="color:#88b89b;">Team loading...</p>
             </div>
           </div>
+
           <div id="bench-container" style="width:100%; flex-shrink:0; padding-bottom:4px;"></div>
         </div>
       </div>
-
     </div>
 
+    <!-- Chat pane — 60%, white background -->
     <div class="chat-pane">
-      <div style="padding:8px 16px; border-bottom:1px solid #E7ECE7; flex-shrink:0; background:#fff;">
+      <div style="margin:10px 12px 0;padding:8px 14px;border:1.5px solid var(--tw-border-green);border-radius:12px;flex-shrink:0;background:#fff;">
         <p class="text-xs font-semibold uppercase tracking-widest" style="color:var(--tw-green-800);">💬 Live Chat</p>
       </div>
 
-      <div id="chat-lock-banner" class="hidden" style="padding:6px 16px; background:rgba(201,168,76,0.08); border-bottom:1px solid rgba(201,168,76,0.25); flex-shrink:0;">
+      <div id="chat-lock-banner" class="hidden" style="padding:6px 16px;background:rgba(201,168,76,0.08);border-bottom:1px solid rgba(201,168,76,0.25);flex-shrink:0;">
         <p class="text-xs" style="color:#8A6D22;">🔒 Chat unlocks once your account is approved — you can browse messages now.</p>
       </div>
 
-      <div id="chat-messages" style="flex:1; overflow-y:auto; padding:10px 16px; background:#fff;"></div>
+      <div id="chat-messages" style="flex:1;overflow-y:auto;padding:10px 16px;background:#fff;"></div>
 
       <div id="reply-preview-bar" class="hidden px-4 py-2 flex items-center justify-between border-t" style="background: #FAFCFA; border-color:#E7ECE7;">
         <div class="flex flex-col min-w-0 flex-1">
-          <span id="reply-target-name" class="text-[10px] font-bold" style="color:#8A6D22;">Reply to user</span>
+          <span id="reply-target-name" class="text-[10px] font-bold" style="color:#8A6D22;">Reply to zaw moe</span>
           <span id="reply-target-text" class="text-xs truncate" style="color:var(--tw-text-dim);">Message text...</span>
         </div>
         <button onclick="window.cancelReply()" class="text-xs font-bold px-2 py-1 text-red-600 bg-red-50 rounded-md ml-2">✖</button>
       </div>
 
-      <div style="padding:8px 12px; border-top:1px solid #E7ECE7; display:flex; gap:8px; align-items:center; flex-shrink:0; background:#fff;">
+      <div style="margin:8px 12px;padding:8px 12px;border:1.5px solid var(--tw-border-green);border-radius:12px;display:flex;gap:8px;align-items:center;flex-shrink:0;background:#fff;">
         <input id="chat-input" type="text" placeholder="Type a message..." onkeydown="window.handleKeydown(event)" disabled
-          style="flex:1; background:#F4F7F2; border:1px solid #E7ECE7; color:var(--tw-green-900); border-radius:0.75rem; padding:10px 14px; font-size:0.85rem; outline:none;"
+          style="flex:1;background:#F4F7F2;border:1px solid #E7ECE7;color:var(--tw-green-900);border-radius:0.75rem;padding:10px 14px;font-size:0.85rem;outline:none;"
           onfocus="this.style.borderColor='#2F7A4F'" onblur="this.style.borderColor='#E7ECE7'" />
-        <button id="send-btn" onclick="window.sendMessage()" disabled style="opacity:0.4; background:linear-gradient(135deg,#1B4D2E,#2F7A4F); color:#fff; border-radius:0.75rem; padding:10px 16px; font-weight:700; font-size:0.85rem;">Send</button>
+        <button id="send-btn" onclick="window.sendMessage()" disabled style="opacity:0.4;background:linear-gradient(135deg,#1B4D2E,#2F7A4F);color:#fff;border-radius:0.75rem;padding:10px 16px;font-weight:700;font-size:0.85rem;">Send</button>
       </div>
     </div>
 
   </div>
 
-  <div class="bottom-nav">
-    <div class="nav-item" onclick="window.location.href='../pages/dashboard.html'"><span style="font-size:1.2rem;">🏠</span><span>Home</span></div>
-    <div class="nav-item active"><span style="font-size:1.2rem;">⚡</span><span>Live</span></div>
-    <div class="nav-item" onclick="window.location.href='../pages/leagues.html'"><span style="font-size:1.2rem;">🏆</span><span>League</span></div>
-    <div class="nav-item" onclick="window.location.href='../pages/fixtures.html'"><span style="font-size:1.2rem;">⚽</span><span>Fixtures</span></div>
-    <div class="nav-item" onclick="window.location.href='../pages/scout.html'"><span style="font-size:1.2rem;">🔍</span><span>Scout</span></div>
-  </div>
-
   <div id="message-options-modal" class="hidden fixed inset-0 bg-black/60 flex items-center justify-center p-4 z-50">
-    <div class="w-full max-w-xs rounded-xl p-4 flex flex-col gap-3 shadow-2xl" style="background:#fff; border:1px solid #E7ECE7;">
-      <p id="modal-msg-preview" class="text-xs truncate border-b pb-2" style="color:var(--tw-text-dim); border-color:#E7ECE7;"></p>
+    <div class="w-full max-w-xs rounded-xl p-4 flex flex-col gap-3 shadow-2xl" style="background:#fff;border:1px solid #E7ECE7;">
+      <p id="modal-msg-preview" class="text-xs truncate border-b pb-2" style="color:var(--tw-text-dim);border-color:#E7ECE7;"></p>
       <button id="modal-reply-btn" class="w-full text-white font-bold py-2.5 rounded-lg text-sm transition-all" style="background:var(--tw-green-800);">💬 Reply</button>
       <button id="modal-delete-btn" class="w-full bg-red-600 hover:bg-red-700 text-white font-bold py-2.5 rounded-lg text-sm transition-all hidden">🗑️ Delete message</button>
       <button onclick="window.closeOptionsModal()" class="w-full text-xs py-1 mt-1 font-medium" style="color:var(--tw-text-dim);">Cancel</button>
     </div>
   </div>
 
+  <div class="bg-white border-t flex justify-around items-center py-1 flex-shrink-0" style="border-color:#E7ECE7;">
+    <div class="nav-item" onclick="window.location.href='../pages/dashboard.html'"><span style="font-size:1.2rem;">🏠</span><span>Home</span></div>
+    <div class="nav-item active"><span style="font-size:1.2rem;">⚡</span><span>Live</span></div>
+    <div class="nav-item" onclick="window.location.href='../pages/leagues.html'"><span style="font-size:1.2rem;">🏆</span><span>League</span></div>
+    <div class="nav-item" onclick="window.location.href='../pages/fixtures.html'"><span style="font-size:1.2rem;">⚽</span><span>Fixtures</span></div>
+    <div class="nav-item" onclick="window.location.href='../pages/scout.html'"><span style="font-size:1.2rem;">🔍</span><span>Scout</span></div>
+  </div>
 </body>
 </html>
